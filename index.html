@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lane 2 Federal Sales Roadmap | LAIG</title>
+  <meta name="description" content="Limitless AI Growth – Federal contractor pipeline intelligence. Identify when to position, not when to propose." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ──────────────────────────────────────────
+       DESIGN TOKENS
+    ────────────────────────────────────────── */
+    :root, [data-theme="light"] {
+      --color-bg: #f5f6f8;
+      --color-surface: #ffffff;
+      --color-surface-2: #f0f2f5;
+      --color-border: #dde1e7;
+      --color-divider: #e8eaed;
+      --color-text: #111827;
+      --color-text-muted: #6b7280;
+      --color-text-faint: #9ca3af;
+      --color-text-inverse: #ffffff;
+
+      --color-primary: #1a56db;
+      --color-primary-hover: #1e429f;
+      --color-primary-bg: #eff6ff;
+
+      --color-success: #057a55;
+      --color-success-bg: #f0fdf4;
+      --color-success-border: #bbf7d0;
+
+      --color-warning: #9f580a;
+      --color-warning-bg: #fffbeb;
+      --color-warning-border: #fde68a;
+
+      --color-danger: #c81e1e;
+      --color-danger-bg: #fff5f5;
+      --color-danger-border: #fecaca;
+
+      --color-purple: #5521b5;
+      --color-purple-bg: #f5f3ff;
+      --color-purple-border: #ddd6fe;
+
+      --color-teal: #047481;
+      --color-teal-bg: #ecfeff;
+      --color-teal-border: #a5f3fc;
+
+      --color-navy: #1e3a5f;
+
+      /* Chart palette */
+      --chart-1: #1a56db;
+      --chart-2: #057a55;
+      --chart-3: #9f580a;
+      --chart-4: #5521b5;
+      --chart-5: #c81e1e;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.09);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --color-bg: #0d1117;
+      --color-surface: #161b22;
+      --color-surface-2: #1c2129;
+      --color-border: #30363d;
+      --color-divider: #21262d;
+      --color-text: #e6edf3;
+      --color-text-muted: #8b949e;
+      --color-text-faint: #484f58;
+      --color-text-inverse: #0d1117;
+
+      --color-primary: #4d9cf8;
+      --color-primary-hover: #79b8ff;
+      --color-primary-bg: #0d1f3a;
+
+      --color-success: #3fb950;
+      --color-success-bg: #0d2117;
+      --color-success-border: #1a472a;
+
+      --color-warning: #d29922;
+      --color-warning-bg: #1f1a0d;
+      --color-warning-border: #3a2a00;
+
+      --color-danger: #f85149;
+      --color-danger-bg: #21100f;
+      --color-danger-border: #3a1515;
+
+      --color-purple: #bc8cff;
+      --color-purple-bg: #1a0d3a;
+      --color-purple-border: #2d1a5a;
+
+      --color-teal: #39d0d8;
+      --color-teal-bg: #041e23;
+      --color-teal-border: #0a4048;
+
+      --color-navy: #1e3a5f;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    /* ──────────────────────────────────────────
+       BASE
+    ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.5;
+    }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    table { border-collapse: collapse; width: 100%; }
+    a { color: var(--color-primary); text-decoration: none; }
+
+    /* ──────────────────────────────────────────
+       LAYOUT
+    ────────────────────────────────────────── */
+    .app {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 1fr;
+      height: 100dvh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--color-divider);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .logo-brand {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-primary);
+    }
+    .logo-sub {
+      font-size: 10px;
+      color: var(--color-text-muted);
+      letter-spacing: 0.03em;
+    }
+    .nav-section {
+      padding: 12px 12px 4px;
+    }
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-faint);
+      padding: 0 8px;
+      margin-bottom: 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover { background: var(--color-surface-2); color: var(--color-text); }
+    .nav-item.active { background: var(--color-primary-bg); color: var(--color-primary); }
+    .nav-item svg { flex-shrink: 0; opacity: 0.7; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid var(--color-divider);
+    }
+    .cta-box {
+      background: linear-gradient(135deg, var(--color-navy) 0%, #1a3a6e 100%);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+    }
+    .cta-box p { font-size: 11px; color: #aac4e8; line-height: 1.5; }
+    .cta-box strong { color: #ffffff; font-size: 12px; display: block; margin-bottom: 6px; }
+    .cta-keyword {
+      display: inline-block;
+      margin-top: 8px;
+      background: var(--color-primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+    }
+
+    /* MAIN */
+    .main {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .topbar-left { display: flex; flex-direction: column; gap: 2px; }
+    .page-title { font-size: 17px; font-weight: 700; color: var(--color-text); }
+    .page-subtitle { font-size: 12px; color: var(--color-text-muted); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .theme-toggle {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+      color: var(--color-text-muted);
+      transition: all 0.15s;
+    }
+    .theme-toggle:hover { color: var(--color-text); border-color: var(--color-primary); }
+    .as-of {
+      font-size: 11px;
+      color: var(--color-text-faint);
+      font-family: var(--font-mono);
+    }
+
+    /* CONTENT AREA */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 24px;
+    }
+
+    /* VIEWS */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ──────────────────────────────────────────
+       KPI CARDS
+    ────────────────────────────────────────── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text);
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--color-text-faint);
+      margin-top: 4px;
+    }
+    .kpi-card.accent-green .kpi-value { color: var(--color-success); }
+    .kpi-card.accent-orange .kpi-value { color: var(--color-warning); }
+    .kpi-card.accent-blue .kpi-value { color: var(--color-primary); }
+    .kpi-card.accent-purple .kpi-value { color: var(--color-purple); }
+
+    /* ──────────────────────────────────────────
+       GRID LAYOUT
+    ────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+
+    /* ──────────────────────────────────────────
+       CARD
+    ────────────────────────────────────────── */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid var(--color-divider);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .card-hint {
+      font-size: 11px;
+      color: var(--color-text-faint);
+    }
+    .card-body { padding: 18px; }
+    .chart-wrap { position: relative; height: 200px; }
+
+    /* ──────────────────────────────────────────
+       BADGES / LABELS
+    ────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+    .badge-green { background: var(--color-success-bg); color: var(--color-success); border: 1px solid var(--color-success-border); }
+    .badge-orange { background: var(--color-warning-bg); color: var(--color-warning); border: 1px solid var(--color-warning-border); }
+    .badge-red { background: var(--color-danger-bg); color: var(--color-danger); border: 1px solid var(--color-danger-border); }
+    .badge-blue { background: var(--color-primary-bg); color: var(--color-primary); border: 1px solid rgba(74,152,248,0.3); }
+    .badge-purple { background: var(--color-purple-bg); color: var(--color-purple); border: 1px solid var(--color-purple-border); }
+    .badge-teal { background: var(--color-teal-bg); color: var(--color-teal); border: 1px solid var(--color-teal-border); }
+    .badge-gray { background: var(--color-surface-2); color: var(--color-text-muted); border: 1px solid var(--color-border); }
+
+    /* Position Now flag */
+    .flag-position {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--color-success);
+      color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .flag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ──────────────────────────────────────────
+       PRIORITY TABLE
+    ────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      overscroll-behavior: contain;
+    }
+    .priority-table {
+      font-size: 12.5px;
+    }
+    .priority-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--color-surface-2);
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      border-bottom: 1px solid var(--color-border);
+      white-space: nowrap;
+    }
+    .priority-table tbody tr {
+      border-bottom: 1px solid var(--color-divider);
+      transition: background 0.12s;
+    }
+    .priority-table tbody tr:hover { background: var(--color-surface-2); }
+    .priority-table tbody tr:last-child { border-bottom: none; }
+    .priority-table td {
+      padding: 11px 12px;
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }
+    .opp-title {
+      font-weight: 600;
+      color: var(--color-text);
+      max-width: 280px;
+      line-height: 1.3;
+    }
+    .opp-org {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .sol-date {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-text);
+    }
+    .days-remaining {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .days-hot { color: var(--color-danger); }
+    .days-warm { color: var(--color-warning); }
+    .days-cool { color: var(--color-text-muted); }
+    .value-cell {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--color-text);
+      white-space: nowrap;
+    }
+    .incumbent-cell {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      max-width: 160px;
+    }
+    .incumbent-known { color: var(--color-warning); font-weight: 500; }
+
+    /* ──────────────────────────────────────────
+       TIMELINE VIEW
+    ────────────────────────────────────────── */
+    .timeline-list { display: flex; flex-direction: column; gap: 10px; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+    }
+    .timeline-item.flagged { border-left: 3px solid var(--color-success); }
+    .timeline-date-col { text-align: right; }
+    .timeline-month {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+    }
+    .timeline-day {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--color-text);
+      line-height: 1;
+    }
+    .timeline-title { font-size: 13px; font-weight: 600; color: var(--color-text); margin-bottom: 3px; }
+    .timeline-meta { font-size: 11px; color: var(--color-text-muted); }
+
+    /* ──────────────────────────────────────────
+       OPTY CARDS (Department / NAICS views)
+    ────────────────────────────────────────── */
+    .opty-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .opty-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .opty-card.flagged { border-top: 3px solid var(--color-success); }
+    .opty-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .opty-card-title { font-size: 13px; font-weight: 600; color: var(--color-text); line-height: 1.35; }
+    .opty-card-org { font-size: 11px; color: var(--color-text-muted); margin-top: 3px; }
+    .opty-meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .opty-field { display: flex; flex-direction: column; gap: 2px; }
+    .opty-field-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-faint); font-weight: 600; }
+    .opty-field-value { font-size: 12px; color: var(--color-text); font-weight: 500; }
+    .opty-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; border-top: 1px solid var(--color-divider); padding-top: 10px; }
+
+    /* ──────────────────────────────────────────
+       FILTER BAR
+    ────────────────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .filter-chip.active { background: var(--color-primary-bg); border-color: var(--color-primary); color: var(--color-primary); font-weight: 600; }
+    .filter-label { font-size: 11px; color: var(--color-text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ──────────────────────────────────────────
+       SECTION HEADING
+    ────────────────────────────────────────── */
+    .section-heading {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-divider);
+    }
+
+    /* ──────────────────────────────────────────
+       LEGEND
+    ────────────────────────────────────────── */
+    .legend-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--color-text-muted); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ──────────────────────────────────────────
+       EMPTY / LOADING
+    ────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--color-text-faint);
+      font-size: 13px;
+    }
+
+    /* ──────────────────────────────────────────
+       RESPONSIVE
+    ────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .sidebar { display: none; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <!-- SVG Logo: geometric "L" mark -->
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LAIG logo">
+        <rect width="32" height="32" rx="7" fill="#1a56db"/>
+        <rect x="8" y="7" width="5" height="18" rx="1.5" fill="white"/>
+        <rect x="8" y="20" width="14" height="5" rx="1.5" fill="white"/>
+        <rect x="19" y="7" width="5" height="10" rx="1.5" fill="rgba(255,255,255,0.45)"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-brand">LAIG</span>
+        <span class="logo-sub">Lane 2 Roadmap</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Views</div>
+      <button class="nav-item active" onclick="showView('overview')" id="nav-overview">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" onclick="showView('priority')" id="nav-priority">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Priority Table
+        <span class="nav-badge">2</span>
+      </button>
+      <button class="nav-item" onclick="showView('timeline')" id="nav-timeline">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Timeline
+      </button>
+      <button class="nav-item" onclick="showView('department')" id="nav-department">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        By Department
+      </button>
+      <button class="nav-item" onclick="showView('naics')" id="nav-naics">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        NAICS / Type
+      </button>
+      <button class="nav-item" onclick="showView('recompete')" id="nav-recompete">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.89"/></svg>
+        Recompete Watch
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="cta-box">
+        <strong>Future Requirement Readiness Checklist</strong>
+        <p>Drop a comment on LinkedIn to receive the Future Requirement Readiness Checklist.</p>
+        <span class="cta-keyword">Comment "FORECAST"</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════ MAIN ══════ -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="page-title" id="page-title">Pipeline Overview</span>
+        <span class="page-subtitle">DOT Federal Forecast — Lane 2 positioning intelligence</span>
+      </div>
+      <div class="topbar-right">
+        <span class="as-of">As of May 18, 2026</span>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" id="theme-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ══ VIEW: OVERVIEW ══ -->
+      <div class="view active" id="view-overview">
+
+        <!-- KPI Row -->
+        <div class="kpi-row">
+          <div class="kpi-card accent-green">
+            <div class="kpi-label">Position Now</div>
+            <div class="kpi-value">2</div>
+            <div class="kpi-sub">Require immediate attention</div>
+          </div>
+          <div class="kpi-card accent-orange">
+            <div class="kpi-label">Monitor</div>
+            <div class="kpi-value">2</div>
+            <div class="kpi-sub">Watch closely — 90–180 days</div>
+          </div>
+          <div class="kpi-card accent-blue">
+            <div class="kpi-label">Recompete Watch</div>
+            <div class="kpi-value">1</div>
+            <div class="kpi-sub">Known incumbent — 286 days out</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Eligible / Total</div>
+            <div class="kpi-value">6 <span style="font-size:14px;font-weight:500;color:var(--color-text-muted);">of 7</span></div>
+            <div class="kpi-sub">1 ineligible (&lt;60 days). $5B+ pipeline</div>
+          </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="grid-2" style="margin-bottom: 18px;">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Positioning Status</span>
+              <span class="card-hint">Active opportunities only</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <canvas id="chartStatus"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Requirement Type</span>
+              <span class="card-hint">Recompete vs. New</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <canvas id="chartType"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Solicitation Timeline</span>
+              <span class="card-hint">By FY quarter</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <canvas id="chartTimeline"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Set-Aside Breakdown</span>
+              <span class="card-hint">Competitive structure</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <canvas id="chartSetAside"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /overview -->
+
+
+      <!-- ══ VIEW: PRIORITY TABLE ══ -->
+      <div class="view" id="view-priority">
+        <div class="legend-row">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div> Position Now</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-warning)"></div> Monitor</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary)"></div> Recompete Watch</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-text-faint)"></div> Too Early</div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table class="priority-table">
+              <thead>
+                <tr>
+                  <th>Opportunity</th>
+                  <th>Label</th>
+                  <th>Sol. Date</th>
+                  <th>Days Out</th>
+                  <th>Value</th>
+                  <th>Type</th>
+                  <th>Set-Aside</th>
+                  <th>Incumbent</th>
+                  <th>Flag</th>
+                </tr>
+              </thead>
+              <tbody id="priority-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /priority -->
+
+
+      <!-- ══ VIEW: TIMELINE ══ -->
+      <div class="view" id="view-timeline">
+        <div class="section-heading">FY2026–2027 Solicitation Roadmap</div>
+        <div class="timeline-list" id="timeline-list"></div>
+      </div><!-- /timeline -->
+
+
+      <!-- ══ VIEW: DEPARTMENT ══ -->
+      <div class="view" id="view-department">
+        <div class="filter-bar">
+          <span class="filter-label">Agency:</span>
+          <button class="filter-chip active" onclick="filterDept('all', this)">All</button>
+          <button class="filter-chip" onclick="filterDept('NHTSA', this)">NHTSA</button>
+          <button class="filter-chip" onclick="filterDept('MARAD', this)">MARAD</button>
+          <button class="filter-chip" onclick="filterDept('FHWA', this)">FHWA</button>
+        </div>
+        <div class="opty-grid" id="dept-grid"></div>
+      </div><!-- /department -->
+
+
+      <!-- ══ VIEW: NAICS ══ -->
+      <div class="view" id="view-naics">
+        <div class="grid-2" style="margin-bottom: 18px;">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Opportunities by NAICS</span></div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <canvas id="chartNaics"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">NAICS Reference</span></div>
+            <div class="card-body">
+              <table style="font-size:12px;">
+                <thead>
+                  <tr>
+                    <th style="padding:6px 10px; text-align:left; color:var(--color-text-muted); border-bottom:1px solid var(--color-border);">NAICS</th>
+                    <th style="padding:6px 10px; text-align:left; color:var(--color-text-muted); border-bottom:1px solid var(--color-border);">Description</th>
+                    <th style="padding:6px 10px; text-align:left; color:var(--color-text-muted); border-bottom:1px solid var(--color-border);">Count</th>
+                  </tr>
+                </thead>
+                <tbody id="naics-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="opty-grid" id="naics-grid"></div>
+      </div><!-- /naics -->
+
+
+      <!-- ══ VIEW: RECOMPETE ══ -->
+      <div class="view" id="view-recompete">
+        <div class="card" style="margin-bottom: 16px; padding: 16px 20px;">
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--color-warning-bg);border:1px solid var(--color-warning-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.89"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--color-text);margin-bottom:4px;">Recompete Intelligence</div>
+              <div style="font-size:12px;color:var(--color-text-muted);line-height:1.6;">Recompetes are where incumbents have structural advantages. Use this view to identify where you need to start relationships <em>now</em> — before the solicitation drops. If an incumbent is known, assume they have at least an 18-month head start.</div>
+            </div>
+          </div>
+        </div>
+        <div class="opty-grid" id="recompete-grid"></div>
+      </div><!-- /recompete -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+</div><!-- /app -->
+
+<script>
+/* ──────────────────────────────────────────
+   DATA
+────────────────────────────────────────── */
+const TODAY = new Date('2026-05-18');
+
+// Rule: any requirement with solicitation date < 60 days from today is ineligible
+const INELIGIBLE_DAYS = 60;
+
+const ALL_OPPS = [
+  {
+    id: 'NHTSA_2026_027',
+    title: 'Takata Dashboard Support',
+    org: 'NHTSA',
+    dept: 'Dept. of Transportation',
+    status: 'Recompete',
+    phase: null,
+    isOption: false,
+    solDate: new Date('2026-05-31'),
+    awardFY: 2027,
+    awardQtr: 'FY27 Q1',
+    value: '$250K–$499K',
+    naics: '541715',
+    naicsDesc: 'R&D – Physical Sciences',
+    setAside: 'To Be Determined',
+    extent: 'Full & Open',
+    incumbent: null,
+    label: 'Ineligible',
+    positionNow: false,
+    ineligible: true
+  },
+  {
+    id: 'FHWA_2026_1DOT',
+    title: '1DOT Digital Services (supersedes SWES 2.0)',
+    org: 'FHWA',
+    dept: 'Dept. of Transportation',
+    status: 'New Requirement',
+    phase: 'Market Research',
+    isOption: false,
+    solDate: new Date('2026-08-01'),
+    awardFY: 2027,
+    awardQtr: 'FY27 Q2',
+    value: '$1B–$1.9B',
+    naics: '541511',
+    naicsDesc: 'Custom Computer Programming',
+    setAside: 'Partial SB Set-Aside',
+    extent: 'Full & Open (after exclusion)',
+    incumbent: null,
+    label: 'Position Now',
+    positionNow: true,
+    ineligible: false
+  },
+  {
+    id: 'MARAD_2026_NSSV',
+    title: 'National Security Sealift Vessels – 10 RO/RO Ships',
+    org: 'MARAD',
+    dept: 'Dept. of Transportation',
+    status: 'New Requirement',
+    phase: 'Market Research',
+    isOption: false,
+    solDate: new Date('2026-08-15'),
+    awardFY: 2027,
+    awardQtr: 'FY27 Q2',
+    value: '$3B–$3.9B',
+    naics: '336611',
+    naicsDesc: 'Ship Building & Repairing',
+    setAside: 'Other Than Small Business',
+    extent: 'Full & Open Competition',
+    incumbent: null,
+    label: 'Position Now',
+    positionNow: true,
+    ineligible: false
+  },
+  {
+    id: 'FHWA_2026_DataHub',
+    title: 'Enterprise Data Platform – Datahub',
+    org: 'FHWA',
+    dept: 'Dept. of Transportation',
+    status: 'Unknown',
+    phase: null,
+    isOption: false,
+    solDate: new Date('2026-10-01'),
+    awardFY: 2027,
+    awardQtr: 'FY27 Q1',
+    value: '$5M–$9.9M',
+    naics: '541519',
+    naicsDesc: 'Other Computer Related Services',
+    setAside: 'Total SB Set-Aside',
+    extent: 'Full & Open (after exclusion)',
+    incumbent: 'New Tech Solutions Inc',
+    label: 'Monitor',
+    positionNow: false,
+    ineligible: false
+  },
+  {
+    id: 'NHTSA_2026_021',
+    title: "National-Level Vehicle Data for NHTSA's Database & Analysis",
+    org: 'NHTSA',
+    dept: 'Dept. of Transportation',
+    status: 'New Requirement',
+    phase: null,
+    isOption: false,
+    solDate: new Date('2026-11-14'),
+    awardFY: 2027,
+    awardQtr: 'FY27 Q3',
+    value: '$5M–$9.9M',
+    naics: '519290',
+    naicsDesc: 'Web Search Portals / Data',
+    setAside: 'To Be Determined',
+    extent: 'Full & Open Competition',
+    incumbent: 'R.L. Polk and Company',
+    label: 'Monitor',
+    positionNow: false,
+    ineligible: false
+  },
+  {
+    id: 'NHTSA_2026_010',
+    title: 'Crash Injury Research and Engineering Network (CIREN) IDIQ',
+    org: 'NHTSA',
+    dept: 'Dept. of Transportation',
+    status: 'New Requirement',
+    phase: null,
+    isOption: false,
+    solDate: new Date('2026-12-31'),
+    awardFY: 2027,
+    awardQtr: 'FY27 Q4',
+    value: '$10M–$19M',
+    naics: '541715',
+    naicsDesc: 'R&D – Physical Sciences',
+    setAside: 'Other Than Small Business',
+    extent: 'Full & Open Competition',
+    incumbent: 'Crash Research & Analysis, Inc.',
+    label: 'Too Early',
+    positionNow: false,
+    ineligible: false
+  },
+  {
+    id: 'NHTSA_2026_016',
+    title: 'CRSS Coding Operations Resource Center',
+    org: 'NHTSA',
+    dept: 'Dept. of Transportation',
+    status: 'Recompete',
+    phase: null,
+    isOption: false,
+    solDate: new Date('2027-02-28'),
+    awardFY: 2027,
+    awardQtr: 'FY27 TBD',
+    value: '$5M–$9.9M',
+    naics: '541990',
+    naicsDesc: 'Other Professional Services',
+    setAside: 'Small Business',
+    extent: 'To Be Determined',
+    incumbent: 'Laansu Incorporated',
+    label: 'Recompete Watch',
+    positionNow: false,
+    ineligible: false
+  }
+];
+
+// Apply ineligibility rule: exclude opps < 60 days from solicitation
+const opps = ALL_OPPS.filter(o => {
+  const days = Math.round((o.solDate - TODAY) / (1000 * 60 * 60 * 24));
+  if (days < INELIGIBLE_DAYS) {
+    o.ineligible = true;
+    o.label = 'Ineligible — <60 Days';
+    o.positionNow = false;
+    return false; // exclude from main views
+  }
+  return true;
+});
+const ineligibleOpps = ALL_OPPS.filter(o => o.ineligible);
+
+function daysOut(opp) {
+  return Math.round((opp.solDate - TODAY) / (1000 * 60 * 60 * 24));
+}
+
+function labelBadge(label) {
+  const map = {
+    'Position Now': '<span class="badge badge-green">⬆ Position Now</span>',
+    'Monitor': '<span class="badge badge-orange">◎ Monitor</span>',
+    'Recompete Watch': '<span class="badge badge-blue">↺ Recompete Watch</span>',
+    'Too Early': '<span class="badge badge-gray">⋯ Too Early</span>',
+    'Ineligible — <60 Days': '<span class="badge badge-red">✕ Ineligible &lt;60d</span>',
+  };
+  return map[label] || `<span class="badge badge-gray">${label}</span>`;
+}
+
+/* ──────────────────────────────────────────
+   NAVIGATION
+────────────────────────────────────────── */
+const pageTitles = {
+  overview: 'Pipeline Overview',
+  priority: 'Priority Opportunities',
+  timeline: 'Solicitation Timeline',
+  department: 'Opportunities by Agency',
+  naics: 'NAICS / Type View',
+  recompete: 'Recompete Watch'
+};
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[id];
+  buildView(id);
+}
+
+function buildView(id) {
+  if (id === 'priority') buildPriorityTable();
+  if (id === 'timeline') buildTimeline();
+  if (id === 'department') buildDeptGrid('all');
+  if (id === 'naics') buildNaicsView();
+  if (id === 'recompete') buildRecompeteGrid();
+}
+
+/* ──────────────────────────────────────────
+   PRIORITY TABLE
+────────────────────────────────────────── */
+function buildPriorityTable() {
+  const sorted = [...opps].sort((a, b) => {
+    const order = ['Position Now','Monitor','Recompete Watch','Too Early'];
+    return order.indexOf(a.label) - order.indexOf(b.label) || daysOut(a) - daysOut(b);
+  });
+
+  const tbody = document.getElementById('priority-tbody');
+  tbody.innerHTML = sorted.map(o => {
+    const days = daysOut(o);
+    const daysClass = days <= 30 ? 'days-hot' : days <= 90 ? 'days-warm' : 'days-cool';
+    const solStr = o.solDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return `<tr>
+      <td>
+        <div class="opp-title">${o.title}</div>
+        <div class="opp-org">${o.org}</div>
+      </td>
+      <td>${labelBadge(o.label)}</td>
+      <td><span class="sol-date">${solStr}</span></td>
+      <td><span class="days-remaining ${daysClass}">${days}d</span></td>
+      <td><span class="value-cell">${o.value}</span></td>
+      <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : o.status === 'New Requirement' ? '<span class="badge badge-blue">New Req.</span>' : '<span class="badge badge-gray">Unknown</span>'}</td>
+      <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside}</span></td>
+      <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
+      <td>${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ──────────────────────────────────────────
+   TIMELINE
+────────────────────────────────────────── */
+function buildTimeline() {
+  const sorted = [...opps].sort((a, b) => a.solDate - b.solDate);
+  const list = document.getElementById('timeline-list');
+  list.innerHTML = sorted.map(o => {
+    const mon = o.solDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const day = o.solDate.getDate();
+    return `<div class="timeline-item ${o.positionNow ? 'flagged' : ''}">
+      <div class="timeline-date-col">
+        <div class="timeline-month">${o.solDate.toLocaleDateString('en-US', { month: 'short' })} '${String(o.solDate.getFullYear()).slice(2)}</div>
+        <div class="timeline-day">${String(day).padStart(2, '0')}</div>
+      </div>
+      <div>
+        <div class="timeline-title">${o.title}</div>
+        <div class="timeline-meta">${o.org} · ${o.value} · ${o.awardQtr} award · NAICS ${o.naics}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        ${labelBadge(o.label)}
+        ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Position Now</span>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ──────────────────────────────────────────
+   DEPT GRID
+────────────────────────────────────────── */
+function buildDeptGrid(filter) {
+  const filtered = filter === 'all' ? opps : opps.filter(o => o.org === filter);
+  const grid = document.getElementById('dept-grid');
+  grid.innerHTML = filtered.map(o => oppCard(o)).join('');
+}
+
+function filterDept(val, btn) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  buildDeptGrid(val);
+}
+
+/* ──────────────────────────────────────────
+   NAICS VIEW
+────────────────────────────────────────── */
+function buildNaicsView() {
+  // Group by NAICS
+  const groups = {};
+  opps.forEach(o => {
+    if (!groups[o.naics]) groups[o.naics] = { desc: o.naicsDesc, opps: [] };
+    groups[o.naics].opps.push(o);
+  });
+
+  // Table
+  const tbody = document.getElementById('naics-tbody');
+  tbody.innerHTML = Object.entries(groups).map(([code, g]) => `
+    <tr style="border-bottom:1px solid var(--color-divider)">
+      <td style="padding:8px 10px;font-family:var(--font-mono);font-weight:600;color:var(--color-primary);">${code}</td>
+      <td style="padding:8px 10px;color:var(--color-text-muted);">${g.desc}</td>
+      <td style="padding:8px 10px;font-weight:700;">${g.opps.length}</td>
+    </tr>
+  `).join('');
+
+  // Cards
+  const grid = document.getElementById('naics-grid');
+  grid.innerHTML = opps.map(o => oppCard(o)).join('');
+
+  // Chart
+  setTimeout(() => {
+    const ctx = document.getElementById('chartNaics');
+    if (!ctx || ctx._chartBuilt) return;
+    ctx._chartBuilt = true;
+    const labels = Object.keys(groups);
+    const data = labels.map(k => groups[k].opps.length);
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ label: 'Opportunities', data, backgroundColor: ['#1a56db','#057a55','#9f580a','#5521b5','#c81e1e'] }]
+      },
+      options: { ...barOpts(), plugins: { legend: { display: false } } }
+    });
+  }, 50);
+}
+
+/* ──────────────────────────────────────────
+   RECOMPETE GRID
+────────────────────────────────────────── */
+function buildRecompeteGrid() {
+  const recompetes = opps.filter(o => o.status === 'Recompete' || o.label === 'Recompete Watch');
+  const grid = document.getElementById('recompete-grid');
+  grid.innerHTML = recompetes.map(o => oppCard(o)).join('');
+}
+
+/* ──────────────────────────────────────────
+   OPP CARD
+────────────────────────────────────────── */
+function oppCard(o) {
+  const days = daysOut(o);
+  return `<div class="opty-card ${o.positionNow ? 'flagged' : ''}">
+    <div class="opty-card-header">
+      <div>
+        <div class="opty-card-title">${o.title}</div>
+        <div class="opty-card-org">${o.org}</div>
+      </div>
+      ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}
+    </div>
+    ${labelBadge(o.label)}
+    <div class="opty-fields">
+      <div class="opty-field"><span class="opty-field-label">Sol. Date</span><span class="opty-field-value">${o.solDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Days Out</span><span class="opty-field-value" style="color:${days<=30?'var(--color-danger)':days<=90?'var(--color-warning)':'var(--color-text)'}">${days}d</span></div>
+      <div class="opty-field"><span class="opty-field-label">Value</span><span class="opty-field-value">${o.value}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Type</span><span class="opty-field-value">${o.status}</span></div>
+      <div class="opty-field"><span class="opty-field-label">NAICS</span><span class="opty-field-value">${o.naics}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Set-Aside</span><span class="opty-field-value" style="font-size:11px;">${o.setAside}</span></div>
+      ${o.incumbent ? `<div class="opty-field" style="grid-column:1/-1;"><span class="opty-field-label">Incumbent</span><span class="opty-field-value incumbent-known">${o.incumbent}</span></div>` : ''}
+      ${o.phase ? `<div class="opty-field" style="grid-column:1/-1;"><span class="opty-field-label">Phase</span><span class="opty-field-value">${o.phase}</span></div>` : ''}
+    </div>
+  </div>`;
+}
+
+/* ──────────────────────────────────────────
+   CHARTS (OVERVIEW)
+────────────────────────────────────────── */
+function isDark() {
+  return document.documentElement.getAttribute('data-theme') === 'dark';
+}
+
+function chartColors() {
+  return {
+    text: isDark() ? '#8b949e' : '#6b7280',
+    grid: isDark() ? '#21262d' : '#e5e7eb',
+  };
+}
+
+function baseOpts() {
+  const c = chartColors();
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { color: c.text, font: { family: 'Inter', size: 11 }, padding: 12, boxWidth: 10, boxHeight: 10 }
+      },
+      tooltip: {
+        backgroundColor: isDark() ? '#161b22' : '#fff',
+        titleColor: isDark() ? '#e6edf3' : '#111827',
+        bodyColor: isDark() ? '#8b949e' : '#6b7280',
+        borderColor: isDark() ? '#30363d' : '#e5e7eb',
+        borderWidth: 1,
+      }
+    }
+  };
+}
+
+function barOpts() {
+  const c = chartColors();
+  return {
+    ...baseOpts(),
+    scales: {
+      x: { grid: { color: c.grid }, ticks: { color: c.text, font: { family: 'Inter', size: 11 } } },
+      y: { grid: { color: c.grid }, ticks: { color: c.text, font: { family: 'Inter', size: 11 }, stepSize: 1 }, beginAtZero: true }
+    }
+  };
+}
+
+function buildCharts() {
+  // Status donut — 2 Position Now, 2 Monitor, 1 Recompete Watch, 1 Too Early = 6 eligible (1 ineligible excluded)
+  new Chart(document.getElementById('chartStatus'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Position Now (2)', 'Monitor (2)', 'Recompete Watch (1)', 'Too Early (1)'],
+      datasets: [{
+        data: [2, 2, 1, 1],
+        backgroundColor: ['#057a55', '#d29922', '#1a56db', '#6b7280'],
+        borderWidth: 2,
+        borderColor: isDark() ? '#161b22' : '#ffffff',
+        hoverOffset: 6
+      }]
+    },
+    options: { ...baseOpts(), cutout: '65%' }
+  });
+
+  // Type donut
+  new Chart(document.getElementById('chartType'), {
+    type: 'doughnut',
+    data: {
+      labels: ['New Requirement', 'Recompete', 'Unknown'],
+      datasets: [{
+        data: [4, 2, 1],
+        backgroundColor: ['#1a56db', '#9f580a', '#6b7280'],
+        borderWidth: 0,
+        hoverOffset: 6
+      }]
+    },
+    options: { ...baseOpts(), cutout: '60%' }
+  });
+
+  // Timeline bar — 6 eligible opps (Takata excluded as ineligible): DataHub=FY27Q1, 1DOT=FY27Q2, NSSV=FY27Q2, VehicleData=FY27Q3, CIREN=FY27Q4, CRSS=TBD
+  new Chart(document.getElementById('chartTimeline'), {
+    type: 'bar',
+    data: {
+      labels: ['FY27 Q1', 'FY27 Q2', 'FY27 Q3', 'FY27 Q4', 'FY27 TBD'],
+      datasets: [{
+        label: 'Opportunities',
+        data: [1, 2, 1, 1, 1],
+        backgroundColor: '#1a56db',
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: { ...barOpts(), plugins: { ...barOpts().plugins, legend: { display: false } } }
+  });
+
+  // Set-aside donut
+  new Chart(document.getElementById('chartSetAside'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Full & Open', 'Other Than SB', 'Small Business', 'Partial SB', 'TBD'],
+      datasets: [{
+        data: [2, 2, 1, 1, 1],
+        backgroundColor: ['#1a56db', '#5521b5', '#057a55', '#047481', '#aaaaaa'],
+        borderWidth: 0,
+        hoverOffset: 6
+      }]
+    },
+    options: { ...baseOpts(), cutout: '60%' }
+  });
+}
+
+/* ──────────────────────────────────────────
+   THEME TOGGLE
+────────────────────────────────────────── */
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('theme-btn').innerHTML = next === 'dark'
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+}
+
+/* ──────────────────────────────────────────
+   INIT
+────────────────────────────────────────── */
+buildCharts();
+</script>
+</body>
+</html>
