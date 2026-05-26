@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lane 2 Federal Sales Roadmap | LAIG</title>
-  <meta name="description" content="Limitless AI Growth – Federal contractor pipeline intelligence. Identify when to position, not when to propose." />
+  <title>LAIG Federal Sales Roadmap | Multi-Agency Pipeline</title>
+  <meta name="description" content="Limitless AI Growth — Federal contractor pipeline intelligence across DOT, DOE, DoD, DHS, State, HHS." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
+
     /* ──────────────────────────────────────────
        DESIGN TOKENS
     ────────────────────────────────────────── */
@@ -608,15 +609,95 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+  
+
+    /* ── AGENCY SELECTOR ──────────────────────────────────────── */
+    .agency-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .agency-tab {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: none;
+    }
+    .agency-tab:hover { background: var(--color-surface-2); color: var(--color-text); }
+    .agency-tab.active { background: var(--color-primary-bg); color: var(--color-primary); font-weight: 600; }
+    .agency-tab-left { display: flex; align-items: center; gap: 7px; }
+    .agency-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .agency-count {
+      font-size: 10px; font-weight: 700;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1px 6px;
+      color: var(--color-text-faint);
+    }
+    .agency-tab.active .agency-count {
+      background: var(--color-primary-bg);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .agency-pos-badge {
+      font-size: 10px; font-weight: 700;
+      background: var(--color-success);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 6px;
+    }
+
+    /* ── CLEARANCE BADGE ──────────────────────────────────────── */
+    .badge-clearance {
+      background: #1a0d3a; color: #bc8cff;
+      border: 1px solid #2d1a5a;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ── OVERVIEW AGENCY CARDS ────────────────────────────────── */
+    .agency-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .agency-ov-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .agency-ov-card:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
+    .agency-ov-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .agency-ov-name { font-size: 13px; font-weight: 700; color: var(--color-text); }
+    .agency-ov-full { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+    .agency-ov-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; border-top: 1px solid var(--color-divider); padding-top: 10px; }
+    .agency-ov-stat { display: flex; flex-direction: column; gap: 2px; }
+    .agency-ov-stat-val { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .agency-ov-stat-lbl { font-size: 10px; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
   </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ══════ SIDEBAR ══════ -->
+  <!-- ══ SIDEBAR ══ -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <!-- SVG Logo: geometric "L" mark -->
       <svg class="logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LAIG logo">
         <rect width="32" height="32" rx="7" fill="#1a56db"/>
         <rect x="8" y="7" width="5" height="18" rx="1.5" fill="white"/>
@@ -633,24 +714,16 @@
       <div class="nav-label">Views</div>
       <button class="nav-item active" onclick="showView('overview')" id="nav-overview">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Overview
+        All Agencies
       </button>
       <button class="nav-item" onclick="showView('priority')" id="nav-priority">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         Priority Table
-        <span class="nav-badge">2</span>
+        <span class="nav-badge" id="nav-priority-badge">—</span>
       </button>
       <button class="nav-item" onclick="showView('timeline')" id="nav-timeline">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Timeline
-      </button>
-      <button class="nav-item" onclick="showView('department')" id="nav-department">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        By Department
-      </button>
-      <button class="nav-item" onclick="showView('naics')" id="nav-naics">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        NAICS / Type
       </button>
       <button class="nav-item" onclick="showView('recompete')" id="nav-recompete">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.89"/></svg>
@@ -658,124 +731,64 @@
       </button>
     </div>
 
+    <div class="nav-section">
+      <div class="nav-label">Agency</div>
+      <div class="agency-tabs" id="agency-tabs"></div>
+    </div>
+
     <div class="sidebar-footer">
       <div class="cta-box">
-        <strong>Future Requirement Readiness Checklist</strong>
-        <p>Drop a comment on LinkedIn to receive the Future Requirement Readiness Checklist.</p>
+        <strong>Future Requirement Readiness Framework</strong>
+        <p>Drop a comment on LinkedIn to receive the positioning checklist.</p>
         <span class="cta-keyword">Comment "FORECAST"</span>
       </div>
     </div>
   </aside>
 
-  <!-- ══════ MAIN ══════ -->
+  <!-- ══ MAIN ══ -->
   <div class="main">
-
-    <!-- TOPBAR -->
     <header class="topbar">
       <div class="topbar-left">
-        <span class="page-title" id="page-title">Pipeline Overview</span>
-        <span class="page-subtitle">DOT Federal Forecast — Lane 2 positioning intelligence</span>
+        <span class="page-title" id="page-title">All Agencies — Pipeline Overview</span>
+        <span class="page-subtitle" id="page-subtitle">LAIG Lane 2 Federal Sales Roadmap · Multi-Agency Intelligence</span>
       </div>
       <div class="topbar-right">
-        <span class="as-of">As of May 18, 2026</span>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" id="theme-btn">
+        <span class="as-of" id="as-of-date">As of May 26, 2026</span>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
       </div>
     </header>
 
-    <!-- CONTENT -->
     <div class="content">
 
-      <!-- ══ VIEW: OVERVIEW ══ -->
+      <!-- ══ ALL AGENCIES OVERVIEW ══ -->
       <div class="view active" id="view-overview">
-
-        <!-- KPI Row -->
-        <div class="kpi-row">
-          <div class="kpi-card accent-green">
-            <div class="kpi-label">Position Now</div>
-            <div class="kpi-value">2</div>
-            <div class="kpi-sub">Require immediate attention</div>
-          </div>
-          <div class="kpi-card accent-orange">
-            <div class="kpi-label">Monitor</div>
-            <div class="kpi-value">2</div>
-            <div class="kpi-sub">Watch closely — 90–180 days</div>
-          </div>
-          <div class="kpi-card accent-blue">
-            <div class="kpi-label">Recompete Watch</div>
-            <div class="kpi-value">1</div>
-            <div class="kpi-sub">Known incumbent — 286 days out</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Eligible / Total</div>
-            <div class="kpi-value">6 <span style="font-size:14px;font-weight:500;color:var(--color-text-muted);">of 7</span></div>
-            <div class="kpi-sub">1 ineligible (&lt;60 days). $5B+ pipeline</div>
-          </div>
-        </div>
-
-        <!-- Charts Row 1 -->
-        <div class="grid-2" style="margin-bottom: 18px;">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Positioning Status</span>
-              <span class="card-hint">Active opportunities only</span>
-            </div>
-            <div class="card-body">
-              <div class="chart-wrap">
-                <canvas id="chartStatus"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Requirement Type</span>
-              <span class="card-hint">Recompete vs. New</span>
-            </div>
-            <div class="card-body">
-              <div class="chart-wrap">
-                <canvas id="chartType"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charts Row 2 -->
+        <div class="kpi-row" id="overview-kpis"></div>
+        <div class="agency-overview-grid" id="agency-cards"></div>
         <div class="grid-2">
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">Solicitation Timeline</span>
-              <span class="card-hint">By FY quarter</span>
-            </div>
-            <div class="card-body">
-              <div class="chart-wrap">
-                <canvas id="chartTimeline"></canvas>
-              </div>
-            </div>
+            <div class="card-header"><span class="card-title">Position Now by Agency</span></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="chartAgencyPos"></canvas></div></div>
           </div>
           <div class="card">
-            <div class="card-header">
-              <span class="card-title">Set-Aside Breakdown</span>
-              <span class="card-hint">Competitive structure</span>
-            </div>
-            <div class="card-body">
-              <div class="chart-wrap">
-                <canvas id="chartSetAside"></canvas>
-              </div>
-            </div>
+            <div class="card-header"><span class="card-title">FY2026–27 Solicitation Timeline</span></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="chartTimeline"></canvas></div></div>
           </div>
         </div>
+      </div>
 
-      </div><!-- /overview -->
-
-
-      <!-- ══ VIEW: PRIORITY TABLE ══ -->
+      <!-- ══ PRIORITY TABLE ══ -->
       <div class="view" id="view-priority">
+        <div class="filter-bar" id="priority-filter-bar">
+          <span class="filter-label">Agency:</span>
+          <button class="filter-chip active" onclick="filterPriority('ALL',this)">All</button>
+        </div>
         <div class="legend-row">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div> Position Now</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--color-warning)"></div> Monitor</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary)"></div> Recompete Watch</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--color-text-faint)"></div> Too Early</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div>Position Now</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-warning)"></div>Monitor</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary)"></div>Recompete Watch</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-text-faint)"></div>Too Early</div>
         </div>
         <div class="card">
           <div class="table-wrap">
@@ -783,6 +796,7 @@
               <thead>
                 <tr>
                   <th>Opportunity</th>
+                  <th>Agency</th>
                   <th>Label</th>
                   <th>Sol. Date</th>
                   <th>Days Out</th>
@@ -797,575 +811,767 @@
             </table>
           </div>
         </div>
-      </div><!-- /priority -->
+      </div>
 
-
-      <!-- ══ VIEW: TIMELINE ══ -->
+      <!-- ══ TIMELINE ══ -->
       <div class="view" id="view-timeline">
+        <div class="filter-bar" id="timeline-filter-bar">
+          <span class="filter-label">Agency:</span>
+          <button class="filter-chip active" onclick="filterTimeline('ALL',this)">All</button>
+        </div>
         <div class="section-heading">FY2026–2027 Solicitation Roadmap</div>
         <div class="timeline-list" id="timeline-list"></div>
-      </div><!-- /timeline -->
+      </div>
 
-
-      <!-- ══ VIEW: DEPARTMENT ══ -->
-      <div class="view" id="view-department">
-        <div class="filter-bar">
-          <span class="filter-label">Agency:</span>
-          <button class="filter-chip active" onclick="filterDept('all', this)">All</button>
-          <button class="filter-chip" onclick="filterDept('NHTSA', this)">NHTSA</button>
-          <button class="filter-chip" onclick="filterDept('MARAD', this)">MARAD</button>
-          <button class="filter-chip" onclick="filterDept('FHWA', this)">FHWA</button>
-        </div>
-        <div class="opty-grid" id="dept-grid"></div>
-      </div><!-- /department -->
-
-
-      <!-- ══ VIEW: NAICS ══ -->
-      <div class="view" id="view-naics">
-        <div class="grid-2" style="margin-bottom: 18px;">
-          <div class="card">
-            <div class="card-header"><span class="card-title">Opportunities by NAICS</span></div>
-            <div class="card-body">
-              <div class="chart-wrap">
-                <canvas id="chartNaics"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title">NAICS Reference</span></div>
-            <div class="card-body">
-              <table style="font-size:12px;">
-                <thead>
-                  <tr>
-                    <th style="padding:6px 10px; text-align:left; color:var(--color-text-muted); border-bottom:1px solid var(--color-border);">NAICS</th>
-                    <th style="padding:6px 10px; text-align:left; color:var(--color-text-muted); border-bottom:1px solid var(--color-border);">Description</th>
-                    <th style="padding:6px 10px; text-align:left; color:var(--color-text-muted); border-bottom:1px solid var(--color-border);">Count</th>
-                  </tr>
-                </thead>
-                <tbody id="naics-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="opty-grid" id="naics-grid"></div>
-      </div><!-- /naics -->
-
-
-      <!-- ══ VIEW: RECOMPETE ══ -->
+      <!-- ══ RECOMPETE ══ -->
       <div class="view" id="view-recompete">
-        <div class="card" style="margin-bottom: 16px; padding: 16px 20px;">
-          <div style="display:flex; gap:14px; align-items:flex-start;">
+        <div class="filter-bar" id="recompete-filter-bar">
+          <span class="filter-label">Agency:</span>
+          <button class="filter-chip active" onclick="filterRecompete('ALL',this)">All</button>
+        </div>
+        <div class="card" style="margin-bottom:16px;padding:16px 20px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
             <div style="width:36px;height:36px;border-radius:50%;background:var(--color-warning-bg);border:1px solid var(--color-warning-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.89"/></svg>
             </div>
             <div>
-              <div style="font-size:13px;font-weight:600;color:var(--color-text);margin-bottom:4px;">Recompete Intelligence</div>
-              <div style="font-size:12px;color:var(--color-text-muted);line-height:1.6;">Recompetes are where incumbents have structural advantages. Use this view to identify where you need to start relationships <em>now</em> — before the solicitation drops. If an incumbent is known, assume they have at least an 18-month head start.</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Recompete Intelligence</div>
+              <div style="font-size:12px;color:var(--color-text-muted);line-height:1.6;">Incumbents have structural advantages. These opportunities require relationship-building before the solicitation drops — not after.</div>
             </div>
           </div>
         </div>
         <div class="opty-grid" id="recompete-grid"></div>
-      </div><!-- /recompete -->
+      </div>
+
+      <!-- ══ SINGLE AGENCY VIEW ══ -->
+      <div class="view" id="view-agency">
+        <div class="kpi-row" id="agency-kpis"></div>
+        <div class="grid-2" style="margin-bottom:18px;">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Positioning Status</span></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="chartAgencyStatus"></canvas></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Requirement Type</span></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="chartAgencyType"></canvas></div></div>
+          </div>
+        </div>
+        <div class="section-heading" id="agency-table-heading">Priority Opportunities</div>
+        <div class="card">
+          <div class="table-wrap">
+            <table class="priority-table">
+              <thead>
+                <tr>
+                  <th>Opportunity</th>
+                  <th>Org / Office</th>
+                  <th>Label</th>
+                  <th>Sol. Date</th>
+                  <th>Days Out</th>
+                  <th>Value</th>
+                  <th>Type</th>
+                  <th>Set-Aside</th>
+                  <th>Incumbent</th>
+                  <th>Flag</th>
+                </tr>
+              </thead>
+              <tbody id="agency-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
     </div><!-- /content -->
   </div><!-- /main -->
-
 </div><!-- /app -->
 
 <script>
-/* ──────────────────────────────────────────
-   DATA
-────────────────────────────────────────── */
-const TODAY = new Date('2026-05-18');
-
-// Rule: any requirement with solicitation date < 60 days from today is ineligible
-const INELIGIBLE_DAYS = 60;
-
-const ALL_OPPS = [
-  {
-    id: 'NHTSA_2026_027',
-    title: 'Takata Dashboard Support',
-    org: 'NHTSA',
-    dept: 'Dept. of Transportation',
-    status: 'Recompete',
-    phase: null,
-    isOption: false,
-    solDate: new Date('2026-05-31'),
-    awardFY: 2027,
-    awardQtr: 'FY27 Q1',
-    value: '$250K–$499K',
-    naics: '541715',
-    naicsDesc: 'R&D – Physical Sciences',
-    setAside: 'To Be Determined',
-    extent: 'Full & Open',
-    incumbent: null,
-    label: 'Ineligible',
-    positionNow: false,
-    ineligible: true
-  },
-  {
-    id: 'FHWA_2026_1DOT',
-    title: '1DOT Digital Services (supersedes SWES 2.0)',
-    org: 'FHWA',
-    dept: 'Dept. of Transportation',
-    status: 'New Requirement',
-    phase: 'Market Research',
-    isOption: false,
-    solDate: new Date('2026-08-01'),
-    awardFY: 2027,
-    awardQtr: 'FY27 Q2',
-    value: '$1B–$1.9B',
-    naics: '541511',
-    naicsDesc: 'Custom Computer Programming',
-    setAside: 'Partial SB Set-Aside',
-    extent: 'Full & Open (after exclusion)',
-    incumbent: null,
-    label: 'Position Now',
-    positionNow: true,
-    ineligible: false
-  },
-  {
-    id: 'MARAD_2026_NSSV',
-    title: 'National Security Sealift Vessels – 10 RO/RO Ships',
-    org: 'MARAD',
-    dept: 'Dept. of Transportation',
-    status: 'New Requirement',
-    phase: 'Market Research',
-    isOption: false,
-    solDate: new Date('2026-08-15'),
-    awardFY: 2027,
-    awardQtr: 'FY27 Q2',
-    value: '$3B–$3.9B',
-    naics: '336611',
-    naicsDesc: 'Ship Building & Repairing',
-    setAside: 'Other Than Small Business',
-    extent: 'Full & Open Competition',
-    incumbent: null,
-    label: 'Position Now',
-    positionNow: true,
-    ineligible: false
-  },
-  {
-    id: 'FHWA_2026_DataHub',
-    title: 'Enterprise Data Platform – Datahub',
-    org: 'FHWA',
-    dept: 'Dept. of Transportation',
-    status: 'Unknown',
-    phase: null,
-    isOption: false,
-    solDate: new Date('2026-10-01'),
-    awardFY: 2027,
-    awardQtr: 'FY27 Q1',
-    value: '$5M–$9.9M',
-    naics: '541519',
-    naicsDesc: 'Other Computer Related Services',
-    setAside: 'Total SB Set-Aside',
-    extent: 'Full & Open (after exclusion)',
-    incumbent: 'New Tech Solutions Inc',
-    label: 'Monitor',
-    positionNow: false,
-    ineligible: false
-  },
-  {
-    id: 'NHTSA_2026_021',
-    title: "National-Level Vehicle Data for NHTSA's Database & Analysis",
-    org: 'NHTSA',
-    dept: 'Dept. of Transportation',
-    status: 'New Requirement',
-    phase: null,
-    isOption: false,
-    solDate: new Date('2026-11-14'),
-    awardFY: 2027,
-    awardQtr: 'FY27 Q3',
-    value: '$5M–$9.9M',
-    naics: '519290',
-    naicsDesc: 'Web Search Portals / Data',
-    setAside: 'To Be Determined',
-    extent: 'Full & Open Competition',
-    incumbent: 'R.L. Polk and Company',
-    label: 'Monitor',
-    positionNow: false,
-    ineligible: false
-  },
-  {
-    id: 'NHTSA_2026_010',
-    title: 'Crash Injury Research and Engineering Network (CIREN) IDIQ',
-    org: 'NHTSA',
-    dept: 'Dept. of Transportation',
-    status: 'New Requirement',
-    phase: null,
-    isOption: false,
-    solDate: new Date('2026-12-31'),
-    awardFY: 2027,
-    awardQtr: 'FY27 Q4',
-    value: '$10M–$19M',
-    naics: '541715',
-    naicsDesc: 'R&D – Physical Sciences',
-    setAside: 'Other Than Small Business',
-    extent: 'Full & Open Competition',
-    incumbent: 'Crash Research & Analysis, Inc.',
-    label: 'Too Early',
-    positionNow: false,
-    ineligible: false
-  },
-  {
-    id: 'NHTSA_2026_016',
-    title: 'CRSS Coding Operations Resource Center',
-    org: 'NHTSA',
-    dept: 'Dept. of Transportation',
-    status: 'Recompete',
-    phase: null,
-    isOption: false,
-    solDate: new Date('2027-02-28'),
-    awardFY: 2027,
-    awardQtr: 'FY27 TBD',
-    value: '$5M–$9.9M',
-    naics: '541990',
-    naicsDesc: 'Other Professional Services',
-    setAside: 'Small Business',
-    extent: 'To Be Determined',
-    incumbent: 'Laansu Incorporated',
-    label: 'Recompete Watch',
-    positionNow: false,
-    ineligible: false
-  }
-];
-
-// Apply ineligibility rule: exclude opps < 60 days from solicitation
-const opps = ALL_OPPS.filter(o => {
-  const days = Math.round((o.solDate - TODAY) / (1000 * 60 * 60 * 24));
-  if (days < INELIGIBLE_DAYS) {
-    o.ineligible = true;
-    o.label = 'Ineligible — <60 Days';
-    o.positionNow = false;
-    return false; // exclude from main views
-  }
-  return true;
-});
-const ineligibleOpps = ALL_OPPS.filter(o => o.ineligible);
-
-function daysOut(opp) {
-  return Math.round((opp.solDate - TODAY) / (1000 * 60 * 60 * 24));
-}
-
-function labelBadge(label) {
-  const map = {
-    'Position Now': '<span class="badge badge-green">⬆ Position Now</span>',
-    'Monitor': '<span class="badge badge-orange">◎ Monitor</span>',
-    'Recompete Watch': '<span class="badge badge-blue">↺ Recompete Watch</span>',
-    'Too Early': '<span class="badge badge-gray">⋯ Too Early</span>',
-    'Ineligible — <60 Days': '<span class="badge badge-red">✕ Ineligible &lt;60d</span>',
-  };
-  return map[label] || `<span class="badge badge-gray">${label}</span>`;
-}
-
-/* ──────────────────────────────────────────
-   NAVIGATION
-────────────────────────────────────────── */
-const pageTitles = {
-  overview: 'Pipeline Overview',
-  priority: 'Priority Opportunities',
-  timeline: 'Solicitation Timeline',
-  department: 'Opportunities by Agency',
-  naics: 'NAICS / Type View',
-  recompete: 'Recompete Watch'
+/* ─────────────────────────────────────────────────────────────────
+   AGENCY DATA (auto-generated from weekly Excel drop)
+───────────────────────────────────────────────────────────────── */
+const AGENCY_DATA = {
+  "DoD": [
+    {id:"SOCO_Single_Award_IDIQ__Provides_pe_1011",title:"Single Award IDIQ; Provides personal, contractor-provided services and expertise resident within service teams to suppor",org:"SOCOM",status:"Recompete",solDate:"2026-09-01",daysOut:98,awardQtr:"Aug-2027",value:"$955,000,000.00",valueRank:11,naics:"621340",naicsDesc:"",setAside:"SAM.gov",incumbent:"H9240019D0001",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"NAWC_Aircrew_Electronic_Warfare_Tac_750",title:"Aircrew Electronic Warfare Tactical Training Ranges (AEWTTR) III",org:"NAWCWD",status:"Recompete",solDate:"2026-10-01",daysOut:128,awardQtr:"FY 2027 QTR 1",value:"> $100M - < $250M",valueRank:9,naics:"334511",naicsDesc:"",setAside:"Full and Open Competition",incumbent:"Amentum / Leidos / Saab / Scientific Research Corp / HII Mission Technologies",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"SOCO_Previously_part_of_UEWTEP__Sin_1015",title:"Previously part of UEWTEP. Single Award IDIQ. Focus is on planning, designing, and executing training and 3/9/2026 HQ-KH",org:"SOCOM",status:"Recompete",solDate:"2026-11-01",daysOut:159,awardQtr:"Apr-2027",value:"$242,000,000.00",valueRank:9,naics:"541990",naicsDesc:"",setAside:"GSA OASIS+",incumbent:"H9240024D0001",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provides_JSOU_with_educational_1019",title:"Provides JSOU with educational support services with emphasis on military studies. Provides resident and distance learni",org:"SOCOM",status:"Recompete",solDate:"2026-11-01",daysOut:159,awardQtr:"Jun-2027",value:"$100,000,000.00",valueRank:9,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0036",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_The_intent_is_to_fulfill_futur_1012",title:"The intent is to fulfill future lightweight body armor requirements. NOTE: Market Research is still being Lightweight Bo",org:"SOCOM",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"Sep-2027",value:"$95,000,000.00",valueRank:8,naics:"339999",naicsDesc:"",setAside:"SAM.gov",incumbent:"H9240320D0006",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Marine_Raider_Training_Center__1017",title:"Marine Raider Training Center Initial Training 3/10/2026 MARSOC MARSOC Course FTE support Provide FTEs in support of MRT",org:"SOCOM",status:"Recompete",solDate:"2026-11-01",daysOut:159,awardQtr:"Feb-2027",value:"$11,100,000.00",valueRank:6,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9225722F0034",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Special_Operations_Command__Re_1016",title:"Special Operations Command, Research, Analysis, and Threat Evaluation System (SOCRATES) Surge Special Operations Command",org:"SOCOM",status:"Recompete",solDate:"2026-10-01",daysOut:128,awardQtr:"May-2027",value:"$4,000,000.00",valueRank:4,naics:"541519",naicsDesc:"",setAside:"TBD",incumbent:"H9241523C0003",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"NAWC_AEA_Electronic_Support_Systems_751",title:"AEA Electronic Support Systems",org:"NAWCWD",status:"Recompete",solDate:"2026-10-01",daysOut:128,awardQtr:"FY 2027 QTR 1",value:"> $250M - < $1B",valueRank:0,naics:"541330",naicsDesc:"",setAside:"Sole-Source",incumbent:"Northrop Grumman Systems Corporation",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Top Secret"},
+    {id:"SOCO_Renewal_of_Microsoft_Software__1024",title:"Renewal of Microsoft Software Assurance (SA) for software that currently is licensed and new licenses and SA for new Cal",org:"SOCOM",status:"Recompete",solDate:"2027-01-01",daysOut:220,awardQtr:"Feb-2027",value:"$208,800,000.00",valueRank:9,naics:"511210",naicsDesc:"",setAside:"TBD",incumbent:"H9241524F0002",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provides_USSOCOM_Enterprise_wi_1031",title:"Provides USSOCOM Enterprise with responsive Language, Regional Expertise, and Culture (LREC) instruction and support for",org:"SOCOM",status:"Recompete",solDate:"2027-06-01",daysOut:371,awardQtr:"Dec-2027",value:"$200,000,000.00",valueRank:9,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0042",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provide_FTEs_and_Exercise_Supp_1018",title:"Provide FTEs and Exercise Support for MARSOC G7 RAVEN 3/10/2026 MARSOC MARSOC MARSOC RAVEN Exercise Support culumination",org:"SOCOM",status:"Recompete",solDate:"2026-12-01",daysOut:189,awardQtr:"May-2027",value:"$65,000,000.00",valueRank:8,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0042",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NAWC_F_35_Mission_Planning_Environm_742",title:"F-35 Mission Planning Environment (MPE)",org:"NAWCWD",status:"Recompete",solDate:"2027-01-01",daysOut:220,awardQtr:"FY 2027 QTR 2",value:"> $50M - < $100M",valueRank:8,naics:"541330",naicsDesc:"",setAside:"Sole-Source",incumbent:"Computer System Center Inc. (CSCI)",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"Top Secret"},
+    {id:"NAWC_EA_18G_ALQ_227_Engineering_Avi_753",title:"EA-18G ALQ-227 Engineering/Avionics",org:"NAWCWD",status:"Recompete",solDate:"2027-07-01",daysOut:401,awardQtr:"FY 2027 QTR 4",value:"> $50M - < $100M",valueRank:8,naics:"541330",naicsDesc:"",setAside:"Sole-Source",incumbent:"Raytheon Company",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"Top Secret"},
+    {id:"SOCO_MARSOC_Pre_deployment_Training_1026",title:"MARSOC Pre-deployment Training Program (PTP) Provide program management and comprehensive turnkey 3/10/2026 MARSOC MARSO",org:"SOCOM",status:"Recompete",solDate:"2027-09-01",daysOut:463,awardQtr:"Jan-2028",value:"$68,000,000.00",valueRank:8,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0025",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_The_scope_of_this_effort_is_to_1027",title:"The scope of this effort is to provide enterprise-wide cybersecurity support and solutions to the SOF Information Enviro",org:"SOCOM",status:"Recompete",solDate:"2027-09-01",daysOut:463,awardQtr:"Mar-2028",value:"$79,000,000.00",valueRank:8,naics:"511210",naicsDesc:"",setAside:"TBD",incumbent:"H9241524F0002",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_To_aid_with_this_aspect_of_the_1035",title:"To aid with this aspect of the SOF AT&L mission, this requirement is to procure production of a Digital Ecosystem (DE) C",org:"SOCOM",status:"Recompete",solDate:"2028-01-01",daysOut:585,awardQtr:"Sep-2028",value:"$98,000,000.00",valueRank:8,naics:"TBD",naicsDesc:"",setAside:"TBD",incumbent:"H924332390001",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provide_MRTC_with_full_time_an_1021",title:"Provide MRTC with full-time and episodic Subject Matter Experts (SMEs) to support the Advanced Training Company (ATC) pr",org:"SOCOM",status:"Recompete",solDate:"2027-03-01",daysOut:279,awardQtr:"Sep-2027",value:"$31,000,000.00",valueRank:7,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0042",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_ADS__Darley_Defense__Federal_P_1025",title:"ADS, Darley Defense, Federal Provides clothing and equipment for use in multiple Merchants, RRDS, Inc., Tidewater 4/10/2",org:"SOCOM",status:"Recompete",solDate:"2027-04-01",daysOut:310,awardQtr:"Sep-2027",value:"$20,000,000.00",valueRank:7,naics:"339999",naicsDesc:"",setAside:"TBD",incumbent:"H9224022A0010/11/12/13/14/15",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provide_FTEs_and_Episodic_Supp_1032",title:"Provide FTEs and Episodic Support for MARSOC Assessment 3/10/2026 MARSOC MARSOC Assessment & Selection Support and Selec",org:"SOCOM",status:"Recompete",solDate:"2027-05-01",daysOut:340,awardQtr:"Oct-2027",value:"$43,000,000.00",valueRank:7,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0018",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provide_FTEs_across_a_wide_ran_1030",title:"Provide FTEs across a wide range of labor categories. (85 3/10/2026 MARSOC MARSOC Contract Logistic Support FTEs FTEs) $",org:"SOCOM",status:"Recompete",solDate:"2027-07-01",daysOut:401,awardQtr:"Dec-2027",value:"$40,000,000.00",valueRank:7,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"N/A",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_and_instructors_who_maintain_p_1028",title:"and instructors who maintain proficiency in evolving PR/SERE TTPs, adult learning theory, and team/culture building prin",org:"SOCOM",status:"Recompete",solDate:"2027-08-01",daysOut:432,awardQtr:"Jan-2028",value:"$25,000,000.00",valueRank:7,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9225723F0073",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_The_objective_is_to_obtain_con_1036",title:"The objective is to obtain contractor provided aviation support using Commercial Airlift Review Board (CARB), Federal Av",org:"SOCOM",status:"Recompete",solDate:"2028-05-01",daysOut:706,awardQtr:"Nov-2028",value:"$25,000,000.00",valueRank:7,naics:"481219",naicsDesc:"",setAside:"TBD",incumbent:"H9224021D0027",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_3_10_2026_MARSOC_MARSOC_Multi__1023",title:"3/10/2026 MARSOC MARSOC Multi-Disciplion Intelligence Operators Course Provide training and support for SOCS-H operators",org:"SOCOM",status:"Recompete",solDate:"2027-01-01",daysOut:220,awardQtr:"Jul-2027",value:"$12,200,000.00",valueRank:6,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9225722D0007",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_Provide_comprehensive_training_1029",title:"Provide comprehensive training, supply, and logistical support for the MRTC culminating exercise, including full-time em",org:"SOCOM",status:"Recompete",solDate:"2027-07-01",daysOut:401,awardQtr:"Jan-2028",value:"$17,000,000.00",valueRank:6,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9240020D0035",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_3_10_2026_MARSOC_MARSOC_Physic_1022",title:"3/10/2026 MARSOC MARSOC Physical Security Provide Physical Security support adminstistrative services $ 5,100,000.00 SOF",org:"SOCOM",status:"Recompete",solDate:"2027-01-01",daysOut:220,awardQtr:"Jun-2027",value:"$5,100,000.00",valueRank:5,naics:"541611",naicsDesc:"",setAside:"TBD",incumbent:"H9225723F0090",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_3_10_2026_MARSOC_MARSOC_MARSOC_1034",title:"3/10/2026 MARSOC MARSOC MARSOC Signals Intelligence Course Provide full spectrum signals intelligence courses $ 6,800,00",org:"SOCOM",status:"Recompete",solDate:"2027-04-01",daysOut:310,awardQtr:"Oct-2027",value:"$6,800,000.00",valueRank:5,naics:"611699",naicsDesc:"",setAside:"TBD",incumbent:"H9225723D0001",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_3_10_2026_MARSOC_MARSOC_EOD_Pr_1020",title:"3/10/2026 MARSOC MARSOC EOD Primer Provide EOD instruction courses $ 3,000,000.00 SAM.GOV 611519 Mar-27 Aug-27 TBD H9225",org:"SOCOM",status:"Recompete",solDate:"2027-03-01",daysOut:279,awardQtr:"Aug-2027",value:"$3,000,000.00",valueRank:4,naics:"611519",naicsDesc:"",setAside:"TBD",incumbent:"H9225723D0005",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"SOCO_3_10_2026_MARSOC_MARSOC_MARSOC_1033",title:"3/10/2026 MARSOC MARSOC MARSOC Multifunction Devices Provide MARSOC with MFD/printer leases $ 1,600,000.00 SAM.GOV 53242",org:"SOCOM",status:"Recompete",solDate:"2027-03-01",daysOut:279,awardQtr:"Aug-2027",value:"$1,600,000.00",valueRank:4,naics:"532420",naicsDesc:"",setAside:"TBD",incumbent:"H9225721D0002",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NAWC_Printed_Circuit_Boards__PCB__747",title:"Printed Circuit Boards (PCB)",org:"NAWCWD",status:"Recompete",solDate:"2027-04-01",daysOut:310,awardQtr:"FY2027 QTR 3",value:"> $2M - < $7.5M",valueRank:4,naics:"334418",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Coastal Mechanics / Multilayer Technology / PC Vision / Printed Circuits Corp.",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"None"},
+    {id:"NAWC_Stand_off_Land_Attack_Missile__745",title:"Stand-off Land Attack Missile-Expanded Response (SLAM-ER) Warhead Casings",org:"NAWCWD",status:"Recompete",solDate:"2027-01-01",daysOut:220,awardQtr:"FY 2027 QTR 2",value:"> $7.5M - < $50M",valueRank:0,naics:"336419",naicsDesc:"",setAside:"Sole-Source",incumbent:"General Dynamics OTS",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"Classified"},
+  ],
+  "DOT": [
+    {id:"FHWA_2027_002",title:"1DOT Digital Services (supersedes SWES 2.0)",org:"Federal Highway Administration (FHWA)",status:"New Requirement",solDate:"2026-08-01",daysOut:67,awardQtr:"2nd (January 1 - March 31)",value:"$1B - $1.9B",valueRank:12,naics:"541511",naicsDesc:"",setAside:"Set-Aside Small Business - Partial",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"AG41769_1773838400",title:"National Security Sealift Vessels (NSSV) 10 new Roll-on/Roll-off (RO/RO) Ships",org:"MARAD – Office of Acquisition",status:"New Requirement",solDate:"2026-08-15",daysOut:81,awardQtr:"2nd (January 1 - March 31)",value:"$3B - $3.9B",valueRank:0,naics:"336611",naicsDesc:"",setAside:"Other Than Small Business",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"FHWA_2026_185",title:"Enterprise Data Platform - Datahub",org:"Federal Highway Administration (FHWA)",status:"Unknown",solDate:"2026-10-01",daysOut:128,awardQtr:"1st (October 1 - December 31)",value:"$5M - $9.9M",valueRank:5,naics:"541519",naicsDesc:"",setAside:"Small Business Set Aside - Total",incumbent:"New Tech Solutions Inc",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NHTSA_2026_021",title:"National-Level Vehicle Data for NHTSA's Database & Analysis",org:"National Highway Traffic Safety Administration (NHTSA)",status:"New Requirement",solDate:"2026-11-14",daysOut:172,awardQtr:"3rd (April 1 - June 30)",value:"$5M - $9.9M",valueRank:5,naics:"519290",naicsDesc:"",setAside:"To Be Determined",incumbent:"R.L. Polk and Company",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NHTSA_2026_016",title:"CRSS Coding Operations Resource Center",org:"National Highway Traffic Safety Administration (NHTSA)",status:"Recompete",solDate:"2027-02-28",daysOut:278,awardQtr:"To Be Determined",value:"$5M - $9.9M",valueRank:5,naics:"541990",naicsDesc:"",setAside:"Small Business",incumbent:"Laansu Incorporated",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NHTSA_2026_010",title:"Crash Injury Research and Engineering Network (CIREN) IDIQ",org:"National Highway Traffic Safety Administration (NHTSA)",status:"New Requirement",solDate:"2026-12-31",daysOut:219,awardQtr:"4th (July 1 - September 30)",value:"$10M - $19M",valueRank:6,naics:"541715",naicsDesc:"",setAside:"Other Than Small Business",incumbent:"CRASH RESEARCH & ANALYSIS, INC.",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+  ],
+  "State": [
+    {id:"STAT_Junior_ProgramOfficer__ECA_PE__807",title:"Junior ProgramOfficer (ECA/PE/C/PY)",org:"GA",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"4th (July 1 - September 30)",value:"$150K - $250K",valueRank:0,naics:"561499",naicsDesc:"",setAside:"To Be Determined",incumbent:"Jason Lin",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_19AQMM23F2161_Information_Spec_808",title:"19AQMM23F2161 Information Specialist (ECA/EC)",org:"GA",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"4th (July 1 - September 30)",value:"",valueRank:0,naics:"561499",naicsDesc:"",setAside:"To Be Determined",incumbent:"GOLDBELT C6, LLC (Contractor: Erica Matsui)",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_Babel_Street_Software_License__809",title:"Babel Street Software License Renewal, or equal",org:"GA",status:"Recompete",solDate:"2026-08-14",daysOut:80,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"541519",naicsDesc:"",setAside:"Unrestricted",incumbent:"Distributed Technology Group LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Program_Management_Support_Ser_810",title:"Program Management Support Services",org:"GA",status:"Recompete",solDate:"2026-08-26",daysOut:92,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"561611",naicsDesc:"",setAside:"Unrestricted",incumbent:"Guidehouse",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_Special_Prison_Operations_Resp_811",title:"Special Prison Operations Response Team Training",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"922140",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_ILEA_Financial_Management_TPC_812",title:"ILEA Financial Management TPC",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"541611",naicsDesc:"",setAside:"SDVOSB",incumbent:"Creative Corrections",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_ILEA_Program_Assistant_TPC_813",title:"ILEA Program Assistant TPC",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"541611",naicsDesc:"",setAside:"SDVOSB",incumbent:"Universal Strategy Group, Inc",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_Integrated_Border_Interdiction_814",title:"Integrated Border Interdiction Project",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"561510",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Forensics_Opioid_Identificatio_815",title:"Forensics Opioid Identification Equipment",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"334516",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Forensics_Specialized_IT_Equip_816",title:"Forensics Specialized IT Equipment",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"541380",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_State_of_Nuevo_Leon_Command__C_817",title:"State of Nuevo Leon Command, Control, Computing, Communication. and Citizen Contact Center (C5) IT Equipment",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"423430",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Mobile_Maintenance_Trucks_818",title:"Mobile Maintenance Trucks",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"336120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Fortified_Perimeter_for_Teacap_819",title:"Fortified Perimeter for Teacapan Naval Air Base",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"238120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_ATSG_Advisors_820",title:"ATSG Advisors",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"541611",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Purchase_vehicles_for_Belize_P_821",title:"Purchase vehicles for Belize Police Department  specialised units",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"423110",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Manta_License_Plate_Readers__L_822",title:"Manta License Plate Readers (LPR) System",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"541512/541519",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Strengthening_Ecuador_s_Mariti_823",title:"Strengthening Ecuadors Maritime Security and Aerial Surveillance",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"336411",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Advanced_Border_Security_Train_824",title:"Advanced Border Security Training Services",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"611430",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Fixed_Counter_Unmanned_Aerial__825",title:"Fixed Counter Unmanned Aerial Systems (C-UAS)",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Mobile_Counter_Unmanned_Aerial_826",title:"Mobile Counter Unmanned Aerial Systems (C-UAS)",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Crossfire_Initiative_827",title:"Crossfire Initiative",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"518210",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Canine_Equipment_IDIQ_828",title:"Canine Equipment IDIQ",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"315250",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Mobile_Device_Extractions_829",title:"Mobile Device Extractions",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"518210",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_UAS_Exploitation_Capabilities_830",title:"UAS Exploitation Capabilities",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Satellite_Phone_Intercept_Tech_831",title:"Satellite Phone Intercept Tech",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"517410",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Maintenance_Software_Program_832",title:"Maintenance Software Program",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"541511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Outboard_Motor_Refurbishment_P_833",title:"Outboard Motor Refurbishment Parts & Tools",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"333618",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Third_Party_Advisors_834",title:"Third Party Advisors",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"524292",naicsDesc:"",setAside:"To Be Determined",incumbent:"ATSG",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Rebuild_Destroyed_Stations_835",title:"Rebuild Destroyed Stations",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"922120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Personal_Protective_Equipment__836",title:"Personal Protective Equipment (PPE) for Vetted Units",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"339999",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+  ],
+  "DOE": [
+    {id:"DOE_Department_of_Energy__DOE___Of_38",title:"Department of Energy (DOE), Office of Energy Efficiency and Renewable Energy (EERE) Conference Logistics Support Service",org:"Assistant Secretary for Energy Efficiency and Renewable Energy",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541611",naicsDesc:"Administrative Management and General Management Consulting Services",setAside:"No Set Aside",incumbent:"THE BUILDING PEOPLE LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Schweitzer_Engineering_Laborat_41",title:"Schweitzer Engineering Laboratories (SEL) Relays and Equipment for Warehouse Stock",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541519",naicsDesc:"Other Computer Related Services",setAside:"Not Specified",incumbent:"NEW TECH SOLUTIONS, INC.",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Provide_Operational_and_Mainte_46",title:"Provide Operational and Maintenance Support Services to the Department of Energy",org:"Office of Inspector General",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541511",naicsDesc:"Custom Computer Programming Services",setAside:"No Set Aside",incumbent:"WINGSWEPT, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Technical__Liaison__and_Analyt_47",title:"Technical, Liaison, and Analytical Support Services for the Office of Defense Programs (NA-10) and the Office of Systems",org:"National Nuclear Security Administration",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541330",naicsDesc:"Engineering Services",setAside:"No Set Aside",incumbent:"TECHSOURCE INC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Atmospheric_Combustion_Chamber_50",title:"Atmospheric Combustion Chamber for Experimental Burner System",org:"Assistant Secretary for Fossil Energy",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"333994",naicsDesc:"Industrial Process Furnace and Oven Manufacturing",setAside:"Small Business Set-Aside",incumbent:"PENNRAM DIVERSIFIED MANUFACTURING CORP",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_BEALE_AIR_FORCE_BASE_ACCESS_RO_51",title:"BEALE AIR FORCE BASE ACCESS ROADS, PADS, AND CAISSON FOUNDATIONS CONSTRUCTION",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237310",naicsDesc:"Highway, Street, and Bridge Construction",setAside:"Small Business Set-Aside",incumbent:"GILL-OUTBACK JOINT VENTURE",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_SIOUX_FALLS_REPEATER__COMMUNIC_52",title:"SIOUX FALLS REPEATER, COMMUNICATIONS BUILDING, SOUTH DAKOTA",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"236220",naicsDesc:"Commercial and Institutional Building Construction",setAside:"Small Business Set-Aside",incumbent:"ELBOW GREASE ENTERPRISES, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_The_contractor_shall_provide_a_56",title:"The contractor shall provide all labor, management, supervision, and other materials to provide ACSS for various divisio",org:"Office of Human Capital Management",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541611",naicsDesc:"Administrative Management and General Management Consulting Services",setAside:"8(a) Sole Source",incumbent:"ALEUT TECHNICAL SERVICES, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_U_S__Department_of_Energy_Nati_58",title:"U.S. Department of Energy National Nuclear Security Administration (DOE/NNSA) Office of Acquisition & Project Management",org:"National Nuclear Security Administration",status:"Recompete",solDate:"2026-08-02",daysOut:68,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541611",naicsDesc:"Administrative Management and General Management Consulting Services",setAside:"No Set Aside",incumbent:"HARKCON LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Administrative__Records_Manage_59",title:"Administrative, Records Management, and Mailroom Support Services for the NNSA Los Alamos Field Office",org:"National Nuclear Security Administration",status:"Recompete",solDate:"2026-08-02",daysOut:68,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"561110",naicsDesc:"Office Administrative Services",setAside:"No Set Aside",incumbent:"STREET LEGAL INDUSTRIES, INC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Microwave_Ore_Processing_Unit__66",title:"Microwave Ore Processing Unit Delivery Period of Performance: 1 year (12 months) after award",org:"Assistant Secretary for Fossil Energy",status:"Recompete",solDate:"2026-08-06",daysOut:72,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"334516",naicsDesc:"Analytical Laboratory Instrument Manufacturing",setAside:"Small Business Set-Aside",incumbent:"MALACHITE TECHNOLOGIES INC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Contractor_REDISTRICT_to_provi_79",title:"Contractor REDISTRICT to provide AIS manufactured Matrix system furniture; AIS Calibrate furniture and installation serv",org:"Office of Management",status:"Recompete",solDate:"2026-08-14",daysOut:80,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"337214",naicsDesc:"Office Furniture (Except Wood) Manufacturing",setAside:"No Set Aside",incumbent:"SUPPLYSOURCE DC, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_ANSYS_Technology_software_Peri_81",title:"ANSYS Technology software Period of performance is 8/15/25 to 8/14/26",org:"Assistant Secretary for Fossil Energy",status:"Recompete",solDate:"2026-08-14",daysOut:80,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"513210",naicsDesc:"Software Publishers",setAside:"No Set Aside",incumbent:"ANSYS INC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Delivery_off_of_FBI_IDIQ_contr_82",title:"Delivery off of FBI IDIQ contract number 15F06726D0000187, CTG 5.56x45MM FEDERAL 64GR TACTICAL BONDED X, Product Number ",org:"National Nuclear Security Administration",status:"Recompete",solDate:"2026-08-15",daysOut:81,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"332992",naicsDesc:"Small Arms Ammunition Manufacturing",setAside:"No Set Aside",incumbent:"THE KINETIC GROUP SALES LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Subscription_products_from_Ben_97",title:"Subscription products from Benchmark Mineral Intelligence.",org:"Energy and Threat",status:"Recompete",solDate:"2026-08-22",daysOut:88,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541618",naicsDesc:"Other Management Consulting Services",setAside:"No Set Aside",incumbent:"BENCHMARK MINERAL INTELLIGENCE LIMITED",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_The_purpose_of_this_contract_i_98",title:"The purpose of this contract is to obtain services from Red Carrot, an SBA 8(a) business, for a subscription to Meltwate",org:"Loan Programs Office (LPO)",status:"Recompete",solDate:"2026-08-23",daysOut:89,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"516210",naicsDesc:"Media Streaming Distribution Services, Social Networks, and Other Media Networks and Content Providers",setAside:"8(a) Sole Source",incumbent:"RED CARROT INC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_EMS_Chemical_Inventory_Softwar_99",title:"EMS-Chemical Inventory Software Annual Support and Maintenance",org:"Assistant Secretary for Fossil Energy",status:"Recompete",solDate:"2026-08-24",daysOut:90,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"511210",naicsDesc:"Software Publishers",setAside:"No Set Aside",incumbent:"SFS CHEMICAL SAFETY INC.",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_NON_HAZARDOUS_INTEGRATED_SOLID_100",title:"NON-HAZARDOUS INTEGRATED SOLID WASTE MANAGEMENT SERVICES",org:"National Nuclear Security Administration",status:"Recompete",solDate:"2026-08-24",daysOut:90,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541611",naicsDesc:"Administrative Management and General Management Consulting Services",setAside:"No Set Aside",incumbent:"STREET LEGAL INDUSTRIES, INC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_This_is_an_urgent_requirement__101",title:"This is an urgent requirement for the replacement of 93 defective Trench transformer bushings throughout WAPA's region.",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-08-25",daysOut:91,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"335999",naicsDesc:"All Other Miscellaneous Electrical Equipment and Component Manufacturing",setAside:"Women Owned Small Business Sole Source",incumbent:"MARY HELEN PARKEY",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Award_a_Firm_Fixed_Price_Indef_112",title:"Award a Firm Fixed Price Indefinite Delivery/Indefinite Quantity (ID/IQ)contract with a five year ordering period for In",org:"National Nuclear Security Administration",status:"Recompete",solDate:"2026-08-29",daysOut:95,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"325920",naicsDesc:"Explosives Manufacturing",setAside:"No Set Aside",incumbent:"ENSIGN-BICKFORD AEROSPACE & DEFENSE COMPANY",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_MEDICAL_SUPPORT_SERVICES_119",title:"MEDICAL SUPPORT SERVICES",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"621111",naicsDesc:"Offices of Physicians (except Mental Health Specialists)",setAside:"Women Owned Small Business",incumbent:"VETERAN CLINICAL SOLUTIONS, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_AVEVA_PI_HISTORIAN_ANNUAL_SUPP_124",title:"AVEVA PI HISTORIAN ANNUAL SUPPORT",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541519",naicsDesc:"Other Computer Related Services",setAside:"Small Business Set-Aside",incumbent:"NEW TECH SOLUTIONS, INC.",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_To_acquire_Oracle_Premier_Supp_127",title:"To acquire Oracle Premier Support software maintenance formerly known as ELA, non-ELA, and Federal Financial maintenance",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541519",naicsDesc:"Other Computer Related Services",setAside:"Small Business Set-Aside",incumbent:"DYNAMIC SYSTEMS, INC.",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Pure_Storage___Evergreen_stora_129",title:"Pure Storage //Evergreen storage and 36 month support (See Attachment 1 for Site breakdown) POC: Lewann Belton, lewann.b",org:"Assistant Secretary for Environmental Management",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541519",naicsDesc:"Other Computer Related Services",setAside:"HUBZone Set-Aside",incumbent:"CTG FEDERAL, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Motorola_APX_NEXT_Radios_and_r_130",title:"Motorola APX NEXT Radios and related services for AU-1.23, Office of Special Operations",org:"Office of Environment, Health, Safety and Security",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541519",naicsDesc:"Other Computer Related Services",setAside:"Women Owned Small Business",incumbent:"ADVANCED COMPUTER CONCEPTS, INC.",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_The_maintenance_and_enhancemen_134",title:"The maintenance and enhancement of the FIMS and CAIS applications requires contractor support to ensure the continued op",org:"Office of Management",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"519290",naicsDesc:"Web Search Portals and All Other Information Services",setAside:"No Set Aside",incumbent:"MICROHEALTH, LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_WELEETKA_FOUNDATIONS___CONDUIT_136",title:"WELEETKA FOUNDATIONS & CONDUITS CONSTRUCTION FOR WELEETKA SUBSTATION",org:"Southwestern Power Administration",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237130",naicsDesc:"Power and Communication Line and Related Structures Construction",setAside:"Not Specified",incumbent:"GLOBENET TELECOMMUNICATIONS LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_Flatiron_Substation_2025_Break_137",title:"Flatiron Substation 2025 Breaker Replacement with principal components of substation work to include demolition and site",org:"Western Area Power Administration",status:"Recompete",solDate:"2026-08-31",daysOut:97,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237130",naicsDesc:"Power and Communication Line and Related Structures Construction",setAside:"Small Business Set-Aside",incumbent:"ADDISON CONSTRUCTION CO",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_INDEFINITE_DELIVERY_INDEFINITE_138",title:"INDEFINITE DELIVERY/INDEFINITE QUANTITY (IDIQ) CONTRACT FOR GENERAL COMMUNICATION SITE TOWER MAINTENANCE",org:"Southwestern Power Administration",status:"Recompete",solDate:"2026-09-01",daysOut:98,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237130",naicsDesc:"Power and Communication Line and Related Structures Construction",setAside:"Small Business Set-Aside",incumbent:"ASTRO SYSTEMS CORP",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"DOE_INDEFINITE_DELIVERY_INDEFINITE_139",title:"INDEFINITE DELIVERY/INDEFINITE QUANTITY (IDIQ) CONTRACT FOR GENERAL COMMUNICATION SITE TOWER MAINTENANCE",org:"Southwestern Power Administration",status:"Recompete",solDate:"2026-09-01",daysOut:98,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237130",naicsDesc:"Power and Communication Line and Related Structures Construction",setAside:"Small Business Set-Aside",incumbent:"PORT GRAHAM DEVELOPMENT CORPORATION",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+  ],
+  "DHS": [
+    {id:"DHS_Office_of_Public_Affairs__OPA__840",title:"Office of Public Affairs (OPA) Support Services",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_WMSL_418_Appleton_Knuckle_Boom_841",title:"WMSL 418 Appleton Knuckle Boom Cranes",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Satellite_Cable_TV_Services_842",title:"Satellite Cable TV Services",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Construct_Small_Boat_Fueling___843",title:"Construct Small-Boat Fueling, Valdez, AK (PN 17096386)",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Replace_Rescue_21_Tower_Saipan_844",title:"Replace Rescue 21 Tower Saipan Project # 32022750",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Minotaur_Rapid_Reaction_Protot_845",title:"Minotaur Rapid Reaction Prototyping Engineering Support",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_VirTra_Supply_IDIQ_846",title:"VirTra Supply IDIQ",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_AgilQuest_Reservation_System_847",title:"AgilQuest Reservation System",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Visual_Arts_Support_Services__848",title:"Visual Arts Support Services.",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Modernization_Through_Technolo_849",title:"Modernization Through Technology Acceleration",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Renewal_of_Galvanize_ACL_Analy_850",title:"Renewal of Galvanize ACL Analytics Licenses",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Armed_Protective_Security_Offi_851",title:"Armed Protective Security Officers for Western Washington.",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Rescue_21_Coastal_Remote_Fixed_852",title:"Rescue 21 Coastal Remote Fixed Facility Kawela Relocation",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Armed_PSO_Services_in_Northern_853",title:"Armed PSO Services in Northern Virginia",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Technical_and_Mission_Support__854",title:"Technical and Mission Support Services (TAMSS)",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_4_7_Meter_Inflatable_Boats_In__855",title:"4.7-Meter Inflatable Boats In Support of Foreign Military Sales",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Mail_Meters__inserters_and_mai_856",title:"Mail Meters, inserters and maintenance",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_OneStream_Financial_Management_857",title:"OneStream Financial Management Services",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_CBP_9mm_Submachine_Gun_and_Par_858",title:"CBP 9mm Submachine Gun and Parts",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Data_Backup_Equipment_and_Supp_859",title:"Data Backup Equipment and Support Services",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_CommercialÂ_Heavy_Armored_Vehi_860",title:"CommercialÂ Heavy Armored Vehicle (CHAV) Level D Armored Vehicles",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_AN_SPS_75_Radar_Repair_Contrac_861",title:"AN/SPS-75 Radar Repair Contract",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_FY26_BPS_862",title:"FY26 BPS",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_USCGC_STEELHEAD_FY26_Dining_an_863",title:"USCGC STEELHEAD FY26 Dining and Lodging",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Renewal_of_WorkPlace_as_a_Serv_864",title:"Renewal of WorkPlace as a Service (WPaaS) Subscriptions",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Dell_EMC_Storage_Hardware_and__865",title:"Dell-EMC Storage Hardware and Software Maintenance",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Vessel_Construction_Management_866",title:"Vessel Construction Management (VCM) Services for Vessel and Infrastructure Construction",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Tail_Cone_Fixture_and_Sling__D_867",title:"Tail Cone Fixture and Sling, Dual Strap",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_Major_M_R_Blast_Bay_Building_1_868",title:"Major M&R Blast Bay Building 14 at CG Base Boston (FY26 C-POP)",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"DHS_USCGC_ROBERT_WARD_DD2_FY27_869",title:"USCGC ROBERT WARD DD2 FY27",org:"Dept. of Homeland Security",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+  ],
+  "HHS": [
+    {id:"HHS__1130",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1131",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1132",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1133",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1134",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1135",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1136",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1137",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1138",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1139",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1140",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1141",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1142",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1143",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1144",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1145",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1146",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1147",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1148",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1149",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1150",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1151",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1152",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1153",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1154",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1155",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1156",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1157",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1158",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS__1159",title:"Untitled",org:"HHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"",value:"",valueRank:0,naics:"",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+  ],
 };
 
-function showView(id) {
+/* ─────────────────────────────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────────────────────────────── */
+const TODAY        = new Date('2026-05-26');
+const DATA_AS_OF   = 'May 26, 2026';
+const INELIGIBLE_DAYS = 60;
+const PREVIOUSLY_FEATURED = [
+  // 'FHWA_2026_1DOT',   // Featured: Week of May 21, 2026
+  // 'MARAD_2026_NSSV',  // Featured: Week of May 21, 2026
+];
+
+const AGENCY_META = {
+  'DOT':   { label:'DOT',   full:'Dept. of Transportation',       color:'#4d9cf8', dot:'#4d9cf8' },
+  'DOE':   { label:'DOE',   full:'Dept. of Energy',               color:'#3fb950', dot:'#3fb950' },
+  'DoD':   { label:'DoD',   full:'Dept. of Defense',              color:'#bc8cff', dot:'#bc8cff' },
+  'DHS':   { label:'DHS',   full:'Dept. of Homeland Security',    color:'#d29922', dot:'#d29922' },
+  'State': { label:'State', full:'Dept. of State',                color:'#39d0d8', dot:'#39d0d8' },
+  'HHS':   { label:'HHS',   full:'Dept. of Health & Human Svcs', color:'#f85149', dot:'#f85149' },
+};
+
+/* Apply rules */
+Object.keys(AGENCY_DATA).forEach(ag => {
+  AGENCY_DATA[ag].forEach(o => {
+    if (PREVIOUSLY_FEATURED.includes(o.id)) {
+      o.previouslyFeatured = true;
+      if (o.positionNow) { o.positionNow = false; o.label = 'Monitor'; }
+    }
+  });
+});
+
+/* All active opps across agencies */
+const ALL_ACTIVE = Object.values(AGENCY_DATA).flat();
+const AGENCIES   = Object.keys(AGENCY_DATA);
+
+let currentAgency = null;
+let priorityFilter = 'ALL';
+let timelineFilter = 'ALL';
+let recompeteFilter = 'ALL';
+
+/* ─────────────────────────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────────────────────────── */
+function daysClass(d) {
+  return d <= 30 ? 'days-hot' : d <= 90 ? 'days-warm' : 'days-cool';
+}
+function fmtDate(s) {
+  if (!s) return '—';
+  const d = new Date(s + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+function labelBadge(label, prev) {
+  const map = {
+    'Position Now':    '<span class="badge badge-green">⬆ Position Now</span>',
+    'Monitor':         '<span class="badge badge-orange">◎ Monitor</span>',
+    'Recompete Watch': '<span class="badge badge-blue">↺ Recompete Watch</span>',
+    'Too Early':       '<span class="badge badge-gray">⋯ Too Early</span>',
+  };
+  const b = map[label] || `<span class="badge badge-gray">${label}</span>`;
+  const p = prev ? ' <span class="badge badge-gray" style="font-size:10px;opacity:0.7;">Prev. Featured</span>' : '';
+  return b + p;
+}
+function agencyBadge(ag) {
+  const m = AGENCY_META[ag] || {color:'#8b949e'};
+  return `<span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;font-size:10px;">${ag}</span>`;
+}
+function oppCard(o) {
+  const days = o.daysOut;
+  const clearBadge = o.clearance && o.clearance !== 'None' && o.clearance !== ''
+    ? `<span class="badge-clearance">${o.clearance}</span>` : '';
+  return `<div class="opty-card ${o.positionNow ? 'flagged' : ''}">
+    <div class="opty-card-header">
+      <div>
+        <div class="opty-card-title">${o.title}</div>
+        <div class="opty-card-org">${o.org} ${agencyBadge(CURRENT_AGENCY_FOR_CARD || 'DOT')}</div>
+      </div>
+      ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}
+    </div>
+    ${labelBadge(o.label, o.previouslyFeatured)} ${clearBadge}
+    <div class="opty-fields">
+      <div class="opty-field"><span class="opty-field-label">Sol. Date</span><span class="opty-field-value">${fmtDate(o.solDate)}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Days Out</span><span class="opty-field-value" style="color:${days<=30?'var(--color-danger)':days<=90?'var(--color-warning)':'var(--color-text)'}">${days === 999 ? 'TBD' : days + 'd'}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Value</span><span class="opty-field-value">${o.value || '—'}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Type</span><span class="opty-field-value">${o.status}</span></div>
+      <div class="opty-field"><span class="opty-field-label">NAICS</span><span class="opty-field-value">${o.naics || '—'}</span></div>
+      <div class="opty-field"><span class="opty-field-label">Set-Aside</span><span class="opty-field-value" style="font-size:10px;">${o.setAside || '—'}</span></div>
+      ${o.incumbent ? `<div class="opty-field" style="grid-column:1/-1;"><span class="opty-field-label">Incumbent</span><span class="opty-field-value incumbent-known">${o.incumbent}</span></div>` : ''}
+    </div>
+  </div>`;
+}
+
+let CURRENT_AGENCY_FOR_CARD = null;
+
+/* ─────────────────────────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────────────────────────── */
+const PAGE_TITLES = {
+  overview:  'All Agencies — Pipeline Overview',
+  priority:  'Priority Table — All Agencies',
+  timeline:  'Solicitation Timeline',
+  recompete: 'Recompete Watch',
+  agency:    '',
+};
+
+function showView(id, agencyCode) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('view-' + id).classList.add('active');
-  document.getElementById('nav-' + id).classList.add('active');
-  document.getElementById('page-title').textContent = pageTitles[id];
-  buildView(id);
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+
+  if (id === 'agency' && agencyCode) {
+    currentAgency = agencyCode;
+    const meta = AGENCY_META[agencyCode] || {};
+    document.getElementById('page-title').textContent = meta.full + ' — Agency View';
+    document.getElementById('page-subtitle').textContent = `${agencyCode} · LAIG Lane 2 Positioning Intelligence`;
+    buildAgencyView(agencyCode);
+  } else {
+    document.getElementById('page-title').textContent = PAGE_TITLES[id] || id;
+    document.getElementById('page-subtitle').textContent = 'LAIG Lane 2 Federal Sales Roadmap · Multi-Agency Intelligence';
+    if (id === 'overview')  buildOverview();
+    if (id === 'priority')  buildPriorityTable(priorityFilter);
+    if (id === 'timeline')  buildTimeline(timelineFilter);
+    if (id === 'recompete') buildRecompete(recompeteFilter);
+  }
 }
 
-function buildView(id) {
-  if (id === 'priority') buildPriorityTable();
-  if (id === 'timeline') buildTimeline();
-  if (id === 'department') buildDeptGrid('all');
-  if (id === 'naics') buildNaicsView();
-  if (id === 'recompete') buildRecompeteGrid();
+/* ─────────────────────────────────────────────────────────────────
+   OVERVIEW
+───────────────────────────────────────────────────────────────── */
+function buildOverview() {
+  const totalPos  = ALL_ACTIVE.filter(o => o.positionNow).length;
+  const totalMon  = ALL_ACTIVE.filter(o => o.label === 'Monitor').length;
+  const totalRec  = ALL_ACTIVE.filter(o => o.label === 'Recompete Watch').length;
+  const totalOpps = ALL_ACTIVE.length;
+
+  document.getElementById('overview-kpis').innerHTML = `
+    <div class="kpi-card accent-green">
+      <div class="kpi-label">Position Now</div>
+      <div class="kpi-value">${totalPos}</div>
+      <div class="kpi-sub">Across all agencies</div>
+    </div>
+    <div class="kpi-card accent-orange">
+      <div class="kpi-label">Monitor</div>
+      <div class="kpi-value">${totalMon}</div>
+      <div class="kpi-sub">90–180 day window</div>
+    </div>
+    <div class="kpi-card accent-blue">
+      <div class="kpi-label">Recompete Watch</div>
+      <div class="kpi-value">${totalRec}</div>
+      <div class="kpi-sub">Known incumbents identified</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Opportunities</div>
+      <div class="kpi-value">${totalOpps}</div>
+      <div class="kpi-sub">${AGENCIES.length} agencies tracked</div>
+    </div>`;
+
+  // Agency overview cards
+  document.getElementById('agency-cards').innerHTML = AGENCIES.map(ag => {
+    const opps  = AGENCY_DATA[ag] || [];
+    const pos   = opps.filter(o => o.positionNow).length;
+    const rec   = opps.filter(o => o.label === 'Recompete Watch').length;
+    const meta  = AGENCY_META[ag] || { full: ag, color:'#8b949e' };
+    return `<div class="agency-ov-card" onclick="showView('agency','${ag}')">
+      <div class="agency-ov-header">
+        <div>
+          <div class="agency-ov-name">${ag}</div>
+          <div class="agency-ov-full">${meta.full}</div>
+        </div>
+        <div style="width:10px;height:10px;border-radius:50%;background:${meta.color};flex-shrink:0;"></div>
+      </div>
+      <div class="agency-ov-stats">
+        <div class="agency-ov-stat">
+          <span class="agency-ov-stat-val" style="color:var(--color-success)">${pos}</span>
+          <span class="agency-ov-stat-lbl">Position Now</span>
+        </div>
+        <div class="agency-ov-stat">
+          <span class="agency-ov-stat-val" style="color:var(--color-primary)">${rec}</span>
+          <span class="agency-ov-stat-lbl">Recompete Watch</span>
+        </div>
+        <div class="agency-ov-stat">
+          <span class="agency-ov-stat-val">${opps.length}</span>
+          <span class="agency-ov-stat-lbl">Total Tracked</span>
+        </div>
+        <div class="agency-ov-stat">
+          <span class="agency-ov-stat-val" style="font-size:13px;font-weight:600;color:var(--color-text-muted);">→</span>
+          <span class="agency-ov-stat-lbl">Click to view</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Charts
+  setTimeout(() => {
+    const c1 = document.getElementById('chartAgencyPos');
+    if (c1 && !c1._built) {
+      c1._built = true;
+      new Chart(c1, {
+        type: 'bar',
+        data: {
+          labels: AGENCIES,
+          datasets: [{
+            label: 'Position Now',
+            data: AGENCIES.map(ag => (AGENCY_DATA[ag]||[]).filter(o=>o.positionNow).length),
+            backgroundColor: AGENCIES.map(ag => AGENCY_META[ag]?.color || '#4d9cf8'),
+            borderRadius: 4,
+          }]
+        },
+        options: { ...barOpts(), plugins: { legend: { display: false } } }
+      });
+    }
+
+    const c2 = document.getElementById('chartTimeline');
+    if (c2 && !c2._built) {
+      c2._built = true;
+      const qtrs = {'FY26 Q4':0,'FY27 Q1':0,'FY27 Q2':0,'FY27 Q3':0,'FY27 Q4':0};
+      ALL_ACTIVE.forEach(o => {
+        const w = o.awardQtr || '';
+        if (w.includes('FY2026 Q4') || w.includes('Jul')) qtrs['FY26 Q4']++;
+        else if (w.includes('1st') || w.includes('Q1') || w.includes('Oct')) qtrs['FY27 Q1']++;
+        else if (w.includes('2nd') || w.includes('Q2') || w.includes('Jan')) qtrs['FY27 Q2']++;
+        else if (w.includes('3rd') || w.includes('Q3') || w.includes('Apr')) qtrs['FY27 Q3']++;
+        else if (w.includes('4th') || w.includes('Q4') || w.includes('Jul')) qtrs['FY27 Q4']++;
+      });
+      new Chart(c2, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(qtrs),
+          datasets: [{ label: 'Opportunities', data: Object.values(qtrs),
+            backgroundColor: '#1a56db', borderRadius: 4 }]
+        },
+        options: { ...barOpts(), plugins: { legend: { display: false } } }
+      });
+    }
+  }, 50);
 }
 
-/* ──────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────
    PRIORITY TABLE
-────────────────────────────────────────── */
-function buildPriorityTable() {
-  const sorted = [...opps].sort((a, b) => {
-    const order = ['Position Now','Monitor','Recompete Watch','Too Early'];
-    return order.indexOf(a.label) - order.indexOf(b.label) || daysOut(a) - daysOut(b);
+───────────────────────────────────────────────────────────────── */
+function buildPriorityTable(filter) {
+  priorityFilter = filter;
+  const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
+  const sorted = [...opps].sort((a,b) => {
+    const ord = {'Position Now':0,'Monitor':1,'Recompete Watch':2,'Too Early':3};
+    return (ord[a.label]??4) - (ord[b.label]??4) || b.valueRank - a.valueRank || a.daysOut - b.daysOut;
   });
 
-  const tbody = document.getElementById('priority-tbody');
-  tbody.innerHTML = sorted.map(o => {
-    const days = daysOut(o);
-    const daysClass = days <= 30 ? 'days-hot' : days <= 90 ? 'days-warm' : 'days-cool';
-    const solStr = o.solDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  document.getElementById('priority-tbody').innerHTML = sorted.map(o => {
+    const ag = Object.keys(AGENCY_DATA).find(k => AGENCY_DATA[k].includes(o)) || '';
+    const dStr = o.daysOut === 999 ? 'TBD' : o.daysOut + 'd';
+    const clearBadge = o.clearance && o.clearance !== '' && o.clearance !== 'None'
+      ? `<span class="badge-clearance">${o.clearance}</span>` : '';
     return `<tr>
-      <td>
-        <div class="opp-title">${o.title}</div>
-        <div class="opp-org">${o.org}</div>
-      </td>
-      <td>${labelBadge(o.label)}</td>
-      <td><span class="sol-date">${solStr}</span></td>
-      <td><span class="days-remaining ${daysClass}">${days}d</span></td>
-      <td><span class="value-cell">${o.value}</span></td>
-      <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : o.status === 'New Requirement' ? '<span class="badge badge-blue">New Req.</span>' : '<span class="badge badge-gray">Unknown</span>'}</td>
-      <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside}</span></td>
+      <td><div class="opp-title">${o.title}</div><div class="opp-org">${o.org}</div></td>
+      <td>${agencyBadge(ag)}</td>
+      <td>${labelBadge(o.label, o.previouslyFeatured)}</td>
+      <td><span class="sol-date">${fmtDate(o.solDate)}</span></td>
+      <td><span class="days-remaining ${daysClass(o.daysOut)}">${dStr}</span></td>
+      <td><span class="value-cell">${o.value || '—'}</span></td>
+      <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
+      <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
       <td>${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}</td>
     </tr>`;
   }).join('');
+
+  document.getElementById('nav-priority-badge').textContent =
+    sorted.filter(o => o.positionNow).length;
 }
 
-/* ──────────────────────────────────────────
+function filterPriority(val, btn) {
+  document.querySelectorAll('#priority-filter-bar .filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  buildPriorityTable(val);
+}
+
+/* ─────────────────────────────────────────────────────────────────
    TIMELINE
-────────────────────────────────────────── */
-function buildTimeline() {
-  const sorted = [...opps].sort((a, b) => a.solDate - b.solDate);
-  const list = document.getElementById('timeline-list');
-  list.innerHTML = sorted.map(o => {
-    const mon = o.solDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    const day = o.solDate.getDate();
+───────────────────────────────────────────────────────────────── */
+function buildTimeline(filter) {
+  timelineFilter = filter;
+  const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
+  const withDates = [...opps].filter(o => o.solDate).sort((a,b) => new Date(a.solDate) - new Date(b.solDate));
+  const ag_lookup = {};
+  Object.keys(AGENCY_DATA).forEach(k => AGENCY_DATA[k].forEach(o => ag_lookup[o.id] = k));
+
+  document.getElementById('timeline-list').innerHTML = withDates.map(o => {
+    const ag = ag_lookup[o.id] || '';
+    const d = new Date(o.solDate + 'T00:00:00');
     return `<div class="timeline-item ${o.positionNow ? 'flagged' : ''}">
       <div class="timeline-date-col">
-        <div class="timeline-month">${o.solDate.toLocaleDateString('en-US', { month: 'short' })} '${String(o.solDate.getFullYear()).slice(2)}</div>
-        <div class="timeline-day">${String(day).padStart(2, '0')}</div>
+        <div class="timeline-month">${d.toLocaleDateString('en-US',{month:'short'})} '${String(d.getFullYear()).slice(2)}</div>
+        <div class="timeline-day">${String(d.getDate()).padStart(2,'0')}</div>
       </div>
       <div>
         <div class="timeline-title">${o.title}</div>
-        <div class="timeline-meta">${o.org} · ${o.value} · ${o.awardQtr} award · NAICS ${o.naics}</div>
+        <div class="timeline-meta">${o.org} · ${o.value || 'Value TBD'} · NAICS ${o.naics || '—'}</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-        ${labelBadge(o.label)}
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+        ${agencyBadge(ag)}
+        ${labelBadge(o.label, o.previouslyFeatured)}
         ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Position Now</span>' : ''}
       </div>
     </div>`;
   }).join('');
 }
 
-/* ──────────────────────────────────────────
-   DEPT GRID
-────────────────────────────────────────── */
-function buildDeptGrid(filter) {
-  const filtered = filter === 'all' ? opps : opps.filter(o => o.org === filter);
-  const grid = document.getElementById('dept-grid');
-  grid.innerHTML = filtered.map(o => oppCard(o)).join('');
-}
-
-function filterDept(val, btn) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+function filterTimeline(val, btn) {
+  document.querySelectorAll('#timeline-filter-bar .filter-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
-  buildDeptGrid(val);
+  buildTimeline(val);
 }
 
-/* ──────────────────────────────────────────
-   NAICS VIEW
-────────────────────────────────────────── */
-function buildNaicsView() {
-  // Group by NAICS
-  const groups = {};
-  opps.forEach(o => {
-    if (!groups[o.naics]) groups[o.naics] = { desc: o.naicsDesc, opps: [] };
-    groups[o.naics].opps.push(o);
-  });
+/* ─────────────────────────────────────────────────────────────────
+   RECOMPETE
+───────────────────────────────────────────────────────────────── */
+function buildRecompete(filter) {
+  recompeteFilter = filter;
+  const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
+  const recompetes = opps.filter(o => o.label === 'Recompete Watch' || (o.status === 'Recompete' && o.positionNow));
+  const ag_lookup = {};
+  Object.keys(AGENCY_DATA).forEach(k => AGENCY_DATA[k].forEach(o => ag_lookup[o.id] = k));
+  CURRENT_AGENCY_FOR_CARD = null;
+  document.getElementById('recompete-grid').innerHTML = recompetes.map(o => {
+    const ag = ag_lookup[o.id] || '';
+    CURRENT_AGENCY_FOR_CARD = ag;
+    return oppCard(o);
+  }).join('');
+}
+
+function filterRecompete(val, btn) {
+  document.querySelectorAll('#recompete-filter-bar .filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  buildRecompete(val);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   SINGLE AGENCY VIEW
+───────────────────────────────────────────────────────────────── */
+let agStatusChart = null, agTypeChart = null;
+
+function buildAgencyView(ag) {
+  const opps = AGENCY_DATA[ag] || [];
+  const pos  = opps.filter(o => o.positionNow).length;
+  const mon  = opps.filter(o => o.label === 'Monitor').length;
+  const rec  = opps.filter(o => o.label === 'Recompete Watch').length;
+  const te   = opps.filter(o => o.label === 'Too Early').length;
+  const meta = AGENCY_META[ag] || { full: ag, color: '#4d9cf8' };
+
+  document.getElementById('agency-kpis').innerHTML = `
+    <div class="kpi-card accent-green">
+      <div class="kpi-label">Position Now</div>
+      <div class="kpi-value" style="color:var(--color-success)">${pos}</div>
+      <div class="kpi-sub">Act before solicitation drops</div>
+    </div>
+    <div class="kpi-card accent-orange">
+      <div class="kpi-label">Monitor</div>
+      <div class="kpi-value" style="color:var(--color-warning)">${mon}</div>
+      <div class="kpi-sub">90–180 day window</div>
+    </div>
+    <div class="kpi-card accent-blue">
+      <div class="kpi-label">Recompete Watch</div>
+      <div class="kpi-value" style="color:var(--color-primary)">${rec}</div>
+      <div class="kpi-sub">Known incumbents</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Too Early / Total</div>
+      <div class="kpi-value">${te} <span style="font-size:14px;font-weight:500;color:var(--color-text-muted);">of ${opps.length}</span></div>
+      <div class="kpi-sub">${meta.full}</div>
+    </div>`;
+
+  document.getElementById('agency-table-heading').textContent = `${ag} — Top Opportunities`;
 
   // Table
-  const tbody = document.getElementById('naics-tbody');
-  tbody.innerHTML = Object.entries(groups).map(([code, g]) => `
-    <tr style="border-bottom:1px solid var(--color-divider)">
-      <td style="padding:8px 10px;font-family:var(--font-mono);font-weight:600;color:var(--color-primary);">${code}</td>
-      <td style="padding:8px 10px;color:var(--color-text-muted);">${g.desc}</td>
-      <td style="padding:8px 10px;font-weight:700;">${g.opps.length}</td>
-    </tr>
-  `).join('');
+  const sorted = [...opps].sort((a,b) => {
+    const ord = {'Position Now':0,'Monitor':1,'Recompete Watch':2,'Too Early':3};
+    return (ord[a.label]??4)-(ord[b.label]??4) || b.valueRank-a.valueRank || a.daysOut-b.daysOut;
+  });
+  document.getElementById('agency-tbody').innerHTML = sorted.map(o => {
+    const dStr = o.daysOut === 999 ? 'TBD' : o.daysOut + 'd';
+    const clearBadge = o.clearance && o.clearance !== '' && o.clearance !== 'None'
+      ? `<span class="badge-clearance">${o.clearance}</span>` : '';
+    return `<tr>
+      <td><div class="opp-title">${o.title}</div></td>
+      <td><div class="opp-org">${o.org}</div></td>
+      <td>${labelBadge(o.label, o.previouslyFeatured)}</td>
+      <td><span class="sol-date">${fmtDate(o.solDate)}</span></td>
+      <td><span class="days-remaining ${daysClass(o.daysOut)}">${dStr}</span></td>
+      <td><span class="value-cell">${o.value || '—'}</span></td>
+      <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
+      <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
+      <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
+      <td>${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}</td>
+    </tr>`;
+  }).join('');
 
-  // Cards
-  const grid = document.getElementById('naics-grid');
-  grid.innerHTML = opps.map(o => oppCard(o)).join('');
-
-  // Chart
+  // Charts
   setTimeout(() => {
-    const ctx = document.getElementById('chartNaics');
-    if (!ctx || ctx._chartBuilt) return;
-    ctx._chartBuilt = true;
-    const labels = Object.keys(groups);
-    const data = labels.map(k => groups[k].opps.length);
-    new Chart(ctx, {
-      type: 'bar',
+    const c1 = document.getElementById('chartAgencyStatus');
+    const c2 = document.getElementById('chartAgencyType');
+    if (agStatusChart) agStatusChart.destroy();
+    if (agTypeChart)   agTypeChart.destroy();
+    agStatusChart = new Chart(c1, {
+      type: 'doughnut',
       data: {
-        labels,
-        datasets: [{ label: 'Opportunities', data, backgroundColor: ['#1a56db','#057a55','#9f580a','#5521b5','#c81e1e'] }]
+        labels: ['Position Now','Monitor','Recompete Watch','Too Early'],
+        datasets: [{ data:[pos,mon,rec,te],
+          backgroundColor:['#3fb950','#d29922','#4d9cf8','#6b7280'],
+          borderWidth:2, borderColor: isDark()?'#161b22':'#fff', hoverOffset:6 }]
       },
-      options: { ...barOpts(), plugins: { legend: { display: false } } }
+      options: { ...baseOpts(), cutout:'65%' }
+    });
+    const newReq = opps.filter(o => o.status === 'New Requirement').length;
+    const recomp = opps.filter(o => o.status === 'Recompete').length;
+    agTypeChart = new Chart(c2, {
+      type: 'doughnut',
+      data: {
+        labels: ['New Requirement','Recompete'],
+        datasets: [{ data:[newReq,recomp],
+          backgroundColor:['#4d9cf8','#d29922'],
+          borderWidth:2, borderColor: isDark()?'#161b22':'#fff', hoverOffset:6 }]
+      },
+      options: { ...baseOpts(), cutout:'65%' }
     });
   }, 50);
 }
 
-/* ──────────────────────────────────────────
-   RECOMPETE GRID
-────────────────────────────────────────── */
-function buildRecompeteGrid() {
-  const recompetes = opps.filter(o => o.status === 'Recompete' || o.label === 'Recompete Watch');
-  const grid = document.getElementById('recompete-grid');
-  grid.innerHTML = recompetes.map(o => oppCard(o)).join('');
-}
+/* ─────────────────────────────────────────────────────────────────
+   SIDEBAR AGENCY TABS
+───────────────────────────────────────────────────────────────── */
+function buildAgencyTabs() {
+  const container = document.getElementById('agency-tabs');
+  const filterBars = ['priority-filter-bar','timeline-filter-bar','recompete-filter-bar'];
 
-/* ──────────────────────────────────────────
-   OPP CARD
-────────────────────────────────────────── */
-function oppCard(o) {
-  const days = daysOut(o);
-  return `<div class="opty-card ${o.positionNow ? 'flagged' : ''}">
-    <div class="opty-card-header">
-      <div>
-        <div class="opty-card-title">${o.title}</div>
-        <div class="opty-card-org">${o.org}</div>
+  // Add "All" chips to filter bars
+  filterBars.forEach(barId => {
+    const bar = document.getElementById(barId);
+    if (!bar) return;
+    AGENCIES.forEach(ag => {
+      const meta = AGENCY_META[ag] || { color:'#8b949e' };
+      const btn = document.createElement('button');
+      btn.className = 'filter-chip';
+      btn.textContent = ag;
+      btn.onclick = function() {
+        if (barId === 'priority-filter-bar') filterPriority(ag, this);
+        if (barId === 'timeline-filter-bar') filterTimeline(ag, this);
+        if (barId === 'recompete-filter-bar') filterRecompete(ag, this);
+      };
+      bar.appendChild(btn);
+    });
+  });
+
+  // Sidebar agency tabs
+  container.innerHTML = AGENCIES.map(ag => {
+    const meta = AGENCY_META[ag] || { full: ag, color:'#8b949e' };
+    const opps = AGENCY_DATA[ag] || [];
+    const pos  = opps.filter(o => o.positionNow).length;
+    const posBadge = pos > 0
+      ? `<span class="agency-pos-badge">${pos}</span>`
+      : `<span class="agency-count">${opps.length}</span>`;
+    return `<button class="agency-tab" onclick="showView('agency','${ag}')" id="agency-tab-${ag}">
+      <div class="agency-tab-left">
+        <div class="agency-dot" style="background:${meta.color}"></div>
+        <span>${ag}</span>
       </div>
-      ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}
-    </div>
-    ${labelBadge(o.label)}
-    <div class="opty-fields">
-      <div class="opty-field"><span class="opty-field-label">Sol. Date</span><span class="opty-field-value">${o.solDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span></div>
-      <div class="opty-field"><span class="opty-field-label">Days Out</span><span class="opty-field-value" style="color:${days<=30?'var(--color-danger)':days<=90?'var(--color-warning)':'var(--color-text)'}">${days}d</span></div>
-      <div class="opty-field"><span class="opty-field-label">Value</span><span class="opty-field-value">${o.value}</span></div>
-      <div class="opty-field"><span class="opty-field-label">Type</span><span class="opty-field-value">${o.status}</span></div>
-      <div class="opty-field"><span class="opty-field-label">NAICS</span><span class="opty-field-value">${o.naics}</span></div>
-      <div class="opty-field"><span class="opty-field-label">Set-Aside</span><span class="opty-field-value" style="font-size:11px;">${o.setAside}</span></div>
-      ${o.incumbent ? `<div class="opty-field" style="grid-column:1/-1;"><span class="opty-field-label">Incumbent</span><span class="opty-field-value incumbent-known">${o.incumbent}</span></div>` : ''}
-      ${o.phase ? `<div class="opty-field" style="grid-column:1/-1;"><span class="opty-field-label">Phase</span><span class="opty-field-value">${o.phase}</span></div>` : ''}
-    </div>
-  </div>`;
+      ${posBadge}
+    </button>`;
+  }).join('');
 }
 
-/* ──────────────────────────────────────────
-   CHARTS (OVERVIEW)
-────────────────────────────────────────── */
-function isDark() {
-  return document.documentElement.getAttribute('data-theme') === 'dark';
-}
-
-function chartColors() {
-  return {
-    text: isDark() ? '#8b949e' : '#6b7280',
-    grid: isDark() ? '#21262d' : '#e5e7eb',
-  };
-}
-
+/* ─────────────────────────────────────────────────────────────────
+   CHART HELPERS
+───────────────────────────────────────────────────────────────── */
+function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+function chartColors() { return { text: isDark()?'#8b949e':'#6b7280', grid: isDark()?'#21262d':'#e5e7eb' }; }
 function baseOpts() {
   const c = chartColors();
   return {
-    responsive: true,
-    maintainAspectRatio: false,
+    responsive:true, maintainAspectRatio:false,
     plugins: {
-      legend: {
-        position: 'bottom',
-        labels: { color: c.text, font: { family: 'Inter', size: 11 }, padding: 12, boxWidth: 10, boxHeight: 10 }
-      },
-      tooltip: {
-        backgroundColor: isDark() ? '#161b22' : '#fff',
-        titleColor: isDark() ? '#e6edf3' : '#111827',
-        bodyColor: isDark() ? '#8b949e' : '#6b7280',
-        borderColor: isDark() ? '#30363d' : '#e5e7eb',
-        borderWidth: 1,
-      }
+      legend: { position:'bottom', labels:{ color:c.text, font:{family:'Inter',size:11}, padding:12, boxWidth:10, boxHeight:10 } },
+      tooltip: { backgroundColor:isDark()?'#161b22':'#fff', titleColor:isDark()?'#e6edf3':'#111827',
+        bodyColor:isDark()?'#8b949e':'#6b7280', borderColor:isDark()?'#30363d':'#e5e7eb', borderWidth:1 }
     }
   };
 }
-
 function barOpts() {
   const c = chartColors();
-  return {
-    ...baseOpts(),
-    scales: {
-      x: { grid: { color: c.grid }, ticks: { color: c.text, font: { family: 'Inter', size: 11 } } },
-      y: { grid: { color: c.grid }, ticks: { color: c.text, font: { family: 'Inter', size: 11 }, stepSize: 1 }, beginAtZero: true }
-    }
-  };
+  return { ...baseOpts(), scales: {
+    x: { grid:{color:c.grid}, ticks:{color:c.text,font:{family:'Inter',size:11}} },
+    y: { grid:{color:c.grid}, ticks:{color:c.text,font:{family:'Inter',size:11},stepSize:1}, beginAtZero:true }
+  } };
 }
 
-function buildCharts() {
-  // Status donut — 2 Position Now, 2 Monitor, 1 Recompete Watch, 1 Too Early = 6 eligible (1 ineligible excluded)
-  new Chart(document.getElementById('chartStatus'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Position Now (2)', 'Monitor (2)', 'Recompete Watch (1)', 'Too Early (1)'],
-      datasets: [{
-        data: [2, 2, 1, 1],
-        backgroundColor: ['#057a55', '#d29922', '#1a56db', '#6b7280'],
-        borderWidth: 2,
-        borderColor: isDark() ? '#161b22' : '#ffffff',
-        hoverOffset: 6
-      }]
-    },
-    options: { ...baseOpts(), cutout: '65%' }
-  });
-
-  // Type donut
-  new Chart(document.getElementById('chartType'), {
-    type: 'doughnut',
-    data: {
-      labels: ['New Requirement', 'Recompete', 'Unknown'],
-      datasets: [{
-        data: [4, 2, 1],
-        backgroundColor: ['#1a56db', '#9f580a', '#6b7280'],
-        borderWidth: 0,
-        hoverOffset: 6
-      }]
-    },
-    options: { ...baseOpts(), cutout: '60%' }
-  });
-
-  // Timeline bar — 6 eligible opps (Takata excluded as ineligible): DataHub=FY27Q1, 1DOT=FY27Q2, NSSV=FY27Q2, VehicleData=FY27Q3, CIREN=FY27Q4, CRSS=TBD
-  new Chart(document.getElementById('chartTimeline'), {
-    type: 'bar',
-    data: {
-      labels: ['FY27 Q1', 'FY27 Q2', 'FY27 Q3', 'FY27 Q4', 'FY27 TBD'],
-      datasets: [{
-        label: 'Opportunities',
-        data: [1, 2, 1, 1, 1],
-        backgroundColor: '#1a56db',
-        borderRadius: 4,
-        borderSkipped: false
-      }]
-    },
-    options: { ...barOpts(), plugins: { ...barOpts().plugins, legend: { display: false } } }
-  });
-
-  // Set-aside donut
-  new Chart(document.getElementById('chartSetAside'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Full & Open', 'Other Than SB', 'Small Business', 'Partial SB', 'TBD'],
-      datasets: [{
-        data: [2, 2, 1, 1, 1],
-        backgroundColor: ['#1a56db', '#5521b5', '#057a55', '#047481', '#aaaaaa'],
-        borderWidth: 0,
-        hoverOffset: 6
-      }]
-    },
-    options: { ...baseOpts(), cutout: '60%' }
-  });
-}
-
-/* ──────────────────────────────────────────
-   THEME TOGGLE
-────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────
+   THEME
+───────────────────────────────────────────────────────────────── */
 function toggleTheme() {
   const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', next);
   document.getElementById('theme-btn').innerHTML = next === 'dark'
     ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
     : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
 }
 
-/* ──────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────
    INIT
-────────────────────────────────────────── */
-buildCharts();
+───────────────────────────────────────────────────────────────── */
+document.getElementById('as-of-date').textContent = `As of ${DATA_AS_OF}`;
+buildAgencyTabs();
+buildOverview();
 </script>
 </body>
 </html>
