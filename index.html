@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LAIG Federal Sales Roadmap | Multi-Agency Pipeline</title>
+  <title>LAIG Federal Pipeline Diagnostic | Multi-Agency Intelligence</title>
   <meta name="description" content="Limitless AI Growth — Federal contractor pipeline intelligence across DOT, DOE, DoD, DHS, State, HHS." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -788,7 +788,7 @@
       </svg>
       <div class="logo-text">
         <span class="logo-brand">LAIG</span>
-        <span class="logo-sub">Lane 2 Roadmap</span>
+        <span class="logo-sub">Pipeline Diagnostic</span>
       </div>
     </div>
 
@@ -832,7 +832,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <span class="page-title" id="page-title">All Agencies — Pipeline Overview</span>
-        <span class="page-subtitle" id="page-subtitle">LAIG Lane 2 Federal Sales Roadmap · Multi-Agency Intelligence</span>
+        <span class="page-subtitle" id="page-subtitle">LAIG Federal Pipeline Diagnostic · Multi-Agency Intelligence</span>
       </div>
       <div class="topbar-right">
         <span class="as-of" id="as-of-date">As of May 26, 2026</span>
@@ -901,7 +901,7 @@
           <span class="filter-label">Agency:</span>
           <button class="filter-chip active" onclick="filterTimeline('ALL',this)">All</button>
         </div>
-        <div class="section-heading">FY2026–2027 Solicitation Roadmap</div>
+        <div class="section-heading">FY2026–2027 Solicitation Timeline</div>
         <div class="timeline-list" id="timeline-list"></div>
       </div>
 
@@ -1255,11 +1255,11 @@ function showView(id, agencyCode) {
     currentAgency = agencyCode;
     const meta = AGENCY_META[agencyCode] || {};
     document.getElementById('page-title').textContent = meta.full + ' — Agency View';
-    document.getElementById('page-subtitle').textContent = `${agencyCode} · LAIG Lane 2 Positioning Intelligence`;
+    document.getElementById('page-subtitle').textContent = `${agencyCode} · LAIG Federal Pipeline Diagnostic`;
     buildAgencyView(agencyCode);
   } else {
     document.getElementById('page-title').textContent = PAGE_TITLES[id] || id;
-    document.getElementById('page-subtitle').textContent = 'LAIG Lane 2 Federal Sales Roadmap · Multi-Agency Intelligence';
+    document.getElementById('page-subtitle').textContent = 'LAIG Federal Pipeline Diagnostic · Multi-Agency Intelligence';
     if (id === 'overview')  buildOverview();
     if (id === 'priority')  buildPriorityTable(priorityFilter);
     if (id === 'timeline')  buildTimeline(timelineFilter);
