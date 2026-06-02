@@ -11,6 +11,8 @@
   <style>
 
 
+
+
     /* ──────────────────────────────────────────
        DESIGN TOKENS
     ────────────────────────────────────────── */
@@ -772,6 +774,168 @@
     .agency-ov-stat { display: flex; flex-direction: column; gap: 2px; }
     .agency-ov-stat-val { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .agency-ov-stat-lbl { font-size: 10px; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+  
+
+    /* ── AGENCY SELECTOR ──────────────────────────────────────── */
+    .agency-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .agency-tab {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: none;
+    }
+    .agency-tab:hover { background: var(--color-surface-2); color: var(--color-text); }
+    .agency-tab.active { background: var(--color-primary-bg); color: var(--color-primary); font-weight: 600; }
+    .agency-tab-left { display: flex; align-items: center; gap: 7px; }
+    .agency-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .agency-count {
+      font-size: 10px; font-weight: 700;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1px 6px;
+      color: var(--color-text-faint);
+    }
+    .agency-tab.active .agency-count {
+      background: var(--color-primary-bg);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .agency-pos-badge {
+      font-size: 10px; font-weight: 700;
+      background: var(--color-success);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 6px;
+    }
+
+    /* ── CLEARANCE BADGE ──────────────────────────────────────── */
+    .badge-clearance {
+      background: #1a0d3a; color: #bc8cff;
+      border: 1px solid #2d1a5a;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ── OVERVIEW AGENCY CARDS ────────────────────────────────── */
+    .agency-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .agency-ov-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .agency-ov-card:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
+    .agency-ov-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .agency-ov-name { font-size: 13px; font-weight: 700; color: var(--color-text); }
+    .agency-ov-full { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+    .agency-ov-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; border-top: 1px solid var(--color-divider); padding-top: 10px; }
+    .agency-ov-stat { display: flex; flex-direction: column; gap: 2px; }
+    .agency-ov-stat-val { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .agency-ov-stat-lbl { font-size: 10px; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+  
+
+    /* ── AGENCY SELECTOR ──────────────────────────────────────── */
+    .agency-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .agency-tab {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: none;
+    }
+    .agency-tab:hover { background: var(--color-surface-2); color: var(--color-text); }
+    .agency-tab.active { background: var(--color-primary-bg); color: var(--color-primary); font-weight: 600; }
+    .agency-tab-left { display: flex; align-items: center; gap: 7px; }
+    .agency-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .agency-count {
+      font-size: 10px; font-weight: 700;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 1px 6px;
+      color: var(--color-text-faint);
+    }
+    .agency-tab.active .agency-count {
+      background: var(--color-primary-bg);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .agency-pos-badge {
+      font-size: 10px; font-weight: 700;
+      background: var(--color-success);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 6px;
+    }
+
+    /* ── CLEARANCE BADGE ──────────────────────────────────────── */
+    .badge-clearance {
+      background: #1a0d3a; color: #bc8cff;
+      border: 1px solid #2d1a5a;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* ── OVERVIEW AGENCY CARDS ────────────────────────────────── */
+    .agency-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .agency-ov-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .agency-ov-card:hover { border-color: var(--color-primary); box-shadow: var(--shadow-md); }
+    .agency-ov-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .agency-ov-name { font-size: 13px; font-weight: 700; color: var(--color-text); }
+    .agency-ov-full { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+    .agency-ov-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; border-top: 1px solid var(--color-divider); padding-top: 10px; }
+    .agency-ov-stat { display: flex; flex-direction: column; gap: 2px; }
+    .agency-ov-stat-val { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .agency-ov-stat-lbl { font-size: 10px; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
   </style>
 </head>
 <body>
@@ -868,7 +1032,6 @@
         </div>
         <div class="legend-row">
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div>Position Now</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div>Position Now — Recompete</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-warning)"></div>Monitor</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary)"></div>Recompete Watch</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-text-faint)"></div>Too Early</div>
@@ -902,7 +1065,7 @@
           <span class="filter-label">Agency:</span>
           <button class="filter-chip active" onclick="filterTimeline('ALL',this)">All</button>
         </div>
-        <div class="section-heading">FY2026–2027 Solicitation Timeline</div>
+        <div class="section-heading">FY2026–2027 Solicitation Roadmap</div>
         <div class="timeline-list" id="timeline-list"></div>
       </div>
 
@@ -964,7 +1127,6 @@
       </div>
 
     </div><!-- /content -->
-
     <!-- ADVISORY BOTTOM BAR -->
     <div style="flex-shrink:0;background:var(--color-navy,#1e3a5f);border-top:1px solid #2a4a7f;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -982,45 +1144,37 @@
    AGENCY DATA (auto-generated from weekly Excel drop)
 ───────────────────────────────────────────────────────────────── */
 const AGENCY_DATA = {
-  "State": [
-    {id:"STAT_Junior_ProgramOfficer__ECA_PE__807",title:"Junior ProgramOfficer (ECA/PE/C/PY)",org:"GA",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"4th (July 1 - September 30)",value:"$150K - $250K",valueRank:0,naics:"561499",naicsDesc:"",setAside:"To Be Determined",incumbent:"Jason Lin",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
-    {id:"STAT_19AQMM23F2161_Information_Spec_808",title:"19AQMM23F2161 Information Specialist (ECA/EC)",org:"GA",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"4th (July 1 - September 30)",value:"",valueRank:0,naics:"561499",naicsDesc:"",setAside:"To Be Determined",incumbent:"GOLDBELT C6, LLC (Contractor: Erica Matsui)",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
-    {id:"STAT_Babel_Street_Software_License__809",title:"Babel Street Software License Renewal, or equal",org:"GA",status:"Recompete",solDate:"2026-08-14",daysOut:80,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"541519",naicsDesc:"",setAside:"Unrestricted",incumbent:"Distributed Technology Group LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Program_Management_Support_Ser_810",title:"Program Management Support Services",org:"GA",status:"Recompete",solDate:"2026-08-26",daysOut:92,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"561611",naicsDesc:"",setAside:"Unrestricted",incumbent:"Guidehouse",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
-    {id:"STAT_Special_Prison_Operations_Resp_811",title:"Special Prison Operations Response Team Training",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"922140",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_ILEA_Financial_Management_TPC_812",title:"ILEA Financial Management TPC",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"541611",naicsDesc:"",setAside:"SDVOSB",incumbent:"Creative Corrections",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
-    {id:"STAT_ILEA_Program_Assistant_TPC_813",title:"ILEA Program Assistant TPC",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"541611",naicsDesc:"",setAside:"SDVOSB",incumbent:"Universal Strategy Group, Inc",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
-    {id:"STAT_Integrated_Border_Interdiction_814",title:"Integrated Border Interdiction Project",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"561510",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Forensics_Opioid_Identificatio_815",title:"Forensics Opioid Identification Equipment",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"334516",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Forensics_Specialized_IT_Equip_816",title:"Forensics Specialized IT Equipment",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"541380",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_State_of_Nuevo_Leon_Command__C_817",title:"State of Nuevo Leon Command, Control, Computing, Communication. and Citizen Contact Center (C5) IT Equipment",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"423430",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Mobile_Maintenance_Trucks_818",title:"Mobile Maintenance Trucks",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"336120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Fortified_Perimeter_for_Teacap_819",title:"Fortified Perimeter for Teacapan Naval Air Base",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"238120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_ATSG_Advisors_820",title:"ATSG Advisors",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"541611",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Purchase_vehicles_for_Belize_P_821",title:"Purchase vehicles for Belize Police Department  specialised units",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"423110",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Manta_License_Plate_Readers__L_822",title:"Manta License Plate Readers (LPR) System",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"541512/541519",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Strengthening_Ecuador_s_Mariti_823",title:"Strengthening Ecuadors Maritime Security and Aerial Surveillance",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"336411",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Advanced_Border_Security_Train_824",title:"Advanced Border Security Training Services",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"611430",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Fixed_Counter_Unmanned_Aerial__825",title:"Fixed Counter Unmanned Aerial Systems (C-UAS)",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Mobile_Counter_Unmanned_Aerial_826",title:"Mobile Counter Unmanned Aerial Systems (C-UAS)",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Crossfire_Initiative_827",title:"Crossfire Initiative",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"518210",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Canine_Equipment_IDIQ_828",title:"Canine Equipment IDIQ",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"315250",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Mobile_Device_Extractions_829",title:"Mobile Device Extractions",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"518210",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_UAS_Exploitation_Capabilities_830",title:"UAS Exploitation Capabilities",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Satellite_Phone_Intercept_Tech_831",title:"Satellite Phone Intercept Tech",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"517410",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Maintenance_Software_Program_832",title:"Maintenance Software Program",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"541511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Outboard_Motor_Refurbishment_P_833",title:"Outboard Motor Refurbishment Parts & Tools",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"333618",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Third_Party_Advisors_834",title:"Third Party Advisors",org:"GA",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"524292",naicsDesc:"",setAside:"To Be Determined",incumbent:"ATSG",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Rebuild_Destroyed_Stations_835",title:"Rebuild Destroyed Stations",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"922120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"STAT_Personal_Protective_Equipment__836",title:"Personal Protective Equipment (PPE) for Vetted Units",org:"INL",status:"Recompete",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"339999",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-  ],
-  "DOT": [
-    {id:"FHWA_2027_002",title:"1DOT Digital Services (supersedes SWES 2.0)",org:"Federal Highway Administration (FHWA)",status:"New Requirement",solDate:"2026-08-01",daysOut:67,awardQtr:"2nd (January 1 - March 31)",value:"$1B - $1.9B",valueRank:12,naics:"541511",naicsDesc:"",setAside:"Set-Aside Small Business - Partial",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"AG41769_1773838400",title:"National Security Sealift Vessels (NSSV) 10 new Roll-on/Roll-off (RO/RO) Ships",org:"MARAD – Office of Acquisition",status:"New Requirement",solDate:"2026-08-15",daysOut:81,awardQtr:"2nd (January 1 - March 31)",value:"$3B - $3.9B",valueRank:0,naics:"336611",naicsDesc:"",setAside:"Other Than Small Business",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"FHWA_2026_185",title:"Enterprise Data Platform - Datahub",org:"Federal Highway Administration (FHWA)",status:"Unknown",solDate:"2026-10-01",daysOut:128,awardQtr:"1st (October 1 - December 31)",value:"$5M - $9.9M",valueRank:5,naics:"541519",naicsDesc:"",setAside:"Small Business Set Aside - Total",incumbent:"New Tech Solutions Inc",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"NHTSA_2026_021",title:"National-Level Vehicle Data for NHTSA's Database & Analysis",org:"National Highway Traffic Safety Administration (NHTSA)",status:"New Requirement",solDate:"2026-11-14",daysOut:172,awardQtr:"3rd (April 1 - June 30)",value:"$5M - $9.9M",valueRank:5,naics:"519290",naicsDesc:"",setAside:"To Be Determined",incumbent:"R.L. Polk and Company",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"NHTSA_2026_016",title:"CRSS Coding Operations Resource Center",org:"National Highway Traffic Safety Administration (NHTSA)",status:"Recompete",solDate:"2027-02-28",daysOut:278,awardQtr:"To Be Determined",value:"$5M - $9.9M",valueRank:5,naics:"541990",naicsDesc:"",setAside:"Small Business",incumbent:"Laansu Incorporated",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"NHTSA_2026_010",title:"Crash Injury Research and Engineering Network (CIREN) IDIQ",org:"National Highway Traffic Safety Administration (NHTSA)",status:"New Requirement",solDate:"2026-12-31",daysOut:219,awardQtr:"4th (July 1 - September 30)",value:"$10M - $19M",valueRank:6,naics:"541715",naicsDesc:"",setAside:"Other Than Small Business",incumbent:"CRASH RESEARCH & ANALYSIS, INC.",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+  "HHS": [
+    {id:"HHS_General_Clerk_III_1138",title:"General Clerk III",org:"IHS",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"9/2026",value:"> $25K and < $250K",valueRank:0,naics:"561990 : All Other Support Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Lizeth Ayala",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Nursing_Contracts_1150",title:"Nursing Contracts",org:"IHS",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"9/2026",value:">= $700K and < $1.5M",valueRank:0,naics:"561320 : Temporary Help Services",naicsDesc:"",setAside:"To be determined",incumbent:"Ma'at Enterprises ; DT Trak Consulting; Bay Area dba Worldwide Medical; Wesley Medical; MedCare Staffing",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Clinical__1161",title:"Clinical",org:"IHS",status:"Recompete",solDate:"2026-10-01",daysOut:128,awardQtr:"12/2026",value:"> $25K and < $250K",valueRank:0,naics:"561210 : Facilities Support Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Advanced Diagnostic Imaging",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"HHS_WCA_1134",title:"WCA",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"7/2026",value:"> $0 and <= $10K",valueRank:1,naics:"513210 : Software Publishers",naicsDesc:"",setAside:"Full and Open",incumbent:"WCA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Physical_Therarpy__1157",title:"Physical Therarpy",org:"IHS",status:"Recompete",solDate:"2027-04-01",daysOut:310,awardQtr:"10/2027",value:"> $25K and < $250K",valueRank:0,naics:"621340 : Offices of Physical, Occupational and Speech Therapists and Audiologists",naicsDesc:"",setAside:"Full and Open",incumbent:"Holdenville General Hospital",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Physical_Therapy__1160",title:"Physical Therapy",org:"IHS",status:"Recompete",solDate:"2027-07-01",daysOut:401,awardQtr:"10/2027",value:">= $250K and < $700K",valueRank:0,naics:"621340 : Offices of Physical, Occupational and Speech Therapists and Audiologists",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Althletico",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Pedorthic__1162",title:"Pedorthic",org:"IHS",status:"Recompete",solDate:"2028-10-01",daysOut:859,awardQtr:"3/2029",value:">= $1.5M and < $3M",valueRank:0,naics:"316210 : Footwear Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Timothy Hunt",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_McKesson_Federal_PPV___OM_1167",title:"McKesson Federal PPV & OM",org:"IHS",status:"Recompete",solDate:"2028-11-01",daysOut:890,awardQtr:"4/2029",value:">= $100M",valueRank:0,naics:"325412 : Pharmaceutical Preparation Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"McKesson",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Radiology__1168",title:"Radiology",org:"IHS",status:"Recompete",solDate:"2029-01-01",daysOut:951,awardQtr:"6/2029",value:"> $25K and < $250K",valueRank:0,naics:"621512 : Diagnostic Imaging Centers",naicsDesc:"",setAside:"Full and Open",incumbent:"Holdenville General Hospital",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_McKesson_OM_Federal_1130",title:"McKesson OM Federal",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $50M and < $100M",valueRank:0,naics:"325412 : Pharmaceutical Preparation Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"McKesson",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_McKesson_Tribal_PPV_1131",title:"McKesson Tribal PPV",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $100M",valueRank:0,naics:"325412 : Pharmaceutical Preparation Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"McKesson",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_MJL_1132",title:"MJL",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:"> $25K and < $250K",valueRank:0,naics:"339940 : Office Supplies (except Paper) Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"MJL",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Mitchell_Consulting_1133",title:"Mitchell Consulting",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $1.5M and < $3M",valueRank:0,naics:"561320 : Temporary Help Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Mitchell Consulting",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Natuv_Inc__1135",title:"Natuv Inc.",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $7M and < $13M",valueRank:0,naics:"493110 : General Warehousing and Storage",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Natuv Inc.",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_TBD_1136",title:"TBD",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"7/2026",value:">= $7M and < $13M",valueRank:0,naics:"325414 : Biological Product (except Diagnostic) Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"Seqirus/Sanofi/GSK",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_FedEx_1141",title:"FedEx",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $700K and < $1.5M",valueRank:0,naics:"492110 : Couriers and Express Delivery Services",naicsDesc:"",setAside:"Full and Open",incumbent:"FedEx",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_ORR_Technology_Modernization___1147",title:"ORR Technology Modernization (OTM) Follow-On TO 1 Application Platform Interface Infrastructure Support",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $3M and < $7M",valueRank:0,naics:"541512 : Computer Systems Design Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"TBA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_ORR_Technology_Modernization___1152",title:"ORR Technology Modernization (OTM) Base BPA",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $50M and < $100M",valueRank:0,naics:"541512 : Computer Systems Design Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"TBA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_ORR_Technology_Modernization___1153",title:"ORR Technology Modernization (OTM) Follow-On TO 2: ORR Home Studies and Post-release Services Application Enhancement an",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $7M and < $13M",valueRank:0,naics:"541512 : Computer Systems Design Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"TBA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Adaptus_Scanner__Antiviral_too_1156",title:"Adaptus Scanner- Antiviral tool for Salesforce",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"12/2026",value:"> $25K and < $250K",valueRank:0,naics:"423430 : Computer and Computer Peripheral Equipment and Software Merchant Wholesalers",naicsDesc:"",setAside:"To be determined",incumbent:"Radiant Infotec",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Pharmacy_waste_1170",title:"Pharmacy waste",org:"IHS",status:"Recompete",solDate:"2029-03-01",daysOut:1010,awardQtr:"9/2029",value:"> $25K and < $250K",valueRank:0,naics:"562112 : Hazardous Waste Collection",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Capitol Waste Solutions",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Operating_Room_for_Dental_Pedi_1163",title:"Operating Room for Dental Pediatrics",org:"IHS",status:"Recompete",solDate:"2029-04-01",daysOut:1041,awardQtr:"9/2029",value:">= $700K and < $1.5M",valueRank:0,naics:"561320 : Temporary Help Services",naicsDesc:"",setAside:"Full and Open",incumbent:"Holdenville General Hospital",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Radiology_Intrupratations_1165",title:"Radiology Intrupratations",org:"IHS",status:"Recompete",solDate:"2029-06-01",daysOut:1102,awardQtr:"1/2030",value:"> $25K and < $250K",valueRank:0,naics:"541930 : Translation and Interpretation Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Advanced Cardiac Diagnostics",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Janitorial_Supplies_1137",title:"Janitorial Supplies",org:"IHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"8/2026",value:"> $25K and < $250K",valueRank:0,naics:"325612 : Polish and Other Sanitation Good Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Shipping_Supplies_1139",title:"Shipping Supplies",org:"IHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"9/2026",value:"> $25K and < $250K",valueRank:0,naics:"322211 : Corrugated and Solid Fiber Box Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_New_Konica_Minolta_copiers_for_1142",title:"New Konica Minolta copiers for CBER",org:"FDA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"7/2026",value:"> $25K and < $250K",valueRank:0,naics:"561499 : All Other Business Support Services",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Carbon_Dioxide_Refill_Agreemen_1143",title:"Carbon Dioxide Refill Agreement New compete",org:"FDA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"9/2026",value:"> $25K and < $250K",valueRank:0,naics:"325120 : Industrial Gas Manufacturing",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_CBER_Blood_Courier_Services_fo_1144",title:"CBER Blood Courier Services for Research Support New Compete",org:"FDA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"8/2026",value:"> $25K and < $250K",valueRank:0,naics:"492110 : Couriers and Express Delivery Services",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_AdQIC_LFO_1145",title:"AdQIC LFO",org:"CMS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $20M and < $50M",valueRank:0,naics:"541611 : Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"HHS_Case_Coordination_1151",title:"Case Coordination",org:"ASA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"7/2026",value:">= $100M",valueRank:0,naics:"541611 : Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
   ],
   "DoD": [
     {id:"SOCO_Single_Award_IDIQ__Provides_pe_1011",title:"Single Award IDIQ; Provides personal, contractor-provided services and expertise resident within service teams to suppor",org:"SOCOM",status:"Recompete",solDate:"2026-09-01",daysOut:98,awardQtr:"Aug-2027",value:"$955,000,000.00",valueRank:11,naics:"621340",naicsDesc:"",setAside:"SAM.gov",incumbent:"H9240019D0001",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
@@ -1054,37 +1208,77 @@ const AGENCY_DATA = {
     {id:"NAWC_Stand_off_Land_Attack_Missile__745",title:"Stand-off Land Attack Missile-Expanded Response (SLAM-ER) Warhead Casings",org:"NAWCWD",status:"Recompete",solDate:"2027-01-01",daysOut:220,awardQtr:"FY 2027 QTR 2",value:"> $7.5M - < $50M",valueRank:0,naics:"336419",naicsDesc:"",setAside:"Sole-Source",incumbent:"General Dynamics OTS",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"Classified"},
     {id:"NAWC_Weapons_and_System_Integration_744",title:"Weapons and System Integration Support Services (WSISS) VI",org:"NAWCWD",status:"Recompete",solDate:"2027-04-01",daysOut:310,awardQtr:"FY 2027 QTR 3",value:"> $250M - < $1B",valueRank:0,naics:"336411",naicsDesc:"",setAside:"TBD",incumbent:"ASSET LLC",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"Top Secret"},
   ],
-  "HHS": [
-    {id:"HHS_General_Clerk_III_1138",title:"General Clerk III",org:"IHS",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"9/2026",value:"> $25K and < $250K",valueRank:0,naics:"561990 : All Other Support Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Lizeth Ayala",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Nursing_Contracts_1150",title:"Nursing Contracts",org:"IHS",status:"Recompete",solDate:"2026-08-01",daysOut:67,awardQtr:"9/2026",value:">= $700K and < $1.5M",valueRank:0,naics:"561320 : Temporary Help Services",naicsDesc:"",setAside:"To be determined",incumbent:"Ma'at Enterprises ; DT Trak Consulting; Bay Area dba Worldwide Medical; Wesley Medical; MedCare Staffing",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Clinical__1161",title:"Clinical",org:"IHS",status:"Recompete",solDate:"2026-10-01",daysOut:128,awardQtr:"12/2026",value:"> $25K and < $250K",valueRank:0,naics:"561210 : Facilities Support Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Advanced Diagnostic Imaging",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"HHS_WCA_1134",title:"WCA",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"7/2026",value:"> $0 and <= $10K",valueRank:1,naics:"513210 : Software Publishers",naicsDesc:"",setAside:"Full and Open",incumbent:"WCA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Physical_Therarpy__1157",title:"Physical Therarpy",org:"IHS",status:"Recompete",solDate:"2027-04-01",daysOut:310,awardQtr:"10/2027",value:"> $25K and < $250K",valueRank:0,naics:"621340 : Offices of Physical, Occupational and Speech Therapists and Audiologists",naicsDesc:"",setAside:"Full and Open",incumbent:"Holdenville General Hospital",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Physical_Therapy__1160",title:"Physical Therapy",org:"IHS",status:"Recompete",solDate:"2027-07-01",daysOut:401,awardQtr:"10/2027",value:">= $250K and < $700K",valueRank:0,naics:"621340 : Offices of Physical, Occupational and Speech Therapists and Audiologists",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Althletico",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Pedorthic__1162",title:"Pedorthic",org:"IHS",status:"Recompete",solDate:"2028-10-01",daysOut:859,awardQtr:"3/2029",value:">= $1.5M and < $3M",valueRank:0,naics:"316210 : Footwear Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Timothy Hunt",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_McKesson_Federal_PPV___OM_1167",title:"McKesson Federal PPV & OM",org:"IHS",status:"Recompete",solDate:"2028-11-01",daysOut:890,awardQtr:"4/2029",value:">= $100M",valueRank:0,naics:"325412 : Pharmaceutical Preparation Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"McKesson",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Radiology__1168",title:"Radiology",org:"IHS",status:"Recompete",solDate:"2029-01-01",daysOut:951,awardQtr:"6/2029",value:"> $25K and < $250K",valueRank:0,naics:"621512 : Diagnostic Imaging Centers",naicsDesc:"",setAside:"Full and Open",incumbent:"Holdenville General Hospital",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_McKesson_OM_Federal_1130",title:"McKesson OM Federal",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $50M and < $100M",valueRank:0,naics:"325412 : Pharmaceutical Preparation Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"McKesson",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_McKesson_Tribal_PPV_1131",title:"McKesson Tribal PPV",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $100M",valueRank:0,naics:"325412 : Pharmaceutical Preparation Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"McKesson",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_MJL_1132",title:"MJL",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:"> $25K and < $250K",valueRank:0,naics:"339940 : Office Supplies (except Paper) Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"MJL",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Mitchell_Consulting_1133",title:"Mitchell Consulting",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $1.5M and < $3M",valueRank:0,naics:"561320 : Temporary Help Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Mitchell Consulting",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Natuv_Inc__1135",title:"Natuv Inc.",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $7M and < $13M",valueRank:0,naics:"493110 : General Warehousing and Storage",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Natuv Inc.",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_TBD_1136",title:"TBD",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"7/2026",value:">= $7M and < $13M",valueRank:0,naics:"325414 : Biological Product (except Diagnostic) Manufacturing",naicsDesc:"",setAside:"Full and Open",incumbent:"Seqirus/Sanofi/GSK",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_FedEx_1141",title:"FedEx",org:"IHS",status:"Recompete",solDate:"",daysOut:999,awardQtr:"8/2026",value:">= $700K and < $1.5M",valueRank:0,naics:"492110 : Couriers and Express Delivery Services",naicsDesc:"",setAside:"Full and Open",incumbent:"FedEx",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_ORR_Technology_Modernization___1147",title:"ORR Technology Modernization (OTM) Follow-On TO 1 Application Platform Interface Infrastructure Support",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $3M and < $7M",valueRank:0,naics:"541512 : Computer Systems Design Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"TBA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_ORR_Technology_Modernization___1152",title:"ORR Technology Modernization (OTM) Base BPA",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $50M and < $100M",valueRank:0,naics:"541512 : Computer Systems Design Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"TBA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_ORR_Technology_Modernization___1153",title:"ORR Technology Modernization (OTM) Follow-On TO 2: ORR Home Studies and Post-release Services Application Enhancement an",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $7M and < $13M",valueRank:0,naics:"541512 : Computer Systems Design Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"TBA",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Adaptus_Scanner__Antiviral_too_1156",title:"Adaptus Scanner- Antiviral tool for Salesforce",org:"ACF",status:"Recompete",solDate:"",daysOut:999,awardQtr:"12/2026",value:"> $25K and < $250K",valueRank:0,naics:"423430 : Computer and Computer Peripheral Equipment and Software Merchant Wholesalers",naicsDesc:"",setAside:"To be determined",incumbent:"Radiant Infotec",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Pharmacy_waste_1170",title:"Pharmacy waste",org:"IHS",status:"Recompete",solDate:"2029-03-01",daysOut:1010,awardQtr:"9/2029",value:"> $25K and < $250K",valueRank:0,naics:"562112 : Hazardous Waste Collection",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Capitol Waste Solutions",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Operating_Room_for_Dental_Pedi_1163",title:"Operating Room for Dental Pediatrics",org:"IHS",status:"Recompete",solDate:"2029-04-01",daysOut:1041,awardQtr:"9/2029",value:">= $700K and < $1.5M",valueRank:0,naics:"561320 : Temporary Help Services",naicsDesc:"",setAside:"Full and Open",incumbent:"Holdenville General Hospital",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Radiology_Intrupratations_1165",title:"Radiology Intrupratations",org:"IHS",status:"Recompete",solDate:"2029-06-01",daysOut:1102,awardQtr:"1/2030",value:"> $25K and < $250K",valueRank:0,naics:"541930 : Translation and Interpretation Services",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"Advanced Cardiac Diagnostics",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Janitorial_Supplies_1137",title:"Janitorial Supplies",org:"IHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"8/2026",value:"> $25K and < $250K",valueRank:0,naics:"325612 : Polish and Other Sanitation Good Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Shipping_Supplies_1139",title:"Shipping Supplies",org:"IHS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"9/2026",value:"> $25K and < $250K",valueRank:0,naics:"322211 : Corrugated and Solid Fiber Box Manufacturing",naicsDesc:"",setAside:"Small Business Set-Aside",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_New_Konica_Minolta_copiers_for_1142",title:"New Konica Minolta copiers for CBER",org:"FDA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"7/2026",value:"> $25K and < $250K",valueRank:0,naics:"561499 : All Other Business Support Services",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Carbon_Dioxide_Refill_Agreemen_1143",title:"Carbon Dioxide Refill Agreement New compete",org:"FDA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"9/2026",value:"> $25K and < $250K",valueRank:0,naics:"325120 : Industrial Gas Manufacturing",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_CBER_Blood_Courier_Services_fo_1144",title:"CBER Blood Courier Services for Research Support New Compete",org:"FDA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"8/2026",value:"> $25K and < $250K",valueRank:0,naics:"492110 : Couriers and Express Delivery Services",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_AdQIC_LFO_1145",title:"AdQIC LFO",org:"CMS",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"9/2026",value:">= $20M and < $50M",valueRank:0,naics:"541611 : Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"To be determined",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
-    {id:"HHS_Case_Coordination_1151",title:"Case Coordination",org:"ASA",status:"New Requirement",solDate:"",daysOut:999,awardQtr:"7/2026",value:">= $100M",valueRank:0,naics:"541611 : Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"",incumbent:"",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+  "DOT": [
+    {id:"FHWA_2027_002",title:"1DOT Digital Services (supersedes SWES 2.0)",org:"Federal Highway Administration (FHWA)",status:"New Requirement",solDate:"2026-08-01",daysOut:67,awardQtr:"2nd (January 1 - March 31)",value:"$1B - $1.9B",valueRank:12,naics:"541511",naicsDesc:"",setAside:"Set-Aside Small Business - Partial",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"AG41769_1773838400",title:"National Security Sealift Vessels (NSSV) 10 new Roll-on/Roll-off (RO/RO) Ships",org:"MARAD – Office of Acquisition",status:"New Requirement",solDate:"2026-08-15",daysOut:81,awardQtr:"2nd (January 1 - March 31)",value:"$3B - $3.9B",valueRank:0,naics:"336611",naicsDesc:"",setAside:"Other Than Small Business",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"FHWA_2026_185",title:"Enterprise Data Platform - Datahub",org:"Federal Highway Administration (FHWA)",status:"Follow-on",solDate:"2026-10-01",daysOut:128,awardQtr:"1st (October 1 - December 31)",value:"$5M - $9.9M",valueRank:5,naics:"541519",naicsDesc:"",setAside:"Small Business Set Aside - Total",incumbent:"New Tech Solutions Inc",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NHTSA_2026_021",title:"National-Level Vehicle Data for NHTSA's Database & Analysis",org:"National Highway Traffic Safety Administration (NHTSA)",status:"Follow-on",solDate:"2026-11-14",daysOut:172,awardQtr:"3rd (April 1 - June 30)",value:"$5M - $9.9M",valueRank:5,naics:"519290",naicsDesc:"",setAside:"To Be Determined",incumbent:"R.L. Polk and Company",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NHTSA_2026_016",title:"CRSS Coding Operations Resource Center",org:"National Highway Traffic Safety Administration (NHTSA)",status:"Recompete",solDate:"2027-02-28",daysOut:278,awardQtr:"To Be Determined",value:"$5M - $9.9M",valueRank:5,naics:"541990",naicsDesc:"",setAside:"Small Business",incumbent:"Laansu Incorporated",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"NHTSA_2026_010",title:"Crash Injury Research and Engineering Network (CIREN) IDIQ",org:"National Highway Traffic Safety Administration (NHTSA)",status:"Follow-on",solDate:"2026-12-31",daysOut:219,awardQtr:"4th (July 1 - September 30)",value:"$10M - $19M",valueRank:6,naics:"541715",naicsDesc:"",setAside:"Other Than Small Business",incumbent:"CRASH RESEARCH & ANALYSIS, INC.",label:"Too Early",positionNow:false,previouslyFeatured:false,clearance:""},
+  ],
+  "DHS": [
+    {id:"F2025072143",title:"28886599 Reconfigure Fuel Oil Heating to Natural Gas at CG AIRSTA Savannah in Savannah, GA",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-07-25",daysOut:60,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072173",title:"13832139 23HSB_H. Ian: Rebuild Isla De Mona Southeast Light at CG ANT Puerto Rico in San Juan, PR",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-07-26",daysOut:61,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"237990 - Other Heavy and Civil Engineering Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025070511",title:"USCGC DOUGLAS DENMAN FY26 Dining and Lodging",org:"USCG/SFLC",status:"New Requirement",solDate:"2026-07-27",daysOut:62,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"721110 - Hotels (except Casino Hotels) and Motels",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072144",title:"28902443 Repair Sanitary Sewer Line at Sector Key West in Key West, FL",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-07-29",daysOut:64,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072647",title:"Hazen Building Renovation",org:"USSS",status:"New Requirement",solDate:"2026-07-29",daysOut:64,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071837",title:"Enterprise Analysis System (EAS) Hardware and Maintenance Support",org:"TSA",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072147",title:"28772778 Replace Roof Main Building at CGC Muskingum in Sallisaw, OK",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072146",title:"22991542 Replace Fire Alarm - ADMIN BLDG at Base New Orleans in New Orleans, LA",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071750",title:"EMD Procurement (20 EMDs)",org:"TSA/OAPM",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"334111 - Electronic Computer Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072077",title:"Advanced Imaging Technology Procurement",org:"TSA/OAPM",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072080",title:"(RAG) Random Alarm Generator for  AIT",org:"TSA/OAPM",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072079",title:"Quick Personnel Walkthrough (QPW) AIT  Advanced Imagery Technology Systems Electro Magnetic Detector (EMD)",org:"TSA/OAPM",status:"New Requirement",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073890",title:"Division 4 Unit 4 (D4U4)",org:"ICE/HSI",status:"New Requirement",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$5M to $10M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071947",title:"29856173: Electrical design build Santa Barbra housing",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541330 - Engineering Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"*F2025071630",title:"Fiber Modules for Cisco Catalyst 9606 Switches",org:"TSA/OIT",status:"New Requirement",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071626",title:"Qlik Talend Data Management",org:"TSA/OIT",status:"New Requirement",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071631",title:"Vault Licensing",org:"TSA/OIT",status:"New Requirement",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071624",title:"Servers purchase",org:"TSA/OIT",status:"New Requirement",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073349",title:"Window Track Set",org:"USCG/ALC",status:"New Requirement",solDate:"2026-08-01",daysOut:67,awardQtr:"Q1 2027",value:"$350K to $500K",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071673",title:"Replace Fire Protect System Hanger 3 (Kodiak) (PN 474412)",org:"USCG/CG-SHORE",status:"New Requirement",solDate:"2026-08-01",daysOut:67,awardQtr:"Q1 2027",value:"$20M to $50M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073577",title:"T-III Application Integration",org:"ICE/HSI",status:"New Requirement",solDate:"2026-08-01",daysOut:67,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073491",title:"Subject Matter Expert (SME) to Support Maritime Operations",org:"ICE/HSI",status:"New Requirement",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"$5M to $10M",valueRank:0,naics:"541614 - Process, Physical Distribution, and Logistics Consulting Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072475",title:"OVERHAUL OF THE WHEELS, BRAKES AND ASSOCIATED COMPONENTS TO SUPPORT THE HC-144 AND HC-27J AIRCRAFTS",org:"USCG/ALC",status:"Follow-on",solDate:"2026-08-03",daysOut:69,awardQtr:"Q3 2027",value:"$5M to $10M",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"Meggitt Aircraft Braking Systems",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"*F2025069324",title:"SAC Consumables (Follow-On)",org:"USCG/ALC",status:"Follow-on",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2027",value:"Over $100M",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"Sikorsky Aircraft Corporation",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073003",title:"Tactical Communications and Technical Investigative Comprehensive Solutions (TACTICS)",org:"DHS HQ/MGMT",status:"New Requirement",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"Over $100M",valueRank:0,naics:"334220 - Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071054",title:"CRCL Compliance Investigative and Case Management Pilot Program Contract Support Services",org:"DHS HQ/CRCL",status:"Follow-on",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"541611 - Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"Full",incumbent:"PCI Government Services LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073711",title:"PROGRAM MANAGEMENT AND ANALYTICAL SUPPORT SERVICES FOR THE UNITED STATES COAST GUARD DEPUTY COMMANDANT FOR SYSTEMS (DCS)",org:"USCG/CG-HCA",status:"New Requirement",solDate:"2026-08-03",daysOut:69,awardQtr:"Q2 2027",value:"$5M to $10M",valueRank:0,naics:"541611 - Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072628",title:"USCGC NARWHAL DS1 FY27 WTCA (DS1, DS2, DD1) SSDG TCTO",org:"USCG/SFLC",status:"New Requirement",solDate:"2026-08-06",daysOut:72,awardQtr:"Q1 2027",value:"$1M to $2M",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072618",title:"USCGC VIGOROUS FY27 Drydock Availability",org:"USCG/SFLC",status:"New Requirement",solDate:"2026-08-08",daysOut:74,awardQtr:"Q1 2027",value:"$1M to $2M",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072605",title:"USCGC BEAR FY27 Aviation Availability",org:"USCG/SFLC",status:"New Requirement",solDate:"2026-08-08",daysOut:74,awardQtr:"Q1 2027",value:"$350K to $500K",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+  ],
+  "State": [
+    {id:"STAT_Junior_ProgramOfficer__ECA_PE__807",title:"Junior ProgramOfficer (ECA/PE/C/PY)",org:"GA",status:"Follow-on",solDate:"2026-08-01",daysOut:67,awardQtr:"4th (July 1 - September 30)",value:"$150K - $250K",valueRank:0,naics:"561499",naicsDesc:"",setAside:"To Be Determined",incumbent:"Jason Lin",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_19AQMM23F2161_Information_Spec_808",title:"19AQMM23F2161 Information Specialist (ECA/EC)",org:"GA",status:"Follow-on",solDate:"2026-08-01",daysOut:67,awardQtr:"4th (July 1 - September 30)",value:"",valueRank:0,naics:"561499",naicsDesc:"",setAside:"To Be Determined",incumbent:"GOLDBELT C6, LLC (Contractor: Erica Matsui)",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_Babel_Street_Software_License__809",title:"Babel Street Software License Renewal, or equal",org:"GA",status:"Follow-on",solDate:"2026-08-14",daysOut:80,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"541519",naicsDesc:"",setAside:"Unrestricted",incumbent:"Distributed Technology Group LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Fortified_Perimeter_for_Teacap_819",title:"Fortified Perimeter for Teacapan Naval Air Base",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"238120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Manta_License_Plate_Readers__L_822",title:"Manta License Plate Readers (LPR) System",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"541512/541519",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Strengthening_Ecuador_s_Mariti_823",title:"Strengthening Ecuadors Maritime Security and Aerial Surveillance",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"336411",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Advanced_Border_Security_Train_824",title:"Advanced Border Security Training Services",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"611430",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Fixed_Counter_Unmanned_Aerial__825",title:"Fixed Counter Unmanned Aerial Systems (C-UAS)",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Mobile_Counter_Unmanned_Aerial_826",title:"Mobile Counter Unmanned Aerial Systems (C-UAS)",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Crossfire_Initiative_827",title:"Crossfire Initiative",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"518210",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Mobile_Device_Extractions_829",title:"Mobile Device Extractions",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"518210",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_UAS_Exploitation_Capabilities_830",title:"UAS Exploitation Capabilities",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"334511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Rebuild_Destroyed_Stations_835",title:"Rebuild Destroyed Stations",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"922120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Personal_Protective_Equipment__836",title:"Personal Protective Equipment (PPE) for Vetted Units",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"339999",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Rehabilitation_of_Mexican_Navy_837",title:"Rehabilitation of Mexican Navy Docs at Isla Mujeres",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"488310",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_SMART_Border_Sonora_Checkpoint_838",title:"SMART Border Sonora Checkpoints",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"922120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Program_Management_Support_Ser_810",title:"Program Management Support Services",org:"GA",status:"Follow-on",solDate:"2026-08-26",daysOut:92,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"561611",naicsDesc:"",setAside:"Unrestricted",incumbent:"Guidehouse",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_Special_Prison_Operations_Resp_811",title:"Special Prison Operations Response Team Training",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"922140",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_ILEA_Financial_Management_TPC_812",title:"ILEA Financial Management TPC",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"541611",naicsDesc:"",setAside:"SDVOSB",incumbent:"Creative Corrections",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_ILEA_Program_Assistant_TPC_813",title:"ILEA Program Assistant TPC",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"541611",naicsDesc:"",setAside:"SDVOSB",incumbent:"Universal Strategy Group, Inc",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"Secret"},
+    {id:"STAT_Integrated_Border_Interdiction_814",title:"Integrated Border Interdiction Project",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"561510",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Forensics_Opioid_Identificatio_815",title:"Forensics Opioid Identification Equipment",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$5.1M - $10M",valueRank:0,naics:"334516",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Forensics_Specialized_IT_Equip_816",title:"Forensics Specialized IT Equipment",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"541380",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_State_of_Nuevo_Leon_Command__C_817",title:"State of Nuevo Leon Command, Control, Computing, Communication. and Citizen Contact Center (C5) IT Equipment",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"423430",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Mobile_Maintenance_Trucks_818",title:"Mobile Maintenance Trucks",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"336120",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_ATSG_Advisors_820",title:"ATSG Advisors",org:"GA",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"541611",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Purchase_vehicles_for_Belize_P_821",title:"Purchase vehicles for Belize Police Department  specialised units",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$501K - $1M",valueRank:0,naics:"423110",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Canine_Equipment_IDIQ_828",title:"Canine Equipment IDIQ",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$2.1M - $5M",valueRank:0,naics:"315250",naicsDesc:"",setAside:"Unrestricted",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Satellite_Phone_Intercept_Tech_831",title:"Satellite Phone Intercept Tech",org:"INL",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$1.1M - $2M",valueRank:0,naics:"517410",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
+    {id:"STAT_Maintenance_Software_Program_832",title:"Maintenance Software Program",org:"GA",status:"Follow-on",solDate:"2026-08-30",daysOut:96,awardQtr:"4th (July 1 - September 30)",value:"$251K - $500K",valueRank:0,naics:"541511",naicsDesc:"",setAside:"To Be Determined",incumbent:"Not Applicable",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:""},
   ],
   "DOE": [
     {id:"DOE_Department_of_Energy__DOE___Of_38",title:"Department of Energy (DOE), Office of Energy Efficiency and Renewable Energy (EERE) Conference Logistics Support Service",org:"Assistant Secretary for Energy Efficiency and Renewable Energy",status:"Recompete",solDate:"2026-07-31",daysOut:66,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"541611",naicsDesc:"Administrative Management and General Management Consulting Services",setAside:"No Set Aside",incumbent:"THE BUILDING PEOPLE LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
@@ -1118,38 +1312,6 @@ const AGENCY_DATA = {
     {id:"DOE_INDEFINITE_DELIVERY_INDEFINITE_138",title:"INDEFINITE DELIVERY/INDEFINITE QUANTITY (IDIQ) CONTRACT FOR GENERAL COMMUNICATION SITE TOWER MAINTENANCE",org:"Southwestern Power Administration",status:"Recompete",solDate:"2026-09-01",daysOut:98,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237130",naicsDesc:"Power and Communication Line and Related Structures Construction",setAside:"Small Business Set-Aside",incumbent:"ASTRO SYSTEMS CORP",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
     {id:"DOE_INDEFINITE_DELIVERY_INDEFINITE_139",title:"INDEFINITE DELIVERY/INDEFINITE QUANTITY (IDIQ) CONTRACT FOR GENERAL COMMUNICATION SITE TOWER MAINTENANCE",org:"Southwestern Power Administration",status:"Recompete",solDate:"2026-09-01",daysOut:98,awardQtr:"FY2026 Q4 (Jul–Sep 2026)",value:"R2 – $250K–$7.5M",valueRank:3,naics:"237130",naicsDesc:"Power and Communication Line and Related Structures Construction",setAside:"Small Business Set-Aside",incumbent:"PORT GRAHAM DEVELOPMENT CORPORATION",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
   ],
-  "DHS": [
-    {id:"F2025072143",title:"28886599 Reconfigure Fuel Oil Heating to Natural Gas at CG AIRSTA Savannah in Savannah, GA",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-25",daysOut:60,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072173",title:"13832139 23HSB_H. Ian: Rebuild Isla De Mona Southeast Light at CG ANT Puerto Rico in San Juan, PR",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-26",daysOut:61,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"237990 - Other Heavy and Civil Engineering Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025070511",title:"USCGC DOUGLAS DENMAN FY26 Dining and Lodging",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-07-27",daysOut:62,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"721110 - Hotels (except Casino Hotels) and Motels",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072144",title:"28902443 Repair Sanitary Sewer Line at Sector Key West in Key West, FL",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-29",daysOut:64,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026072647",title:"Hazen Building Renovation",org:"USSS",status:"New Requirement, No Contract",solDate:"2026-07-29",daysOut:64,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071837",title:"Enterprise Analysis System (EAS) Hardware and Maintenance Support",org:"TSA",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072147",title:"28772778 Replace Roof Main Building at CGC Muskingum in Sallisaw, OK",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072146",title:"22991542 Replace Fire Alarm - ADMIN BLDG at Base New Orleans in New Orleans, LA",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071750",title:"EMD Procurement (20 EMDs)",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"334111 - Electronic Computer Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072077",title:"Advanced Imaging Technology Procurement",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072080",title:"(RAG) Random Alarm Generator for  AIT",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025072079",title:"Quick Personnel Walkthrough (QPW) AIT  Advanced Imagery Technology Systems Electro Magnetic Detector (EMD)",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026073890",title:"Division 4 Unit 4 (D4U4)",org:"ICE/HSI",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$5M to $10M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071947",title:"29856173: Electrical design build Santa Barbra housing",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541330 - Engineering Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"*F2025071630",title:"Fiber Modules for Cisco Catalyst 9606 Switches",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071626",title:"Qlik Talend Data Management",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071631",title:"Vault Licensing",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071624",title:"Servers purchase",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026073349",title:"Window Track Set",org:"USCG/ALC",status:"New Requirement, No Contract",solDate:"2026-08-01",daysOut:67,awardQtr:"Q1 2027",value:"$350K to $500K",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071673",title:"Replace Fire Protect System Hanger 3 (Kodiak) (PN 474412)",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-08-01",daysOut:67,awardQtr:"Q1 2027",value:"$20M to $50M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026073577",title:"T-III Application Integration",org:"ICE/HSI",status:"New Requirement, No Contract",solDate:"2026-08-01",daysOut:67,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026073491",title:"Subject Matter Expert (SME) to Support Maritime Operations",org:"ICE/HSI",status:"New Requirement, No Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"$5M to $10M",valueRank:0,naics:"541614 - Process, Physical Distribution, and Logistics Consulting Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026072475",title:"OVERHAUL OF THE WHEELS, BRAKES AND ASSOCIATED COMPONENTS TO SUPPORT THE HC-144 AND HC-27J AIRCRAFTS",org:"USCG/ALC",status:"Follow-on to Existing Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q3 2027",value:"$5M to $10M",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"Meggitt Aircraft Braking Systems",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"*F2025069324",title:"SAC Consumables (Follow-On)",org:"USCG/ALC",status:"Follow-on to Existing Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2027",value:"Over $100M",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"Sikorsky Aircraft Corporation",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026073003",title:"Tactical Communications and Technical Investigative Comprehensive Solutions (TACTICS)",org:"DHS HQ/MGMT",status:"New Requirement, No Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"Over $100M",valueRank:0,naics:"334220 - Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2025071054",title:"CRCL Compliance Investigative and Case Management Pilot Program Contract Support Services",org:"DHS HQ/CRCL",status:"Follow-on to Existing Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"541611 - Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"Full",incumbent:"PCI Government Services LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026073711",title:"PROGRAM MANAGEMENT AND ANALYTICAL SUPPORT SERVICES FOR THE UNITED STATES COAST GUARD DEPUTY COMMANDANT FOR SYSTEMS (DCS)",org:"USCG/CG-HCA",status:"New Requirement, No Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q2 2027",value:"$5M to $10M",valueRank:0,naics:"541611 - Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026072628",title:"USCGC NARWHAL DS1 FY27 WTCA (DS1, DS2, DD1) SSDG TCTO",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-08-06",daysOut:72,awardQtr:"Q1 2027",value:"$1M to $2M",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026072618",title:"USCGC VIGOROUS FY27 Drydock Availability",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-08-08",daysOut:74,awardQtr:"Q1 2027",value:"$1M to $2M",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-    {id:"F2026072605",title:"USCGC BEAR FY27 Aviation Availability",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-08-08",daysOut:74,awardQtr:"Q1 2027",value:"$350K to $500K",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
-  ],
 };
 
 /* ─────────────────────────────────────────────────────────────────
@@ -1163,8 +1325,6 @@ const PREVIOUSLY_FEATURED = [
   // 'MARAD_2026_NSSV',  // Featured: Week of May 21, 2026
 ];
 
-// Agency colors are intentionally muted — color is reserved for status signals only
-// (Position Now = green, Monitor = orange, Recompete Watch = blue, Too Early = gray)
 const AGENCY_NEUTRAL = '#6b7280';
 const AGENCY_META = {
   'DOT':   { label:'DOT',   full:'Dept. of Transportation',       color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
@@ -1178,16 +1338,21 @@ const AGENCY_META = {
 /* Apply rules */
 Object.keys(AGENCY_DATA).forEach(ag => {
   AGENCY_DATA[ag].forEach(o => {
-    // Rule: Previously featured — demote from Position Now
     if (PREVIOUSLY_FEATURED.includes(o.id)) {
       o.previouslyFeatured = true;
       if (o.positionNow) { o.positionNow = false; o.label = 'Monitor'; }
     }
-    // Rule: Position Now + Recompete + known incumbent = combined label
-    // This makes them appear in both Priority Table AND Recompete Watch
     if (o.positionNow && o.status === 'Recompete' && o.incumbent && o.incumbent !== '') {
       o.label = 'Position Now — Recompete';
       o.isRecompetePositionNow = true;
+    }
+    if (o.positionNow && o.status === 'Follow-on' && o.incumbent && o.incumbent !== '') {
+      o.label = 'Position Now — Follow-on';
+      o.isFollowOn = true;
+    }
+    if (!o.positionNow && o.status === 'Follow-on' && o.incumbent && o.incumbent !== '') {
+      o.label = 'Follow-on Watch';
+      o.isFollowOn = true;
     }
   });
 });
@@ -1217,7 +1382,10 @@ function labelBadge(label, prev) {
     'Position Now':    '<span class="badge badge-green">⬆ Position Now</span>',
     'Monitor':         '<span class="badge badge-orange">◎ Monitor</span>',
     'Recompete Watch': '<span class="badge badge-blue">↺ Recompete Watch</span>',
-    'Too Early':       '<span class="badge badge-gray">⋯ Too Early</span>',
+    'Too Early':                '<span class="badge badge-gray">⋯ Too Early</span>',
+    'Position Now — Recompete': '<span class="badge badge-green" style="background:var(--color-success-bg);color:var(--color-success);border-color:var(--color-success-border);">⬆ Position Now</span> <span class="badge badge-orange" style="font-size:9px;">↺ Recompete</span>',
+    'Position Now — Follow-on': '<span class="badge badge-green" style="background:var(--color-success-bg);color:var(--color-success);border-color:var(--color-success-border);">⬆ Position Now</span> <span class="badge badge-purple" style="font-size:9px;">→ Follow-on</span>',
+    'Follow-on Watch':           '<span class="badge badge-purple">→ Follow-on Watch</span>',
   };
   const b = map[label] || `<span class="badge badge-gray">${label}</span>`;
   const p = prev ? ' <span class="badge badge-gray" style="font-size:10px;opacity:0.7;">Prev. Featured</span>' : '';
@@ -1236,7 +1404,7 @@ function oppCard(o) {
         <div class="opty-card-title">${o.title}</div>
         <div class="opty-card-org">${o.org} ${agencyBadge(CURRENT_AGENCY_FOR_CARD || 'DOT')}</div>
       </div>
-      ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
+      ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
     </div>
     ${labelBadge(o.label, o.previouslyFeatured)} ${clearBadge}
     <div class="opty-fields">
@@ -1330,7 +1498,7 @@ function buildOverview() {
           <div class="agency-ov-name">${ag}</div>
           <div class="agency-ov-full">${meta.full}</div>
         </div>
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-text-faint);flex-shrink:0;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:${meta.color};flex-shrink:0;"></div>
       </div>
       <div class="agency-ov-stats">
         <div class="agency-ov-stat">
@@ -1365,7 +1533,7 @@ function buildOverview() {
           datasets: [{
             label: 'Position Now',
             data: AGENCIES.map(ag => (AGENCY_DATA[ag]||[]).filter(o=>o.positionNow).length),
-            backgroundColor: '#4d9cf8',
+            backgroundColor: AGENCIES.map(ag => AGENCY_META[ag]?.color || '#4d9cf8'),
             borderRadius: 4,
           }]
         },
@@ -1424,7 +1592,7 @@ function buildPriorityTable(filter) {
       <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
       <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
-      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
+      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
     </tr>`;
   }).join('');
 
@@ -1463,7 +1631,7 @@ function buildTimeline(filter) {
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
         ${agencyBadge(ag)}
         ${labelBadge(o.label, o.previouslyFeatured)}
-        ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
+        ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
       </div>
     </div>`;
   }).join('');
@@ -1481,10 +1649,13 @@ function filterTimeline(val, btn) {
 function buildRecompete(filter) {
   recompeteFilter = filter;
   const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
-  const recompetes = opps.filter(o => 
-    o.label === 'Recompete Watch' || 
+  const recompetes = opps.filter(o =>
+    o.label === 'Recompete Watch' ||
     o.label === 'Position Now — Recompete' ||
-    o.isRecompetePositionNow
+    o.label === 'Position Now — Follow-on' ||
+    o.label === 'Follow-on Watch' ||
+    o.isRecompetePositionNow ||
+    o.isFollowOn
   );
   const ag_lookup = {};
   Object.keys(AGENCY_DATA).forEach(k => AGENCY_DATA[k].forEach(o => ag_lookup[o.id] = k));
@@ -1509,9 +1680,9 @@ let agStatusChart = null, agTypeChart = null;
 
 function buildAgencyView(ag) {
   const opps = AGENCY_DATA[ag] || [];
-  const pos  = opps.filter(o => o.positionNow || o.label === 'Position Now — Recompete').length;
+  const pos  = opps.filter(o => o.positionNow).length;
   const mon  = opps.filter(o => o.label === 'Monitor').length;
-  const rec  = opps.filter(o => o.label === 'Recompete Watch' || o.label === 'Position Now — Recompete').length;
+  const rec  = opps.filter(o => o.label === 'Recompete Watch').length;
   const te   = opps.filter(o => o.label === 'Too Early').length;
   const meta = AGENCY_META[ag] || { full: ag, color: '#4d9cf8' };
 
@@ -1558,7 +1729,7 @@ function buildAgencyView(ag) {
       <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
       <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
-      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
+      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
     </tr>`;
   }).join('');
 
