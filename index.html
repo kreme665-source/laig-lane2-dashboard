@@ -820,9 +820,9 @@
 
     <div class="sidebar-footer">
       <div class="cta-box">
-        <strong>Future Requirement Readiness Framework</strong>
-        <p>Drop a comment on LinkedIn to receive the positioning checklist.</p>
-        <span class="cta-keyword">Comment "FORECAST"</span>
+        <strong>See an opportunity in your lane?</strong>
+        <p>The next step is a conversation — not a proposal. A Positioning Diagnostic helps you decide whether and how to pursue before the solicitation drops.</p>
+        <a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I saw an opportunity on the LAIG dashboard and would like to request a Positioning Diagnostic." style="display:inline-block;margin-top:8px;background:#4d9cf8;color:#fff;font-weight:700;font-size:12px;padding:7px 16px;border-radius:999px;text-decoration:none;letter-spacing:0.04em;">Request a Diagnostic</a>
       </div>
     </div>
   </aside>
@@ -963,6 +963,16 @@
       </div>
 
     </div><!-- /content -->
+
+    <!-- ADVISORY BOTTOM BAR -->
+    <div style="flex-shrink:0;background:var(--color-navy,#1e3a5f);border-top:1px solid #2a4a7f;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#3fb950;animation:pulse 1.8s infinite;flex-shrink:0;"></div>
+        <span style="font-size:12px;color:#aac4e8;line-height:1.4;"><strong style="color:#fff;">This is a decision filter, not a database.</strong> If an opportunity aligns with your capabilities, the next step is a conversation — not a proposal.</span>
+      </div>
+      <a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity on the LAIG dashboard I would like to discuss." style="flex-shrink:0;background:#4d9cf8;color:#fff;font-weight:700;font-size:11.5px;padding:7px 18px;border-radius:999px;text-decoration:none;white-space:nowrap;">Request a Diagnostic &rarr;</a>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /app -->
 
@@ -1152,13 +1162,16 @@ const PREVIOUSLY_FEATURED = [
   // 'MARAD_2026_NSSV',  // Featured: Week of May 21, 2026
 ];
 
+// Agency colors are intentionally muted — color is reserved for status signals only
+// (Position Now = green, Monitor = orange, Recompete Watch = blue, Too Early = gray)
+const AGENCY_NEUTRAL = '#6b7280';
 const AGENCY_META = {
-  'DOT':   { label:'DOT',   full:'Dept. of Transportation',       color:'#4d9cf8', dot:'#4d9cf8' },
-  'DOE':   { label:'DOE',   full:'Dept. of Energy',               color:'#3fb950', dot:'#3fb950' },
-  'DoD':   { label:'DoD',   full:'Dept. of Defense',              color:'#bc8cff', dot:'#bc8cff' },
-  'DHS':   { label:'DHS',   full:'Dept. of Homeland Security',    color:'#d29922', dot:'#d29922' },
-  'State': { label:'State', full:'Dept. of State',                color:'#39d0d8', dot:'#39d0d8' },
-  'HHS':   { label:'HHS',   full:'Dept. of Health & Human Svcs', color:'#f85149', dot:'#f85149' },
+  'DOT':   { label:'DOT',   full:'Dept. of Transportation',       color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
+  'DOE':   { label:'DOE',   full:'Dept. of Energy',               color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
+  'DoD':   { label:'DoD',   full:'Dept. of Defense',              color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
+  'DHS':   { label:'DHS',   full:'Dept. of Homeland Security',    color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
+  'State': { label:'State', full:'Dept. of State',                color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
+  'HHS':   { label:'HHS',   full:'Dept. of Health & Human Svcs', color:AGENCY_NEUTRAL, dot:AGENCY_NEUTRAL },
 };
 
 /* Apply rules */
@@ -1203,8 +1216,7 @@ function labelBadge(label, prev) {
   return b + p;
 }
 function agencyBadge(ag) {
-  const m = AGENCY_META[ag] || {color:'#8b949e'};
-  return `<span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;font-size:10px;">${ag}</span>`;
+  return `<span class="badge badge-gray" style="font-size:10px;font-weight:600;">${ag}</span>`;
 }
 function oppCard(o) {
   const days = o.daysOut;
@@ -1216,7 +1228,7 @@ function oppCard(o) {
         <div class="opty-card-title">${o.title}</div>
         <div class="opty-card-org">${o.org} ${agencyBadge(CURRENT_AGENCY_FOR_CARD || 'DOT')}</div>
       </div>
-      ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}
+      ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
     </div>
     ${labelBadge(o.label, o.previouslyFeatured)} ${clearBadge}
     <div class="opty-fields">
@@ -1310,7 +1322,7 @@ function buildOverview() {
           <div class="agency-ov-name">${ag}</div>
           <div class="agency-ov-full">${meta.full}</div>
         </div>
-        <div style="width:10px;height:10px;border-radius:50%;background:${meta.color};flex-shrink:0;"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-text-faint);flex-shrink:0;"></div>
       </div>
       <div class="agency-ov-stats">
         <div class="agency-ov-stat">
@@ -1345,7 +1357,7 @@ function buildOverview() {
           datasets: [{
             label: 'Position Now',
             data: AGENCIES.map(ag => (AGENCY_DATA[ag]||[]).filter(o=>o.positionNow).length),
-            backgroundColor: AGENCIES.map(ag => AGENCY_META[ag]?.color || '#4d9cf8'),
+            backgroundColor: '#4d9cf8',
             borderRadius: 4,
           }]
         },
@@ -1404,7 +1416,7 @@ function buildPriorityTable(filter) {
       <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
       <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
-      <td>${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}</td>
+      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
     </tr>`;
   }).join('');
 
@@ -1443,7 +1455,7 @@ function buildTimeline(filter) {
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
         ${agencyBadge(ag)}
         ${labelBadge(o.label, o.previouslyFeatured)}
-        ${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Position Now</span>' : ''}
+        ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
       </div>
     </div>`;
   }).join('');
@@ -1534,7 +1546,7 @@ function buildAgencyView(ag) {
       <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
       <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
-      <td>${o.positionNow ? '<span class="flag-position"><span class="flag-dot"></span>Now</span>' : ''}</td>
+      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss next steps." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
     </tr>`;
   }).join('');
 
