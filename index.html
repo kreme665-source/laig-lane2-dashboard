@@ -868,6 +868,7 @@
         </div>
         <div class="legend-row">
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div>Position Now</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div>Position Now — Recompete</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-warning)"></div>Monitor</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-primary)"></div>Recompete Watch</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-text-faint)"></div>Too Early</div>
@@ -1177,9 +1178,16 @@ const AGENCY_META = {
 /* Apply rules */
 Object.keys(AGENCY_DATA).forEach(ag => {
   AGENCY_DATA[ag].forEach(o => {
+    // Rule: Previously featured — demote from Position Now
     if (PREVIOUSLY_FEATURED.includes(o.id)) {
       o.previouslyFeatured = true;
       if (o.positionNow) { o.positionNow = false; o.label = 'Monitor'; }
+    }
+    // Rule: Position Now + Recompete + known incumbent = combined label
+    // This makes them appear in both Priority Table AND Recompete Watch
+    if (o.positionNow && o.status === 'Recompete' && o.incumbent && o.incumbent !== '') {
+      o.label = 'Position Now — Recompete';
+      o.isRecompetePositionNow = true;
     }
   });
 });
@@ -1473,7 +1481,11 @@ function filterTimeline(val, btn) {
 function buildRecompete(filter) {
   recompeteFilter = filter;
   const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
-  const recompetes = opps.filter(o => o.label === 'Recompete Watch' || (o.status === 'Recompete' && o.positionNow));
+  const recompetes = opps.filter(o => 
+    o.label === 'Recompete Watch' || 
+    o.label === 'Position Now — Recompete' ||
+    o.isRecompetePositionNow
+  );
   const ag_lookup = {};
   Object.keys(AGENCY_DATA).forEach(k => AGENCY_DATA[k].forEach(o => ag_lookup[o.id] = k));
   CURRENT_AGENCY_FOR_CARD = null;
