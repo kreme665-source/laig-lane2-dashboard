@@ -1509,9 +1509,9 @@ let agStatusChart = null, agTypeChart = null;
 
 function buildAgencyView(ag) {
   const opps = AGENCY_DATA[ag] || [];
-  const pos  = opps.filter(o => o.positionNow).length;
+  const pos  = opps.filter(o => o.positionNow || o.label === 'Position Now — Recompete').length;
   const mon  = opps.filter(o => o.label === 'Monitor').length;
-  const rec  = opps.filter(o => o.label === 'Recompete Watch').length;
+  const rec  = opps.filter(o => o.label === 'Recompete Watch' || o.label === 'Position Now — Recompete').length;
   const te   = opps.filter(o => o.label === 'Too Early').length;
   const meta = AGENCY_META[ag] || { full: ag, color: '#4d9cf8' };
 
