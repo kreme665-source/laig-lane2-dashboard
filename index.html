@@ -1147,11 +1147,11 @@
     </div>
 
     <!-- SOURCE TRUST NOTE -->
-    <div style="flex-shrink:0;padding:5px 24px;background:var(--color-bg);border-top:1px solid var(--color-divider);">
-      <p style="font-size:10.5px;color:var(--color-text-faint);margin:0;line-height:1.5;">
+    <div style="flex-shrink:0;padding:7px 24px;background:var(--color-bg);border-top:1px solid var(--color-divider);">
+      <p style="font-size:11px;color:var(--color-text-muted);margin:0;line-height:1.6;">
         Forecast data compiled from public agency forecast sources and interpreted by LAIG for positioning readiness. 
-        Dates and values should be validated before capture decisions. 
-        <a href="mailto:phil@limitlessaigrowth.com" style="color:var(--color-primary);text-decoration:none;">Contact LAIG</a> to discuss a specific opportunity.
+        Dates and values should be validated before capture decisions. &nbsp;
+        <a href="mailto:phil@limitlessaigrowth.com" style="color:var(--color-primary);text-decoration:none;font-weight:500;">Contact LAIG</a> to discuss a specific opportunity.
       </p>
     </div>
   </div><!-- /main -->
@@ -1437,7 +1437,7 @@ function oppCard(o) {
         <div class="opty-card-title">${o.title}</div>
         <div class="opty-card-org">${o.org} ${agencyBadge(CURRENT_AGENCY_FOR_CARD || 'DOT')}</div>
       </div>
-      ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
+      ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic</a>' : ''}
     </div>
     ${labelBadge(o.label, o.previouslyFeatured)} ${clearBadge}
     <div class="opty-fields">
@@ -1626,8 +1626,9 @@ function buildPriorityTable(filter) {
       <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
       <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
-      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
-    </tr>`;
+      <td>${(o.positionNow || o.label === 'Position Now — Recompete' || o.label === 'Position Now — Follow-on') ? `<a href="mailto:phil@limitlessaigrowth.com?subject=Request Diagnostic - ${encodeURIComponent(o.title.substring(0,60))}&body=Hi Phil, I would like to request a Positioning Diagnostic for: ${encodeURIComponent(o.title)}" style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic</a>` : ''}</td>
+    </tr>
+    ${(o.positionNow || o.label === 'Recompete Watch' || o.label === 'Position Now — Recompete' || o.label === 'Position Now — Follow-on') ? `<tr><td colspan="10" style="padding:4px 12px 10px;"><div style="font-size:10.5px;color:var(--color-text-muted);border-left:3px solid var(--color-primary);padding-left:10px;line-height:1.5;font-style:italic;">${advisoryNote(o).replace(/<[^>]+>/g,'')}</div></td></tr>` : ''}`;
   }).join('');
 
   document.getElementById('nav-priority-badge').textContent =
@@ -1665,7 +1666,7 @@ function buildTimeline(filter) {
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
         ${agencyBadge(ag)}
         ${labelBadge(o.label, o.previouslyFeatured)}
-        ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}
+        ${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic</a>' : ''}
       </div>
     </div>`;
   }).join('');
@@ -1763,7 +1764,7 @@ function buildAgencyView(ag) {
       <td>${o.status === 'Recompete' ? '<span class="badge badge-orange">Recompete</span>' : '<span class="badge badge-blue">New Req.</span>'}</td>
       <td><span class="badge badge-gray" style="font-size:10px;">${o.setAside || '—'}</span> ${clearBadge}</td>
       <td><span class="${o.incumbent ? 'incumbent-known' : ''} incumbent-cell">${o.incumbent || '—'}</span></td>
-      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Start Conversation</a>' : ''}</td>
+      <td>${o.positionNow ? '<a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity flagged Position Now on the LAIG dashboard and would like to discuss." style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic</a>' : ''}</td>
     </tr>`;
   }).join('');
 
