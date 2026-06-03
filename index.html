@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- LAIG Pipeline Diagnostic | Version: 2026-06-03 | Advisory lead magnet, not SaaS -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -1030,6 +1031,15 @@
           <span class="filter-label">Agency:</span>
           <button class="filter-chip active" onclick="filterPriority('ALL',this)">All</button>
         </div>
+        <!-- STATUS DEFINITIONS -->
+        <div style="background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;padding:12px 16px;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px 24px;">
+          <div><span style="font-size:11px;font-weight:700;color:var(--color-success);">⬆ Position Now</span><span style="font-size:11px;color:var(--color-text-muted);"> — Start positioning conversations now, before the solicitation drops.</span></div>
+          <div><span style="font-size:11px;font-weight:700;color:var(--color-warning);">↺ Recompete Watch</span><span style="font-size:11px;color:var(--color-text-muted);"> — Assess incumbent advantage, teaming, or subcontracting angle.</span></div>
+          <div><span style="font-size:11px;font-weight:700;color:var(--color-warning);">◎ Monitor</span><span style="font-size:11px;color:var(--color-text-muted);"> — Track, but wait for timing or scope clarity before acting.</span></div>
+          <div><span style="font-size:11px;font-weight:700;color:var(--color-text-faint);">⋯ Too Early</span><span style="font-size:11px;color:var(--color-text-muted);"> — Watch only. Do not invest capture energy yet.</span></div>
+          <div><span style="font-size:11px;font-weight:700;color:var(--color-success);">⬆ Position Now — Recompete</span><span style="font-size:11px;color:var(--color-text-muted);"> — Urgent AND competitive. Incumbent advantage likely. Act now.</span></div>
+          <div><span style="font-size:11px;font-weight:700;color:var(--color-success);">⬆ Position Now — Follow-on</span><span style="font-size:11px;color:var(--color-text-muted);"> — May not be competed. Teaming with incumbent is the play.</span></div>
+        </div>
         <div class="legend-row">
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-success)"></div>Position Now</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--color-warning)"></div>Monitor</div>
@@ -1136,6 +1146,14 @@
       <a href="mailto:phil@limitlessaigrowth.com?subject=Positioning Diagnostic Request&body=Hi Phil, I found an opportunity on the LAIG dashboard I would like to discuss." style="flex-shrink:0;background:#4d9cf8;color:#fff;font-weight:700;font-size:11.5px;padding:7px 18px;border-radius:999px;text-decoration:none;white-space:nowrap;">Request a Diagnostic &rarr;</a>
     </div>
 
+    <!-- SOURCE TRUST NOTE -->
+    <div style="flex-shrink:0;padding:5px 24px;background:var(--color-bg);border-top:1px solid var(--color-divider);">
+      <p style="font-size:10.5px;color:var(--color-text-faint);margin:0;line-height:1.5;">
+        Forecast data compiled from public agency forecast sources and interpreted by LAIG for positioning readiness. 
+        Dates and values should be validated before capture decisions. 
+        <a href="mailto:phil@limitlessaigrowth.com" style="color:var(--color-primary);text-decoration:none;">Contact LAIG</a> to discuss a specific opportunity.
+      </p>
+    </div>
   </div><!-- /main -->
 </div><!-- /app -->
 
@@ -1394,6 +1412,21 @@ function labelBadge(label, prev) {
 function agencyBadge(ag) {
   return `<span class="badge badge-gray" style="font-size:10px;font-weight:600;">${ag}</span>`;
 }
+function advisoryNote(o) {
+  const notes = {
+    'Position Now':             'Positioning conversations should start now — not when the solicitation drops.',
+    'Position Now — Recompete': 'Incumbent likely has a structural advantage. Relationship-building and teaming assessment needed before the RFP lands.',
+    'Position Now — Follow-on': 'This may not go to full competition. If the work aligns with your capabilities, the play is a teaming conversation with the incumbent — not a proposal.',
+    'Recompete Watch':          'Assess the incumbent advantage and whether a teaming or subcontracting angle is more viable than competing as prime.',
+    'Follow-on Watch':          'Watch for whether this gets competed. If not, position for a subcontracting conversation with the likely awardee.',
+    'Monitor':                  'Not enough urgency for a diagnostic yet. Monitor until the solicitation window tightens.',
+    'Too Early':                'Watch only. Do not invest capture energy until the forecast window narrows.',
+  };
+  const note = notes[o.label];
+  if (!note) return '';
+  return `<div style="margin-top:8px;padding:8px 10px;background:var(--color-surface-2);border-left:3px solid var(--color-primary);border-radius:0 4px 4px 0;font-size:11px;color:var(--color-text-muted);line-height:1.5;">${note}</div>`;
+}
+
 function oppCard(o) {
   const days = o.daysOut;
   const clearBadge = o.clearance && o.clearance !== 'None' && o.clearance !== ''
@@ -1416,6 +1449,7 @@ function oppCard(o) {
       <div class="opty-field"><span class="opty-field-label">Set-Aside</span><span class="opty-field-value" style="font-size:10px;">${o.setAside || '—'}</span></div>
       ${o.incumbent ? `<div class="opty-field" style="grid-column:1/-1;"><span class="opty-field-label">Incumbent</span><span class="opty-field-value incumbent-known">${o.incumbent}</span></div>` : ''}
     </div>
+    ${advisoryNote(o)}
   </div>`;
 }
 
