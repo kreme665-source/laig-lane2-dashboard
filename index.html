@@ -1607,8 +1607,16 @@ function buildPriorityTable(filter) {
   priorityFilter = filter;
   const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
   const sorted = [...opps].sort((a,b) => {
-    const ord = {'Position Now':0,'Monitor':1,'Recompete Watch':2,'Too Early':3};
-    return (ord[a.label]??4) - (ord[b.label]??4) || b.valueRank - a.valueRank || a.daysOut - b.daysOut;
+    const ord = {
+      'Position Now':0,
+      'Position Now — Recompete':1,
+      'Position Now — Follow-on':2,
+      'Monitor':3,
+      'Follow-on Watch':4,
+      'Recompete Watch':5,
+      'Too Early':6
+    };
+    return (ord[a.label]??7) - (ord[b.label]??7) || a.daysOut - b.daysOut || b.valueRank - a.valueRank;
   });
 
   document.getElementById('priority-tbody').innerHTML = sorted.map(o => {
@@ -1691,7 +1699,11 @@ function buildRecompete(filter) {
     o.label === 'Follow-on Watch' ||
     o.isRecompetePositionNow ||
     o.isFollowOn
-  );
+  ).sort((a,b) => {
+    // Position Now variants first, then by days out ascending
+    const posNow = (o) => o.label.startsWith('Position Now') ? 0 : 1;
+    return posNow(a) - posNow(b) || a.daysOut - b.daysOut;
+  });
   const ag_lookup = {};
   Object.keys(AGENCY_DATA).forEach(k => AGENCY_DATA[k].forEach(o => ag_lookup[o.id] = k));
   CURRENT_AGENCY_FOR_CARD = null;
@@ -1747,8 +1759,16 @@ function buildAgencyView(ag) {
 
   // Table
   const sorted = [...opps].sort((a,b) => {
-    const ord = {'Position Now':0,'Monitor':1,'Recompete Watch':2,'Too Early':3};
-    return (ord[a.label]??4)-(ord[b.label]??4) || b.valueRank-a.valueRank || a.daysOut-b.daysOut;
+    const ord = {
+      'Position Now':0,
+      'Position Now — Recompete':1,
+      'Position Now — Follow-on':2,
+      'Monitor':3,
+      'Follow-on Watch':4,
+      'Recompete Watch':5,
+      'Too Early':6
+    };
+    return (ord[a.label]??7)-(ord[b.label]??7) || a.daysOut-b.daysOut || b.valueRank-a.valueRank;
   });
   document.getElementById('agency-tbody').innerHTML = sorted.map(o => {
     const dStr = o.daysOut === 999 ? 'TBD' : o.daysOut + 'd';
