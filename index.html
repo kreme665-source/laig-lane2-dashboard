@@ -913,21 +913,6 @@
           <span class="filter-label">Agency:</span>
           <button class="filter-chip active" onclick="filterRecompete('ALL',this)">All</button>
         </div>
-        <div class="view" id="view-sam">
-          <div style="padding:16px 0 8px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-              <div>
-                <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov — Sources Sought &amp; RFI</h2>
-                <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Early market signals before the RFP drops. Last pulled: Aug 13, 2026.</p>
-              </div>
-              <div style="font-size:11px;color:var(--color-text-muted);text-align:right;line-height:1.8;">15 active notices<br>
-                <span style="color:#e67e22;font-weight:700;">&#9632;</span> Sources Sought &nbsp;
-                <span style="color:#2980b9;font-weight:700;">&#9632;</span> RFI
-              </div>
-            </div>
-            <div id="sam-notices-list"></div>
-          </div>
-        </div>
         <div class="card" style="margin-bottom:16px;padding:16px 20px;">
           <div style="display:flex;gap:14px;align-items:flex-start;">
             <div style="width:36px;height:36px;border-radius:50%;background:var(--color-warning-bg);border:1px solid var(--color-warning-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -940,6 +925,23 @@
           </div>
         </div>
         <div class="opty-grid" id="recompete-grid"></div>
+      </div>
+
+        <!-- ══ SAM.GOV ══ -->
+      <div class="view" id="view-sam">
+        <div style="padding:16px 0 8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <div>
+              <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov — Sources Sought &amp; RFI</h2>
+              <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Early market signals before the RFP drops. Last pulled: <span id="sam-last-pulled">—</span>.</p>
+            </div>
+            <div style="font-size:11px;color:var(--color-text-muted);text-align:right;line-height:1.8;"><span id="sam-count">—</span><br>
+              <span style="color:#e67e22;font-weight:700;">&#9632;</span> Sources Sought &nbsp;
+              <span style="color:#2980b9;font-weight:700;">&#9632;</span> RFI
+            </div>
+          </div>
+          <div id="sam-notices-list"></div>
+        </div>
       </div>
 
       <!-- ══ SINGLE AGENCY VIEW ══ -->
@@ -1078,6 +1080,10 @@ const AGENCY_DATA = {
   ],
 };
 
+  /* SAM_LAST_PULLED_START */
+  const SAM_LAST_PULLED = 'Aug 12, 2026';
+  /* SAM_LAST_PULLED_END */
+  /* SAM_NOTICES_START */
   const SAM_NOTICES = [
     {solNum:"FA440726QSK05",title:"Joint Range Extension (JRE) system for Scott AFB, IL",agency:"FA4407  375 CONS LGC",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-17",daysUntilClose:4,samLink:"https://sam.gov/opp/ea4a42039ff84cec89ef3a42cdb8a259/view",note:""},
     {solNum:"JTF-Sentinel-0001",title:"Sentinel Program Infrastructure Partnering Program",agency:"W071 ENDIST SEATTLE",naics:"541611",type:"Sources Sought",postedDate:"2026-08-05",closeDate:"2026-08-18",daysUntilClose:5,samLink:"https://sam.gov/opp/f5c3351f96c64dba99b345f19bd4f3a2/view",note:""},
@@ -1095,6 +1101,7 @@ const AGENCY_DATA = {
     {solNum:"FEMA-RFI(PA-TAC-VI)",title:"Request for Information - FEMA Public-Assistance Technical Assistance (PA-TAC) VI Contract",agency:"COMMUNITY SURVIVOR  ASSISTANCE SEC",naics:"541611",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-30",daysUntilClose:48,samLink:"https://sam.gov/opp/2395b2cfa9a4455dbc722b1b7c336458/view",note:""},
     {solNum:"36C10B26Q0625",title:"DA01--VA-26-00071371 Memorials Integration Services and Innovation",agency:"TECHNOLOGY ACQUISITION CENTER NJ (36C10B)",naics:"541512",type:"Sources Sought",postedDate:"2026-08-07",closeDate:"2026-10-06",daysUntilClose:54,samLink:"https://sam.gov/opp/5632a898d02a4efe85655ad58562295c/view",note:""}
   ];
+  /* SAM_NOTICES_END */
 
 
 /* ─────────────────────────────────────────────────────────────────
@@ -1369,15 +1376,35 @@ function oppMailto(o){
     var body=encodeURIComponent('Hi Phil,\n\nI found this opportunity on the LAIG Federal Pipeline Dashboard and want to know if there is still time to position.\n\nOpportunity: '+title+'\n'+(org?'Organization: '+org+'\n':'')+'Solicitation Date: '+sol+'\nNAICS: '+naics+'\nValue: '+value+'\nType: '+type+'\nSet-Aside: '+sa+'\nIncumbent: '+inc+'\nDays Out: '+days+'\n'+(lbl?'Status: '+lbl+'\n':'')+'\nPlease let me know your availability. I understand sessions are held via Google Meet.\n\nThank you');
     return 'mailto:phil@limitlessaigrowth.com?subject='+subj+'&body='+body;
   }
+  /* Stable anchor id from a solicitation number, e.g. 36C260-27-AP-0398 -> notice-36C260-27-AP-0398 */
+  function noticeAnchor(solNum) {
+    return 'notice-' + String(solNum || '').trim().replace(/[^A-Za-z0-9._-]+/g, '-');
+  }
+
   function renderSamNotices() {
     var el = document.getElementById('sam-notices-list');
     if (!el) return;
     var t = new Date(); t.setHours(0,0,0,0);
-    var tc = {'Sources Sought':'#e67e22','RFI':'#2980b9'};
+    var tc = {'Sources Sought':'#e67e22','RFI':'#2980b9','Presolicitation':'#8e44ad','Special Notice':'#2980b9'};
+
+    var stamp = document.getElementById('sam-last-pulled');
+    if (stamp) stamp.textContent = (typeof SAM_LAST_PULLED !== 'undefined' ? SAM_LAST_PULLED : '—');
+
     if (!SAM_NOTICES || !SAM_NOTICES.length) {
       el.innerHTML = '<p style="color:var(--color-text-muted);padding:20px;">No active notices. Check back after next update.</p>';
+      var c0 = document.getElementById('sam-count'); if (c0) c0.textContent = '0 notices';
       return;
     }
+
+    var openCount = 0;
+    SAM_NOTICES.forEach(function(n){
+      var cd = n.closeDate ? new Date(n.closeDate+'T00:00:00') : null;
+      if (!cd || Math.round((cd-t)/86400000) >= 0) openCount++;
+    });
+    var cEl = document.getElementById('sam-count');
+    if (cEl) cEl.textContent = openCount + ' active notice' + (openCount===1?'':'s') +
+      (SAM_NOTICES.length>openCount ? ' · '+(SAM_NOTICES.length-openCount)+' closed' : '');
+
     el.innerHTML = SAM_NOTICES.map(function(n) {
       var cd = n.closeDate ? new Date(n.closeDate+'T00:00:00') : null;
       var dl = cd ? Math.round((cd-t)/86400000) : 999;
@@ -1388,7 +1415,7 @@ function oppMailto(o){
       var dcol = closed?'#888':(urgent?'#c0392b':'var(--color-text-muted)');
       var urgBadge = urgent && !closed ? '<span style="background:#c0392b;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSING SOON</span>' : '';
       var clsBadge = closed ? '<span style="background:#888;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSED</span>' : '';
-      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;margin-bottom:6px;background:var(--color-surface);border-radius:6px;border-left:3px solid '+col+';opacity:'+(closed?'0.5':'1')+';\">' +
+      return '<div id="'+noticeAnchor(n.solNum)+'" class="sam-notice" style="scroll-margin-top:24px;display:flex;align-items:flex-start;gap:12px;padding:10px 12px;margin-bottom:6px;background:var(--color-surface);border-radius:6px;border-left:3px solid '+col+';opacity:'+(closed?'0.5':'1')+';">' +
         '<div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:3px;">' +
         '<span style="font-size:10px;font-weight:700;color:'+col+';">'+n.type+'</span>'+urgBadge+clsBadge+
         '<span style="font-size:10px;color:var(--color-text-muted);">NAICS '+n.naics+'</span></div>' +
@@ -1396,12 +1423,28 @@ function oppMailto(o){
         '<div style="font-size:11px;color:var(--color-text-muted);">'+n.agency+'</div>' +
         (n.note ? '<div style="font-size:10px;color:#e67e22;margin-top:2px;font-style:italic;">'+n.note+'</div>' : '') +
         (n.solNum ? '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">'+n.solNum+'</div>' : '')+'</div>' +
-        '<div style="flex-shrink:0;text-align:right;min-width:80px;">' +
+        '<div style="flex-shrink:0;text-align:right;min-width:96px;">' +
         '<div style="font-size:13px;font-weight:700;color:'+dcol+';">'+dtext+'</div>' +
+        (n.postedDate ? '<div style="font-size:10px;color:var(--color-text-muted);">Posted '+n.postedDate.substring(5)+'</div>' : '') +
         (n.closeDate ? '<div style="font-size:10px;color:var(--color-text-muted);">Closes '+n.closeDate.substring(5)+'</div>' : '') +
-        (n.samLink ? '<a href="'+n.samLink+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:#4d9cf8;text-decoration:none;">SAM.gov \u2197</a>' : '') +'</div></div>';
+        (n.samLink ? '<a href="'+n.samLink+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:#4d9cf8;text-decoration:none;">SAM.gov ↗</a>' : '') +'</div></div>';
     }).join('');
+
+    highlightNoticeFromHash();
   }
+
+  /* Deep-link support: /#notice-<solicitation-number> opens SAM view and highlights the row */
+  function highlightNoticeFromHash() {
+    var h = (window.location.hash || '').replace(/^#/, '');
+    if (!h.indexOf) return;
+    if (h.indexOf('notice-') !== 0) return;
+    var row = document.getElementById(h);
+    if (!row) return;
+    row.style.outline = '2px solid #4d9cf8';
+    row.style.background = 'rgba(77,156,248,0.10)';
+    if (row.scrollIntoView) row.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
   function buildPriorityTable(filter) {
   priorityFilter = filter;
   const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
@@ -1682,6 +1725,16 @@ function initDashboard() {
   buildAgencyTabs();
   buildOverview();
   renderSamNotices();
+  /* If the inbound link points at a specific SAM notice, open that view and jump to it. */
+  if ((window.location.hash || '').indexOf('#notice-') === 0) {
+    showView('sam');
+  }
+  window.addEventListener('hashchange', function(){
+    if ((window.location.hash || '').indexOf('#notice-') === 0) {
+      showView('sam');
+      highlightNoticeFromHash();
+    }
+  });
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDashboard);
