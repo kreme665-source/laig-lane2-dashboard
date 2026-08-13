@@ -42,6 +42,26 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+
+# TIMEZONE — read this before changing anything date-related.
+#
+# GitHub Actions runners are UTC. The scheduled run fires at 00:15 UTC, which is
+# 19:15 the PREVIOUS DAY in US Central. Using date.today() on the runner would
+# therefore stamp the dashboard with tomorrow's date every single night — the
+# reader in Texas sees "Last pulled: Aug 14" at 7:15pm on Aug 13.
+#
+# That is almost certainly what produced the original "Last pulled: Aug 13" on a
+# file built Aug 12. It looks like a typo and is not one; it is a UTC/local slip.
+#
+# Every date in this script — the freshness stamp, retention cutoffs, validation
+# thresholds, and the API query window — is therefore computed in the audience's
+# timezone, not the runner's.
+LOCAL_TZ = ZoneInfo("America/Chicago")
+
+
+def local_today():
+    return datetime.now(LOCAL_TZ).date()
 
 API_BASE = "https://api.sam.gov/opportunities/v2/search"
 
@@ -126,7 +146,13 @@ def fetch_all(api_key, posted_from, posted_to):
 
 
 def norm_date(v):
-    """SAM returns ISO-ish stamps; we want plain YYYY-MM-DD or ''."""
+    """SAM returns ISO-ish stamps; we want plain YYYY-MM-DD or ''.
+
+    Returns '' on anything unparseable. Callers must treat '' as a defect and
+    not as 'no deadline' — see validate_notice(). Silently accepting a blank
+    close date is how a notice ends up never showing CLOSED and never ageing
+    out of retention.
+    """
     if not v:
         return ""
     s = str(v)[:10]
@@ -135,6 +161,99 @@ def norm_date(v):
         return s
     except ValueError:
         return ""
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Date validation
+#
+# A wrong date on this dashboard is worse than a missing notice: the outbound
+# emails quote closing dates, so a transcription slip (the classic 07->08 month
+# error) makes the email look fabricated. Dates now come straight from the API
+# rather than being retyped, which removes that class at the source — but the
+# seed data predates that, and API payloads are not guaranteed sane. So every
+# record is checked before it is allowed into index.html.
+#
+#   ERROR    -> record is quarantined (dropped) and reported
+#   WARNING  -> record is published but flagged in the log
+# ─────────────────────────────────────────────────────────────────────────────
+MAX_FUTURE_YEARS = 3
+MAX_OPEN_SPAN_DAYS = 400
+
+
+def validate_notice(n, today):
+    """Return (errors, warnings) for one notice."""
+    errors, warnings = [], []
+    sol = n.get("solNum") or "<no solicitation number>"
+    p_raw, c_raw = n.get("postedDate", ""), n.get("closeDate", "")
+
+    if not p_raw:
+        warnings.append(f"{sol}: missing/unparseable postedDate")
+    if not c_raw:
+        errors.append(f"{sol}: missing/unparseable closeDate — cannot compute "
+                      f"a closing countdown or age it out of retention")
+        return errors, warnings
+
+    try:
+        cd = datetime.strptime(c_raw, "%Y-%m-%d").date()
+    except ValueError:
+        errors.append(f"{sol}: closeDate '{c_raw}' is not a real date")
+        return errors, warnings
+
+    pd = None
+    if p_raw:
+        try:
+            pd = datetime.strptime(p_raw, "%Y-%m-%d").date()
+        except ValueError:
+            warnings.append(f"{sol}: postedDate '{p_raw}' is not a real date")
+
+    # Impossible orderings — the signature of a month/day transcription slip.
+    if pd and pd > cd:
+        errors.append(
+            f"{sol}: posted {p_raw} is AFTER close {c_raw} "
+            f"({(pd - cd).days}d) — likely a month/day typo")
+
+    if pd and pd > today + timedelta(days=2):
+        errors.append(
+            f"{sol}: postedDate {p_raw} is in the future (today {today}) — "
+            f"check the build clock or a mistyped month")
+
+    if cd.year > today.year + MAX_FUTURE_YEARS:
+        errors.append(f"{sol}: closeDate {c_raw} is more than "
+                      f"{MAX_FUTURE_YEARS} years out — likely a mistyped year")
+
+    if pd and (cd - pd).days > MAX_OPEN_SPAN_DAYS:
+        warnings.append(f"{sol}: open for {(cd - pd).days}d "
+                        f"({p_raw} -> {c_raw}) — unusually long, verify")
+
+    # Freshly posted but already closed: only reachable via a bad date.
+    if pd and cd < today and pd >= today - timedelta(days=LOOKBACK_DAYS):
+        warnings.append(
+            f"{sol}: posted {p_raw} but closed {c_raw} — newly posted yet "
+            f"already expired, verify the month")
+
+    return errors, warnings
+
+
+def audit_dates(notices, today, label):
+    """Validate a list of notices. Returns (clean, dropped)."""
+    clean, dropped, all_warn = [], [], []
+    for n in notices:
+        errs, warns = validate_notice(n, today)
+        all_warn.extend(warns)
+        if errs:
+            dropped.append((n, errs))
+        else:
+            clean.append(n)
+
+    print(f"\n--- date audit ({label}): {len(notices)} checked ---")
+    if not dropped and not all_warn:
+        print("    no date anomalies")
+    for w in all_warn:
+        print(f"    WARN  {w}")
+    for n, errs in dropped:
+        for e in errs:
+            print(f"    DROP  {e}")
+    return clean, dropped
 
 
 def classify(rec):
@@ -215,9 +334,16 @@ def main():
             "SAM_API_KEY is not set. In GitHub Actions this comes from a "
             "repository secret. Never hardcode the key.")
 
-    today = date.today()
+    today = local_today()
+    runner_today = date.today()
+    if today != runner_today:
+        print(f"note: runner clock is {runner_today} (UTC), audience date is "
+              f"{today} (US Central). Using the audience date.")
+
     posted_from = (today - timedelta(days=LOOKBACK_DAYS)).strftime("%m/%d/%Y")
-    posted_to = today.strftime("%m/%d/%Y")
+    # +1 day so notices posted "today" in UTC are not missed when the local
+    # date is still yesterday.
+    posted_to = (today + timedelta(days=1)).strftime("%m/%d/%Y")
 
     html = open(INDEX, encoding="utf-8").read()
     existing = read_existing(html)
@@ -281,6 +407,20 @@ def main():
             except ValueError:
                 pass
         merged.append(n)
+
+    # ---- date audit: quarantine anything with an impossible date ----
+    # Runs over the MERGED list so legacy seed records are checked too, not just
+    # what the API just returned.
+    merged, quarantined = audit_dates(merged, today, "merged feed")
+    if quarantined:
+        share = len(quarantined) / max(1, len(merged) + len(quarantined))
+        print(f"\n{len(quarantined)} record(s) quarantined "
+              f"({share:.0%} of the feed)")
+        if share > 0.20:
+            raise SystemExit(
+                "ABORT: more than 20% of notices failed date validation. "
+                "That is a systemic problem, not a one-off bad record — "
+                "index.html left unchanged.")
 
     merged.sort(key=lambda n: (n.get("closeDate") or "9999-99-99",
                                n.get("title") or ""))
