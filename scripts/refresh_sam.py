@@ -81,6 +81,39 @@ NAICS_SCOPE = {
     "541715",  # R&D in Physical, Engineering & Life Sciences
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# EXCLUDED AGENCIES — conflict-of-interest screen
+#
+# DHS is excluded entirely: Phil is engaged with that agency, so it must not
+# appear anywhere prospect-facing. Matching on the string "DHS" alone is not
+# enough — DHS notices surface under component names that never say "DHS"
+# (Coast Guard, TSA, FEMA, CISA, Secret Service, CBP, ICE, USCIS), and under
+# contracting offices like "AVIATION LOGISTICS CENTER" that are USCG.
+#
+# Three independent signals are checked, and any one of them excludes:
+#   1. agency / office name keywords
+#   2. title keywords (catches a DHS requirement bought through GSA)
+#   3. solicitation number prefix — DHS components use the 70xx family
+#      (70Z = USCG, 70T = TSA, 70B = CBP, 70RTAC/70RSAT = DHS HQ, etc.)
+#
+# To re-enable DHS later, empty EXCLUDED_AGENCY_KEYWORDS and
+# EXCLUDED_SOLNUM_PREFIXES. Do not do so without Phil's explicit say-so.
+# ─────────────────────────────────────────────────────────────────────────────
+EXCLUDED_AGENCY_KEYWORDS = [
+    "DHS", "HOMELAND SECURITY", "HOMELAND",
+    "COAST GUARD", "USCG", "CG-", "SFLC", "AVIATION LOGISTICS CENTER",
+    "TRANSPORTATION SECURITY", "TSA",
+    "SECRET SERVICE", "USSS",
+    "CUSTOMS AND BORDER", "CBP",
+    "IMMIGRATION AND CUSTOMS", "IMMIGRATION & CUSTOMS", "ICE/", "HSI",
+    "CITIZENSHIP AND IMMIGRATION", "USCIS",
+    "FEDERAL EMERGENCY MANAGEMENT", "FEMA",
+    "CYBERSECURITY AND INFRASTRUCTURE", "CISA",
+    "FEDERAL LAW ENFORCEMENT TRAINING", "FLETC",
+    "FEDERAL PROTECTIVE SERVICE",
+]
+EXCLUDED_SOLNUM_PREFIXES = ("70",)
+
 PTYPES = "r,s"        # r = Sources Sought, s = Special Notice (where most RFIs live)
 LOOKBACK_DAYS = 7     # only newly posted notices; retention preserves the rest
 RETENTION_DAYS = 45   # keep closed notices this long so old email links resolve
@@ -234,6 +267,38 @@ def validate_notice(n, today):
     return errors, warnings
 
 
+def excluded_reason(n):
+    """Return why this notice is screened out, or None if it may be published."""
+    agency = (n.get("agency") or "").upper()
+    title = (n.get("title") or "").upper()
+    sol = (n.get("solNum") or "").upper().strip()
+
+    for kw in EXCLUDED_AGENCY_KEYWORDS:
+        if kw in agency:
+            return f"agency '{n.get('agency')}' matches excluded keyword '{kw}'"
+    for kw in EXCLUDED_AGENCY_KEYWORDS:
+        # Word-boundary on the title so "ICE" does not match "SERVICE".
+        if re.search(r"(?<![A-Z0-9])" + re.escape(kw) + r"(?![A-Z0-9])", title):
+            return f"title matches excluded keyword '{kw}'"
+    if sol.startswith(EXCLUDED_SOLNUM_PREFIXES):
+        return f"solicitation number '{sol}' is in the DHS 70xx family"
+    return None
+
+
+def screen_excluded(notices, label):
+    """Drop excluded-agency notices. Returns (kept, removed)."""
+    kept, removed = [], []
+    for n in notices:
+        r = excluded_reason(n)
+        (removed if r else kept).append((n, r) if r else n)
+    print(f"\n--- agency screen ({label}): {len(notices)} checked ---")
+    if not removed:
+        print("    nothing excluded")
+    for n, r in removed:
+        print(f"    EXCLUDE  {n.get('solNum')}: {r}")
+    return kept, removed
+
+
 def audit_dates(notices, today, label):
     """Validate a list of notices. Returns (clean, dropped)."""
     clean, dropped, all_warn = [], [], []
@@ -304,12 +369,54 @@ def read_existing(html):
             "/* SAM_NOTICES_START */ ... /* SAM_NOTICES_END */")
     block = m.group(0)
     body = block[block.index("["): block.rindex("]") + 1]
-    jsonish = re.sub(r"([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)\s*:", r'\1"\2":', body)
-    jsonish = re.sub(r",\s*\]", "]", jsonish)
     try:
-        return json.loads(jsonish)
+        return json.loads(quote_js_keys(body))
     except json.JSONDecodeError as e:
         raise SystemExit(f"Could not parse existing SAM_NOTICES: {e}")
+
+
+def quote_js_keys(js):
+    """Convert a JS object-literal array to strict JSON.
+
+    Written as a character walk rather than a regex on purpose. The obvious
+    regex — re.sub(r'([{,]\\s*)(\\w+)\\s*:', ...) — silently corrupts any record
+    whose STRING VALUE contains a comma followed by a word and a colon, e.g.
+
+        title:"Sources Sought, Phase: 2"
+                            ^^^^^^^^ regex rewrites this as a key
+
+    That produces malformed JSON, or worse, plausible-but-wrong data. Real SAM
+    titles contain exactly this pattern. So: track whether we are inside a
+    string literal, and only quote keys when we are not.
+    """
+    out, i, n = [], 0, len(js)
+    in_str = False
+    quote = ""
+    while i < n:
+        c = js[i]
+        if in_str:
+            out.append(c)
+            if c == "\\" and i + 1 < n:      # preserve escape sequences intact
+                out.append(js[i + 1]); i += 2; continue
+            if c == quote:
+                in_str = False
+            i += 1
+            continue
+        if c in "\"'":
+            in_str, quote = True, c
+            out.append('"')                   # normalise single quotes to double
+            i += 1
+            continue
+        # outside a string: an identifier immediately followed by ':' is a key
+        m = re.match(r"([A-Za-z_$][A-Za-z0-9_$]*)\s*:", js[i:])
+        if m and (not out or out[-1].strip()[-1:] in "{,[" or out[-1] in "{,"):
+            out.append('"' + m.group(1) + '":')
+            i += m.end()
+            continue
+        out.append(c)
+        i += 1
+    txt = "".join(out)
+    return re.sub(r",(\s*[\]}])", r"\1", txt)   # drop trailing commas
 
 
 def js_array(notices):
@@ -407,6 +514,10 @@ def main():
             except ValueError:
                 pass
         merged.append(n)
+
+    # ---- conflict screen: runs over the MERGED list so already-seeded DHS
+    # records are purged too, not just newly pulled ones ----
+    merged, excluded = screen_excluded(merged, "merged feed")
 
     # ---- date audit: quarantine anything with an impossible date ----
     # Runs over the MERGED list so legacy seed records are checked too, not just
