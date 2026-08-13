@@ -1646,9 +1646,17 @@ function toggleTheme() {
 /* ─────────────────────────────────────────────────────────────────
    INIT
 ───────────────────────────────────────────────────────────────── */
-document.getElementById('as-of-date').textContent = `As of ${DATA_AS_OF}`;
-buildAgencyTabs();
-buildOverview();
+function initDashboard() {
+  var asOf = document.getElementById('as-of-date');
+  if (asOf) asOf.textContent = 'As of ' + DATA_AS_OF;
+  buildAgencyTabs();
+  buildOverview();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDashboard);
+} else {
+  initDashboard();
+}
 </script>
 </body>
 </html>
