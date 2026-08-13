@@ -836,7 +836,7 @@
         <span class="page-subtitle" id="page-subtitle">LAIG Federal Pipeline Diagnostic · Multi-Agency Intelligence</span>
       </div>
       <div class="topbar-right">
-        <span class="as-of" id="as-of-date">As of Aug 11, 2026</span>
+        <span class="as-of" id="as-of-date">As of Aug 13, 2026</span>
         <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
@@ -917,14 +917,13 @@
           <div style="padding:16px 0 8px;">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
               <div>
-                <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov Live Notices</h2>
-                <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Sources Sought · Presolicitation · Special Notice — sorted by closing date soonest first.</p>
+                <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov — Sources Sought &amp; RFI</h2>
+                <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Early market signals before the RFP drops. Last pulled: August 13, 2026. Sorted by closing date.</p>
               </div>
-              <div style="font-size:11px;color:var(--color-text-muted);text-align:right;line-height:1.6;">
-                Last pulled: August 13, 2026 &nbsp;|&nbsp; Scope: NAICS 541xxx / 541330<br>
-                <span style="color:#e67e22;font-weight:700;">■</span> Sources Sought &nbsp;
-                <span style="color:#8e44ad;font-weight:700;">■</span> Presolicitation &nbsp;
-                <span style="color:#2980b9;font-weight:700;">■</span> Special Notice
+              <div style="font-size:11px;color:var(--color-text-muted);text-align:right;line-height:1.8;">
+                14 active notices &nbsp;|&nbsp; NAICS 541xxx / 541330<br>
+                <span style="color:#e67e22;font-weight:700;">&#9632;</span> Sources Sought &nbsp;
+                <span style="color:#2980b9;font-weight:700;">&#9632;</span> RFI
               </div>
             </div>
             <div id="sam-notices-list"></div>
@@ -1002,12 +1001,11 @@
 const AGENCY_DATA = {
   "State": [],
   "DOT": [
-    {id:"DOT_WI_FLAP_SHLBY_LACRS_1__0",title:"WI FLAP SHLBY LACRS(1)",org:"Federal Highway Administration",status:"",solDate:"2026-10-10",daysOut:61,awardQtr:"",value:"$500K - $999K",valueRank:0,naics:"237310",naicsDesc:"",setAside:"Small Business Set Aside - Total",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"",location:"Wisconsin",pocName:"C. Shawn Long",pocEmail:"EFLHD.Contracts@dot.gov"},
-    {id:"DOT_CO_NP_ROMO_407_1__Holzwar_1",title:"CO NP ROMO 407(1) Holzwarth Culvert",org:"Federal Highway Administration",status:"",solDate:"2026-10-26",daysOut:77,awardQtr:"",value:"$1M - $1.9M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"",location:"Colorado",pocName:"Denise Martinez",pocEmail:"denise.martinez@dot.gov"},
-    {id:"DOT_MOTUS_Unified_Registratio_2",title:"MOTUS Unified Registration System",org:"Federal Motor Carrier Safety Administration",status:"",solDate:"2026-12-17",daysOut:129,awardQtr:"",value:"$5M - $9.9M",valueRank:0,naics:"541519",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"",location:"District of Columbia",pocName:"Supreet Kaur",pocEmail:"Supreet.Kaur@dot.gov"},
-    {id:"DOT_NC_ERFO_FS_NFNC811_2024_3_3",title:"NC ERFO FS NFNC811 2024-3(2)",org:"Federal Highway Administration",status:"",solDate:"2027-03-01",daysOut:203,awardQtr:"",value:"$100M - $249M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"",location:"North Carolina",pocName:"C. Shawn Long",pocEmail:"EFLHD.Contracts@dot.gov"},
-    {id:"DOT_CO_BR_UCPO_Blue_Mesa_Road_4",title:"CO BR UCPO Blue Mesa Road(1) Blue Mesa Road",org:"Federal Highway Administration",status:"",solDate:"2027-03-01",daysOut:203,awardQtr:"",value:"$5M - $9.9M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"",location:"Colorado",pocName:"Ryan Phillips",pocEmail:"CFLacquisitions@dot.gov"},
-    {id:"DOT_OK_FW_TSM_10_1__NFH_Entra_5",title:"OK FW TSM 10(1) NFH Entrance Road and Parking Improvements",org:"Federal Highway Administration",status:"",solDate:"2027-04-01",daysOut:234,awardQtr:"",value:"$1M - $1.9M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"Small Business",incumbent:"",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"",location:"Oklahoma",pocName:"Eric Grosskreuz",pocEmail:"eric.grosskreuz@dot.gov"}
+    {id:"DOT_CO_NP_ROMO_407_1__Holzwar_0",title:"CO NP ROMO 407(1) Holzwarth Culvert",org:"Federal Highway Administration",status:"",solDate:"2026-10-26",daysOut:77,awardQtr:"",value:"$1M - $1.9M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"",location:"Colorado",pocName:"Denise Martinez",pocEmail:"denise.martinez@dot.gov"},
+    {id:"DOT_MOTUS_Unified_Registratio_1",title:"MOTUS Unified Registration System",org:"Federal Motor Carrier Safety Administration",status:"",solDate:"2026-12-17",daysOut:129,awardQtr:"",value:"$5M - $9.9M",valueRank:0,naics:"541519",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"",location:"District of Columbia",pocName:"Supreet Kaur",pocEmail:"Supreet.Kaur@dot.gov"},
+    {id:"DOT_NC_ERFO_FS_NFNC811_2024_3_2",title:"NC ERFO FS NFNC811 2024-3(2)",org:"Federal Highway Administration",status:"",solDate:"2027-03-01",daysOut:203,awardQtr:"",value:"$100M - $249M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"",location:"North Carolina",pocName:"C. Shawn Long",pocEmail:"EFLHD.Contracts@dot.gov"},
+    {id:"DOT_CO_BR_UCPO_Blue_Mesa_Road_3",title:"CO BR UCPO Blue Mesa Road(1) Blue Mesa Road",org:"Federal Highway Administration",status:"",solDate:"2027-03-01",daysOut:203,awardQtr:"",value:"$5M - $9.9M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"To Be Determined",incumbent:"",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"",location:"Colorado",pocName:"Ryan Phillips",pocEmail:"CFLacquisitions@dot.gov"},
+    {id:"DOT_OK_FW_TSM_10_1__NFH_Entra_4",title:"OK FW TSM 10(1) NFH Entrance Road and Parking Improvements",org:"Federal Highway Administration",status:"",solDate:"2027-04-01",daysOut:234,awardQtr:"",value:"$1M - $1.9M",valueRank:0,naics:"237310",naicsDesc:"",setAside:"Small Business",incumbent:"",label:"Monitor",positionNow:false,previouslyFeatured:false,clearance:"",location:"Oklahoma",pocName:"Eric Grosskreuz",pocEmail:"eric.grosskreuz@dot.gov"}
   ],
   "DoD": [
     {id:"SOCO_Previously_part_of_UEWTEP__Sin_1015",title:"Previously part of UEWTEP. Single Award IDIQ. Focus is on planning, designing, and executing training and 3/9/2026 HQ-KH",org:"SOCOM",status:"Recompete",solDate:"2026-11-01",daysOut:83,awardQtr:"Apr-2027",value:"$242,000,000.00",valueRank:9,naics:"541990",naicsDesc:null,setAside:"GSA OASIS+",incumbent:"H9240024D0001",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:"",location:"",pocName:"",pocEmail:""},
@@ -1047,53 +1045,64 @@ const AGENCY_DATA = {
     {id:"HHS_Radiology_Intrupratations_1165",title:"Radiology Intrupratations",org:"IHS",status:"Recompete",solDate:"2029-06-01",daysOut:1026,awardQtr:"1/2030",value:"> $25K and < $250K",valueRank:0,naics:"541930 : Translation and Interpretation Services",naicsDesc:null,setAside:"Small Business Set-Aside",incumbent:"Advanced Cardiac Diagnostics",label:"Recompete Watch",positionNow:false,previouslyFeatured:false,clearance:"",location:"",pocName:"",pocEmail:""}
   ],
   "DOE": [],
-  "DHS": [],
+  "DHS": [
+    {id:"F2025072143",title:"28886599 Reconfigure Fuel Oil Heating to Natural Gas at CG AIRSTA Savannah in Savannah, GA",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-25",daysOut:60,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072173",title:"13832139 23HSB_H. Ian: Rebuild Isla De Mona Southeast Light at CG ANT Puerto Rico in San Juan, PR",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-26",daysOut:61,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"237990 - Other Heavy and Civil Engineering Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025070511",title:"USCGC DOUGLAS DENMAN FY26 Dining and Lodging",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-07-27",daysOut:62,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"721110 - Hotels (except Casino Hotels) and Motels",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072144",title:"28902443 Repair Sanitary Sewer Line at Sector Key West in Key West, FL",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-29",daysOut:64,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072647",title:"Hazen Building Renovation",org:"USSS",status:"New Requirement, No Contract",solDate:"2026-07-29",daysOut:64,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071837",title:"Enterprise Analysis System (EAS) Hardware and Maintenance Support",org:"TSA",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072147",title:"28772778 Replace Roof Main Building at CGC Muskingum in Sallisaw, OK",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072146",title:"22991542 Replace Fire Alarm - ADMIN BLDG at Base New Orleans in New Orleans, LA",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071750",title:"EMD Procurement (20 EMDs)",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"334111 - Electronic Computer Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072077",title:"Advanced Imaging Technology Procurement",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072080",title:"(RAG) Random Alarm Generator for  AIT",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025072079",title:"Quick Personnel Walkthrough (QPW) AIT  Advanced Imagery Technology Systems Electro Magnetic Detector (EMD)",org:"TSA/OAPM",status:"New Requirement, No Contract",solDate:"2026-07-30",daysOut:65,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"334511 - Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufactur",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073890",title:"Division 4 Unit 4 (D4U4)",org:"ICE/HSI",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$5M to $10M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071947",title:"29856173: Electrical design build Santa Barbra housing",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541330 - Engineering Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"*F2025071630",title:"Fiber Modules for Cisco Catalyst 9606 Switches",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$500K to $1M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071626",title:"Qlik Talend Data Management",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071631",title:"Vault Licensing",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$350K to $500K",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071624",title:"Servers purchase",org:"TSA/OIT",status:"New Requirement, No Contract",solDate:"2026-07-31",daysOut:66,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073349",title:"Window Track Set",org:"USCG/ALC",status:"New Requirement, No Contract",solDate:"2026-08-01",daysOut:67,awardQtr:"Q1 2027",value:"$350K to $500K",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071673",title:"Replace Fire Protect System Hanger 3 (Kodiak) (PN 474412)",org:"USCG/CG-SHORE",status:"New Requirement, No Contract",solDate:"2026-08-01",daysOut:67,awardQtr:"Q1 2027",value:"$20M to $50M",valueRank:0,naics:"236220 - Commercial and Institutional Building Construction",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073577",title:"T-III Application Integration",org:"ICE/HSI",status:"New Requirement, No Contract",solDate:"2026-08-01",daysOut:67,awardQtr:"Q4 2026",value:"$20M to $50M",valueRank:0,naics:"541519 - Other Computer Related Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073491",title:"Subject Matter Expert (SME) to Support Maritime Operations",org:"ICE/HSI",status:"New Requirement, No Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"$5M to $10M",valueRank:0,naics:"541614 - Process, Physical Distribution, and Logistics Consulting Services",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072475",title:"OVERHAUL OF THE WHEELS, BRAKES AND ASSOCIATED COMPONENTS TO SUPPORT THE HC-144 AND HC-27J AIRCRAFTS",org:"USCG/ALC",status:"Follow-on to Existing Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q3 2027",value:"$5M to $10M",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"Meggitt Aircraft Braking Systems",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"*F2025069324",title:"SAC Consumables (Follow-On)",org:"USCG/ALC",status:"Follow-on to Existing Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2027",value:"Over $100M",valueRank:0,naics:"336413 - Other Aircraft Parts and Auxiliary Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"Sikorsky Aircraft Corporation",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073003",title:"Tactical Communications and Technical Investigative Comprehensive Solutions (TACTICS)",org:"DHS HQ/MGMT",status:"New Requirement, No Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"Over $100M",valueRank:0,naics:"334220 - Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing",naicsDesc:"",setAside:"",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2025071054",title:"CRCL Compliance Investigative and Case Management Pilot Program Contract Support Services",org:"DHS HQ/CRCL",status:"Follow-on to Existing Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q4 2026",value:"$2M to $5M",valueRank:0,naics:"541611 - Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"Full",incumbent:"PCI Government Services LLC",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026073711",title:"PROGRAM MANAGEMENT AND ANALYTICAL SUPPORT SERVICES FOR THE UNITED STATES COAST GUARD DEPUTY COMMANDANT FOR SYSTEMS (DCS)",org:"USCG/CG-HCA",status:"New Requirement, No Contract",solDate:"2026-08-03",daysOut:69,awardQtr:"Q2 2027",value:"$5M to $10M",valueRank:0,naics:"541611 - Administrative Management and General Management Consulting Services",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072628",title:"USCGC NARWHAL DS1 FY27 WTCA (DS1, DS2, DD1) SSDG TCTO",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-08-06",daysOut:72,awardQtr:"Q1 2027",value:"$1M to $2M",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072618",title:"USCGC VIGOROUS FY27 Drydock Availability",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-08-08",daysOut:74,awardQtr:"Q1 2027",value:"$1M to $2M",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+    {id:"F2026072605",title:"USCGC BEAR FY27 Aviation Availability",org:"USCG/SFLC",status:"New Requirement, No Contract",solDate:"2026-08-08",daysOut:74,awardQtr:"Q1 2027",value:"$350K to $500K",valueRank:0,naics:"336611 - Ship Building and Repairing",naicsDesc:"",setAside:"Full",incumbent:"",label:"Position Now",positionNow:true,previouslyFeatured:false,clearance:""},
+  ],
 };
 
   const SAM_NOTICES = [
-    {solNum:"FA440726QSK05",title:"Joint Range Extension (JRE) system for Scott AFB, IL",agency:"FA4407  375 CONS LGC",dept:"DEPT OF DEFENSE",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-17",daysUntilClose:4,samLink:"https://sam.gov/opp/ea4a42039ff84cec89ef3a42cdb8a259/view",active:true},
-    {solNum:"",title:"A&E Repair Parking Apron Slab PDPG26-0115",agency:"DEPT OF THE AIR FORCE",dept:"DEPT OF DEFENSE",naics:"541330",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-08-17",daysUntilClose:4,samLink:"https://sam.gov/opp/961e8bdaff0640c69ba4c0e35ca0cbcc/view",active:true},
-    {solNum:"JTF-Sentinel-0001",title:"Sentinel Program Infrastructure Partnering Program",agency:"W071 ENDIST SEATTLE",dept:"DEPT OF DEFENSE",naics:"541611",type:"Sources Sought",postedDate:"2026-08-05",closeDate:"2026-08-18",daysUntilClose:5,samLink:"https://sam.gov/opp/f5c3351f96c64dba99b345f19bd4f3a2/view",active:true},
-    {solNum:"36C25526Q0580",title:"Vocera Smartbadges & accessories",agency:"255-NETWORK CONTRACT OFFICE 15 (36C255)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541519",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-08-19",daysUntilClose:6,samLink:"https://sam.gov/opp/144f6b5fd23e42d790c5182daf978966/view",active:true},
-    {solNum:"1240LT26Q0159",title:"R4 AE Bridge Load Rating",agency:"USDA-FS, CSA INTERMOUNTAIN 8",dept:"AGRICULTURE, DEPARTMENT OF",naics:"541330",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-08-19",daysUntilClose:6,samLink:"https://sam.gov/opp/a38ef67caa8a4869bbd0dee9a5911fd5/view",active:true},
-    {solNum:"SSN26-7571-CDC96901",title:"KNOWLEDGE MANAGEMENT TECHNICAL SUPPORT SERVICES (KMTSS)",agency:"OMAS STRATEGIC BUYING CENTER - INFORMATION TECHNOLOGY",dept:"HEALTH AND HUMAN SERVICES, DEPARTMENT OF",naics:"541512",type:"Sources Sought",postedDate:"2026-08-11",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/a90772453af941aabffd51b3cee8d114/view",active:true},
-    {solNum:"36C260-27-AP-0398",title:"Quality Assurance Inspection Software for EMS",agency:"260-NETWORK CONTRACT OFFICE 20 (36C260)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/4d7f04f62622483a89a4fab3fdc554ac/view",active:true},
-    {solNum:"HT941026N0099",title:"Notice of Intent to Sole Source - Plexus Location Asset Tracking System Installation and Maintenance Services",agency:"DEFENSE HEALTH AGENCY HCD WEST",dept:"DEPT OF DEFENSE",naics:"541512",type:"Special Notice",postedDate:"2026-08-11",closeDate:"2026-08-21",daysUntilClose:8,samLink:"https://sam.gov/opp/8400d75a4c804a26a27c4b6a0bbf9c5b/view",active:true},
-    {solNum:"D-26-L9-0037",title:"Notice of Intent",agency:"DRUG ENFORCEMENT ADMINISTRATION",dept:"JUSTICE, DEPARTMENT OF",naics:"541519",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-08-21",daysUntilClose:8,samLink:"https://sam.gov/opp/cae4886842a74917bb51107cdfb8781d/view",active:true},
-    {solNum:"36C25226Q0636",title:"R499--On-site Survey Readiness Services (Mock Physical Environment  / Life Safety Survey)",agency:"252-NETWORK CONTRACT OFFICE 12 (36C252)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541611",type:"Presolicitation",postedDate:"2026-08-11",closeDate:"2026-08-25",daysUntilClose:12,samLink:"https://sam.gov/opp/e854f985306d4bc39336edb274accf0c/view",active:true},
-    {solNum:"N00421-27-RFPREQ-A0X0000-0005",title:"Sources Sought for AIRWorks Lead Systems Integrator (LSI) Follow-On",agency:"NAVAL AIR WARFARE CENTER AIR DIV",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-25",daysUntilClose:12,samLink:"https://sam.gov/opp/3e06697a91514438b32db245d4378d5b/view",active:true},
-    {solNum:"M6785426I5422",title:"Electronic Limited Technical Inspection (LTI) and System Integration Solution",agency:"COMMANDER",dept:"DEPT OF DEFENSE",naics:"541512",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/88a9452ef9a041839867ba601ea94f82/view",active:true},
-    {solNum:"M9549426R0019",title:"Notice of Intent to Sole Source - Insider Threat Monitoring Tool",agency:"COMMANDING OFFICER",dept:"DEPT OF DEFENSE",naics:"541512",type:"Presolicitation",postedDate:"2026-08-11",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/99a23ebb700244c5bf3bf9f3909f2193/view",active:true},
-    {solNum:"FA481926Q0090",title:"JRE Helpdesk Support",agency:"FA4819  325 CONS PKP",dept:"DEPT OF DEFENSE",naics:"541512",type:"Presolicitation",postedDate:"2026-08-11",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/18599a7d8e9b4028954eac0c149e4e47/view",active:true},
-    {solNum:"PR0820260016185691",title:"WHA/EPSC OAS/SAS Support Services",agency:"ACQUISITIONS - AQM MOMENTUM",dept:"STATE, DEPARTMENT OF",naics:"541611",type:"Special Notice",postedDate:"2026-08-10",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/49a6f9f2a8a442f0876dbf3c8e731bac/view",active:true},
-    {solNum:"763ESS_SDPFY27",title:"AMC Special Departure Procedures",agency:"FA4452  763 ESS",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/0a83f0186e0f40d189bc1aa504307a87/view",active:true},
-    {solNum:"70Z03826IB0000012",title:"Joint Interoperability Test Command (JITC) Interoperability and Conformance Certification for the Link 16 Small Tactical",agency:"AVIATION LOGISTICS CENTER (ALC)(00038)",dept:"HOMELAND SECURITY, DEPARTMENT OF",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/fb0b787c384245df8552a2a923d38355/view",active:true},
-    {solNum:"LTAMDS_ESM_CY26-28",title:"LTAMDS Engineering Services CY26-CY28",agency:"DLA LAND AT ABERDEEN",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/faf7b52422644e65859a0359fec41d3e/view",active:true},
-    {solNum:"N0042126R1023",title:"NAWCAD WOLF Identification Systems Technical Management Support Services DRAFT RFO",agency:"NAVAL AIR WARFARE CENTER AIR DIV",dept:"DEPT OF DEFENSE",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/9d16c01d64f644d9bc1e7dc89662d57a/view",active:true},
-    {solNum:"36C24726R0129",title:"679-23-100 | Campus and Site Electrical Upgrades | CPS",agency:"247-NETWORK CONTRACT OFFICE 7 (36C247)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-08-28",daysUntilClose:15,samLink:"https://sam.gov/opp/856aaf4934d54707a6f0414467919d8e/view",active:true},
-    {solNum:"47QFRA26K0008",title:"CISA Strategic Cyber Tools Buying",agency:"GSA FAS AAS REGION 8",dept:"GENERAL SERVICES ADMINISTRATION",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-01",daysUntilClose:19,samLink:"https://sam.gov/opp/a12bcbd9bfbc4e3ea64a0f8db379df70/view",active:true},
-    {solNum:"36C26126R0065_1",title:"C1DA--A/E Services Renovate Outpatient Clinics to PACT  Project Number: 662-25-105",agency:"261-NETWORK CONTRACT OFFICE 21 (36C261)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-07",daysUntilClose:25,samLink:"https://sam.gov/opp/8e89f673239f4880946a52b3f8eff0ea/view",active:true},
-    {solNum:"N0018926RW023",title:"R425 - OPTEVFOR/VX-1 Technical and Analytical Support Services",agency:"NAVSUP FLT LOG CTR NORFOLK",dept:"DEPT OF DEFENSE",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-10",daysUntilClose:28,samLink:"https://sam.gov/opp/c66d6fc47b0f430a8bf0b9fa4c0bb113/view",active:true},
-    {solNum:"36C10D26Q0186",title:"R499--RFI School Enrollment Reporting",agency:"VETERANS BENEFITS ADMIN (36C10D)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541512",type:"Sources Sought",postedDate:"2026-08-11",closeDate:"2026-09-11",daysUntilClose:29,samLink:"https://sam.gov/opp/35ad4744267a4802b6cce692883a7064/view",active:true},
-    {solNum:"RFI-MD9-2026-01",title:"REQUEST FOR INFORMATION (RFI)/ SOURCES SOUGHT Space Force Mission Delta 9 (MD9) \u2013 SL-5 EC2-S Ground System Sustainment",agency:"FA2518 USSF SPOC/SAIO",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-11",daysUntilClose:29,samLink:"https://sam.gov/opp/2d858b98ed9942e89b04a98338a7b8e7/view",active:true},
-    {solNum:"PANHES26P0000030863",title:"Exception to Fair Opportunity- Army Energy and Water Reporting System (AEWRS) Reports, Analysis, Operation, and System A",agency:"W2V6 USA ENG SPT CTR HUNTSVIL",dept:"DEPT OF DEFENSE",naics:"541512",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-09-13",daysUntilClose:31,samLink:"https://sam.gov/opp/f339c95ee6ca4ea6bb777e22202af5c4/view",active:true},
-    {solNum:"DRAFTH9224126RE007",title:"DRAFT RFP: Support Services for Special Operations Aviation - Specialized Technical Services",agency:"AMSAM-SPK",dept:"DEPT OF DEFENSE",naics:"541330",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-09-14",daysUntilClose:32,samLink:"https://sam.gov/opp/c50b096b93b64d30b066cbc97fd60413/view",active:true},
-    {solNum:"REL2027-2031",title:"Regional Educational Laboratory Program: 2027 \u2013 2031 Cycle",agency:"INSTITUTE OF EDUCATION SCIENCES",dept:"EDUCATION, DEPARTMENT OF",naics:"541611",type:"Presolicitation",postedDate:"2026-08-10",closeDate:"2026-09-15",daysUntilClose:33,samLink:"https://sam.gov/opp/ba2f9d73180441b991688237f85c52f2/view",active:true},
-    {solNum:"19AQMM26R0250",title:"CODIS Phase III (Specialized Forensics IT Equipment)",agency:"ACQUISITIONS - AQM MOMENTUM",dept:"STATE, DEPARTMENT OF",naics:"541519",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-17",daysUntilClose:35,samLink:"https://sam.gov/opp/76dd9e9f39c34e02a0777a9113702afc/view",active:true},
-    {solNum:"FEMA-RFI(PA-TAC-VI)",title:"Request for Information - FEMA Public-Assistance Technical Assistance (PA-TAC) VI Contract",agency:"COMMUNITY SURVIVOR  ASSISTANCE SEC",dept:"HOMELAND SECURITY, DEPARTMENT OF",naics:"541611",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-30",daysUntilClose:48,samLink:"https://sam.gov/opp/2395b2cfa9a4455dbc722b1b7c336458/view",active:true},
-    {solNum:"DRAFT_RFP_N0017826R3107_HPM_SUPPORT_SERVICES",title:"Draft RFP_N0017826R3107_HPM Support Services",agency:"NSWC DAHLGREN",dept:"DEPT OF DEFENSE",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-30",daysUntilClose:48,samLink:"https://sam.gov/opp/22ec99eba9e8482fb9c1d88f2a832129/view",active:true},
-    {solNum:"H9821026RE009",title:"DSPO Connect Program for Suicide Prevention",agency:"DEFENSE HUMAN RESOURCES ACTIVITY",dept:"DEPT OF DEFENSE",naics:"541611",type:"Presolicitation",postedDate:"2026-08-06",closeDate:"2026-10-01",daysUntilClose:49,samLink:"https://sam.gov/opp/aa782de0ebb840489236a672b871678e/view",active:true},
-    {solNum:"36C10B26Q0625",title:"DA01--VA-26-00071371 Memorials Integration Services and Innovation",agency:"TECHNOLOGY ACQUISITION CENTER NJ (36C10B)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541512",type:"Sources Sought",postedDate:"2026-08-07",closeDate:"2026-10-06",daysUntilClose:54,samLink:"https://sam.gov/opp/5632a898d02a4efe85655ad58562295c/view",active:true},
-    {solNum:"36C10B26Q0474",title:"7J20--Zero Trust Encryption (VA-26-00027030)",agency:"TECHNOLOGY ACQUISITION CENTER NJ (36C10B)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541519",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-10-11",daysUntilClose:59,samLink:"https://sam.gov/opp/3bdffc8a66bb4610bb039aa86e795b03/view",active:true},
-    {solNum:"GASNTi2b2_IND_DAY_INT_NOTICE_541512",title:"Global Aircrew Strategic Network Terminal Increment 2, Block 2 (GASNTi2b2) Industry Day - Initial Notice",agency:"FA8735 NUCLEAR NTW DIV AFNWC PZHN",dept:"DEPT OF DEFENSE",naics:"541512",type:"Special Notice",postedDate:"2026-08-11",closeDate:"2026-10-21",daysUntilClose:69,samLink:"https://sam.gov/opp/74b66e84dd7645c2bf3de452b1ab5236/view",active:true}
+    {solNum:"FA440726QSK05",title:"Joint Range Extension (JRE) system for Scott AFB, IL",agency:"FA4407  375 CONS LGC",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-17",daysUntilClose:4,samLink:"https://sam.gov/opp/ea4a42039ff84cec89ef3a42cdb8a259/view",note:""},
+    {solNum:"JTF-Sentinel-0001",title:"Sentinel Program Infrastructure Partnering Program",agency:"W071 ENDIST SEATTLE",naics:"541611",type:"Sources Sought",postedDate:"2026-08-05",closeDate:"2026-08-18",daysUntilClose:5,samLink:"https://sam.gov/opp/f5c3351f96c64dba99b345f19bd4f3a2/view",note:""},
+    {solNum:"SSN26-7571-CDC96901",title:"KNOWLEDGE MANAGEMENT TECHNICAL SUPPORT SERVICES (KMTSS)",agency:"OMAS STRATEGIC BUYING CENTER - INFORMATION TECHNOLOGY",naics:"541512",type:"Sources Sought",postedDate:"2026-08-11",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/a90772453af941aabffd51b3cee8d114/view",note:""},
+    {solNum:"36C260-27-AP-0398",title:"Quality Assurance Inspection Software for EMS",agency:"260-NETWORK CONTRACT OFFICE 20 (36C260)",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/4d7f04f62622483a89a4fab3fdc554ac/view",note:""},
+    {solNum:"H91269A032442",title:"Wargaming and Technical Support Services \u2014 Intent to Sole Source",agency:"NAVSUP Fleet Logistics Center Norfolk",naics:"541330",type:"Sources Sought",postedDate:"2026-08-05",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/04c7103d99204152b9647f8b26b5c542/view",note:"Sole source intent \u2014 incumbent: American Systems Corporation. J8 Joint Staff wargaming support."},
+    {solNum:"N00421-27-RFPREQ-A0X0000-0005",title:"Sources Sought for AIRWorks Lead Systems Integrator (LSI) Follow-On",agency:"NAVAL AIR WARFARE CENTER AIR DIV",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-25",daysUntilClose:12,samLink:"https://sam.gov/opp/3e06697a91514438b32db245d4378d5b/view",note:""},
+    {solNum:"M6785426I5422",title:"Electronic Limited Technical Inspection (LTI) and System Integration Solution",agency:"COMMANDER",naics:"541512",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/88a9452ef9a041839867ba601ea94f82/view",note:""},
+    {solNum:"763ESS_SDPFY27",title:"AMC Special Departure Procedures",agency:"FA4452  763 ESS",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/0a83f0186e0f40d189bc1aa504307a87/view",note:""},
+    {solNum:"70Z03826IB0000012",title:"Joint Interoperability Test Command (JITC) Interoperability and Conformance Certification for the Link 16 Small Tactical",agency:"AVIATION LOGISTICS CENTER (ALC)(00038)",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/fb0b787c384245df8552a2a923d38355/view",note:""},
+    {solNum:"LTAMDS_ESM_CY26-28",title:"LTAMDS Engineering Services CY26-CY28",agency:"DLA LAND AT ABERDEEN",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/faf7b52422644e65859a0359fec41d3e/view",note:""},
+    {solNum:"47QFRA26K0008",title:"CISA Strategic Cyber Tools Buying",agency:"GSA FAS AAS REGION 8",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-01",daysUntilClose:19,samLink:"https://sam.gov/opp/a12bcbd9bfbc4e3ea64a0f8db379df70/view",note:""},
+    {solNum:"36C10D26Q0186",title:"R499--RFI School Enrollment Reporting",agency:"VETERANS BENEFITS ADMIN (36C10D)",naics:"541512",type:"Sources Sought",postedDate:"2026-08-11",closeDate:"2026-09-11",daysUntilClose:29,samLink:"https://sam.gov/opp/35ad4744267a4802b6cce692883a7064/view",note:""},
+    {solNum:"RFI-MD9-2026-01",title:"REQUEST FOR INFORMATION (RFI)/ SOURCES SOUGHT Space Force Mission Delta 9 (MD9) \u2013 SL-5 EC2-S Ground System Sustainment",agency:"FA2518 USSF SPOC/SAIO",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-11",daysUntilClose:29,samLink:"https://sam.gov/opp/2d858b98ed9942e89b04a98338a7b8e7/view",note:""},
+    {solNum:"FEMA-RFI(PA-TAC-VI)",title:"Request for Information - FEMA Public-Assistance Technical Assistance (PA-TAC) VI Contract",agency:"COMMUNITY SURVIVOR  ASSISTANCE SEC",naics:"541611",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-30",daysUntilClose:48,samLink:"https://sam.gov/opp/2395b2cfa9a4455dbc722b1b7c336458/view",note:""},
+    {solNum:"36C10B26Q0625",title:"DA01--VA-26-00071371 Memorials Integration Services and Innovation",agency:"TECHNOLOGY ACQUISITION CENTER NJ (36C10B)",naics:"541512",type:"Sources Sought",postedDate:"2026-08-07",closeDate:"2026-10-06",daysUntilClose:54,samLink:"https://sam.gov/opp/5632a898d02a4efe85655ad58562295c/view",note:""}
   ];
 
 
 /* ─────────────────────────────────────────────────────────────────
    CONFIG
 ───────────────────────────────────────────────────────────────── */
-const TODAY        = new Date('Aug 11, 2026');
-const DATA_AS_OF   = 'Aug 11, 2026';
+const TODAY        = new Date('Aug 13, 2026');
+const DATA_AS_OF   = 'Aug 13, 2026';
 const INELIGIBLE_DAYS = 60;
 const PREVIOUSLY_FEATURED = [
   // 'FHWA_2026_1DOT',   // Featured: Week of May 21, 2026
@@ -1210,7 +1219,7 @@ const PAGE_TITLES = {
   timeline:  'Solicitation Timeline',
   recompete: 'Recompete Watch',
   agency:    '',
-, sam: 'SAM.gov Live Notices'};
+, sam: 'SAM.gov — Sources Sought & RFI'};
 
 function showView(id, agencyCode) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1360,52 +1369,42 @@ function oppMailto(o){
     var body=encodeURIComponent('Hi Phil,\n\nI found this opportunity on the LAIG Federal Pipeline Dashboard and want to know if there is still time to position.\n\nOpportunity: '+title+'\n'+(org?'Organization: '+org+'\n':'')+'Solicitation Date: '+sol+'\nNAICS: '+naics+'\nValue: '+value+'\nType: '+type+'\nSet-Aside: '+sa+'\nIncumbent: '+inc+'\nDays Out: '+days+'\n'+(lbl?'Status: '+lbl+'\n':'')+'\nPlease let me know your availability. I understand sessions are held via Google Meet.\n\nThank you');
     return 'mailto:phil@limitlessaigrowth.com?subject='+subj+'&body='+body;
   }
-  
   function renderSamNotices() {
-    var container = document.getElementById('sam-notices-list');
-    if (!container) return;
-    var today = new Date(); today.setHours(0,0,0,0);
-    var typeColors = {
-      'Sources Sought': '#e67e22',
-      'Presolicitation': '#8e44ad',
-      'Special Notice': '#2980b9'
-    };
-    var html = SAM_NOTICES.map(function(n) {
-      // Recalculate days until close live
-      var closeD = n.closeDate ? new Date(n.closeDate + 'T00:00:00') : null;
-      var daysLeft = closeD ? Math.round((closeD - today) / 86400000) : 999;
-      var isClosed = daysLeft < 0;
-      var isUrgent = daysLeft >= 0 && daysLeft <= 7;
-      var typeColor = typeColors[n.type] || '#555';
-      var urgentBadge = isUrgent && !isClosed ?
-        '<span style="display:inline-block;background:#c0392b;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSING SOON</span>' : '';
-      var closedBadge = isClosed ?
-        '<span style="display:inline-block;background:#888;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSED</span>' : '';
-      var daysText = isClosed ? 'Closed' : (daysLeft === 0 ? 'Closes today' : daysLeft + 'd left');
-      var daysColor = isClosed ? '#888' : (isUrgent ? '#c0392b' : 'var(--color-text-muted)');
-      var rowOpacity = isClosed ? '0.5' : '1';
-
-      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;margin-bottom:6px;background:var(--color-surface);border-radius:6px;border-left:3px solid '+typeColor+';opacity:'+rowOpacity+';">' +
+    var el = document.getElementById('sam-notices-list');
+    if (!el) return;
+    var t = new Date(); t.setHours(0,0,0,0);
+    var tc = {'Sources Sought':'#e67e22','RFI':'#2980b9'};
+    if (!SAM_NOTICES || !SAM_NOTICES.length) {
+      el.innerHTML = '<p style="color:var(--color-text-muted);padding:20px;">No active notices at this time.</p>';
+      return;
+    }
+    el.innerHTML = SAM_NOTICES.map(function(n) {
+      var cd = n.closeDate ? new Date(n.closeDate+'T00:00:00') : null;
+      var dl = cd ? Math.round((cd-t)/86400000) : 999;
+      var closed = dl < 0;
+      var urgent = !closed && dl <= 7;
+      var col = tc[n.type] || '#555';
+      var dtext = closed ? 'Closed' : (dl===0?'Closes today':dl+'d left');
+      var dcol = closed?'#888':(urgent?'#c0392b':'var(--color-text-muted)');
+      var badges = (urgent && !closed ? '<span style="background:#c0392b;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSING SOON</span>':'') + (closed?'<span style="background:#888;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSED</span>':'');
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;margin-bottom:6px;background:var(--color-surface);border-radius:6px;border-left:3px solid '+col+';opacity:'+(closed?'0.5':'1')+';">' +
         '<div style="flex:1;min-width:0;">' +
           '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:3px;">' +
-            '<span style="font-size:10px;font-weight:700;color:'+typeColor+';white-space:nowrap;">'+n.type+'</span>' +
-            urgentBadge + closedBadge +
+            '<span style="font-size:10px;font-weight:700;color:'+col+';">'+n.type+'</span>' + badges +
             '<span style="font-size:10px;color:var(--color-text-muted);">NAICS '+n.naics+'</span>' +
           '</div>' +
-          '<div style="font-size:13px;font-weight:600;color:var(--color-text);margin-bottom:2px;line-height:1.3;">'+n.title+'</div>' +
-          '<div style="font-size:11px;color:var(--color-text-muted);">'+n.agency+'</div>' +
-          (n.solNum ? '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Notice: '+n.solNum+'</div>' : '') +
+          '<div style="font-size:13px;font-weight:600;color:var(--color-text);line-height:1.3;margin-bottom:2px;">'+n.title+'</div>' +
+          '<div style="font-size:11px;color:var(--color-text-muted);">'+n.agency+'</div>' + (n.note ? '<div style="font-size:10px;color:#e67e22;margin-top:2px;font-style:italic;">'+n.note+'</div>' : '') +
+          (n.solNum?'<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">'+n.solNum+'</div>':'') +
         '</div>' +
         '<div style="flex-shrink:0;text-align:right;min-width:80px;">' +
-          '<div style="font-size:13px;font-weight:700;color:'+daysColor+';">'+daysText+'</div>' +
-          '<div style="font-size:10px;color:var(--color-text-muted);">'+(n.closeDate ? 'Closes '+fmtDate(n.closeDate) : '')+'</div>' +
-          (n.samLink ? '<a href="'+n.samLink+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:#4d9cf8;text-decoration:none;white-space:nowrap;">View on SAM.gov ↗</a>' : '') +
+          '<div style="font-size:13px;font-weight:700;color:'+dcol+';">'+dtext+'</div>' +
+          '<div style="font-size:10px;color:var(--color-text-muted);">'+(n.closeDate?'Closes '+n.closeDate.substring(5):'')+'</div>' +
+          (n.samLink?'<a href="'+n.samLink+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:#4d9cf8;text-decoration:none;">SAM.gov ↗</a>':'') +
         '</div>' +
       '</div>';
     }).join('');
-    container.innerHTML = html || '<p style="color:var(--color-text-muted);font-size:13px;padding:20px;">No active notices at this time. Check back after the next dashboard update.</p>';
   }
-  
   function buildPriorityTable(filter) {
   priorityFilter = filter;
   const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
@@ -1635,24 +1634,6 @@ function buildAgencyTabs() {
       <div class="agency-tab-left">
         <div class="agency-dot" style="background:${meta.color}"></div>
         <span>${ag}</span>
-      </div>
-
-      <div id="tab-sam" class="tab-panel" style="display:none;">
-        <div style="padding:16px 0 8px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-            <div>
-              <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov Live Notices</h2>
-              <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Sources Sought · Presolicitation · Special Notice — sorted by closing date. Last pulled: August 13, 2026.</p>
-            </div>
-            <div style="font-size:11px;color:var(--color-text-muted);text-align:right;">
-              35 active notices · NAICS 541xxx · 541330 · 541715<br>
-              <span style="color:#e67e22;">■</span> Sources Sought &nbsp;
-              <span style="color:#8e44ad;">■</span> Presolicitation &nbsp;
-              <span style="color:#2980b9;">■</span> Special Notice
-            </div>
-          </div>
-          <div id="sam-notices-list"></div>
-        </div>
       </div>
       ${posBadge}
     </button>`;
