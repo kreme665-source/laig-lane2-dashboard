@@ -1,0 +1,92 @@
+name: Refresh SAM.gov feed
+
+# Runs server-side. The API key lives in a GitHub Secret (SAM_API_KEY) and is
+# injected as an environment variable at runtime. It is never written to the
+# repo, never committed, and never appears in index.html.
+
+on:
+  schedule:
+    # 11:10 UTC daily = ~06:10 US Central. Runs before the outbound email window
+    # so the dashboard is already current when prospects click through.
+    - cron: "10 11 * * *"
+  workflow_dispatch:        # lets you trigger a manual refresh from the Actions tab
+
+permissions:
+  contents: write           # needed to commit the regenerated index.html
+
+concurrency:
+  group: refresh-sam
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Refresh SAM.gov notices
+        env:
+          SAM_API_KEY: ${{ secrets.SAM_API_KEY }}
+        run: python scripts/refresh_sam.py
+
+      - name: Verify index.html still parses
+        run: |
+          python - <<'PY'
+          import re, subprocess, tempfile, sys
+          html = open('index.html', encoding='utf-8').read()
+          blocks = re.findall(r'<script[^>]*>(.*?)</script>', html, re.S)
+          bad = False
+          for i, js in enumerate(blocks):
+              if not js.strip():
+                  continue
+              with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False,
+                                               encoding='utf-8') as f:
+                  f.write(js); path = f.name
+              r = subprocess.run(['node', '--check', path],
+                                 capture_output=True, text=True)
+              if r.returncode:
+                  print(f"SYNTAX ERROR in script block {i}:\n{r.stderr}")
+                  bad = True
+          # Structural guard: every view must sit at the same nesting level.
+          # A view nested inside another view is invisible when its parent is hidden.
+          from html.parser import HTMLParser
+          class P(HTMLParser):
+              def __init__(s):
+                  super().__init__(); s.stack=[]; s.res={}
+              def handle_starttag(s, t, a):
+                  d = dict(a)
+                  if t == 'div':
+                      s.stack.append(d.get('id') or '')
+                      if d.get('id','').startswith('view-'):
+                          s.res[d['id']] = list(s.stack[:-1])
+              def handle_endtag(s, t):
+                  if t == 'div' and s.stack:
+                      s.stack.pop()
+          p = P(); p.feed(html)
+          for vid, anc in p.res.items():
+              nested = [a for a in anc if a.startswith('view-')]
+              if nested:
+                  print(f"STRUCTURE ERROR: {vid} is nested inside {nested[0]}")
+                  bad = True
+          if bad:
+              sys.exit(1)
+          print("index.html: JS parses, view structure flat. OK")
+          PY
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change to index.html — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "SAM.gov feed refresh — $(date -u +'%B %d, %Y')"
+          git push
