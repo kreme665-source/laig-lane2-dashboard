@@ -836,7 +836,7 @@
         <span class="page-subtitle" id="page-subtitle">LAIG Federal Pipeline Diagnostic · Multi-Agency Intelligence</span>
       </div>
       <div class="topbar-right">
-        <span class="as-of" id="as-of-date">As of Aug 13, 2026</span>
+        <span class="as-of" id="as-of-date">As of Aug 12, 2026</span>
         <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
@@ -1101,7 +1101,7 @@ const AGENCY_DATA = {
    CONFIG
 ───────────────────────────────────────────────────────────────── */
 const TODAY        = new Date('Aug 13, 2026');
-const DATA_AS_OF   = 'Aug 13, 2026';
+const DATA_AS_OF   = 'Aug 12, 2026';
 const INELIGIBLE_DAYS = 60;
 const PREVIOUSLY_FEATURED = [
   // 'FHWA_2026_1DOT',   // Featured: Week of May 21, 2026
@@ -1192,7 +1192,7 @@ function oppCard(o) {
         <div class="opty-card-title">${o.title}</div>
         <div class="opty-card-org">${o.org} ${agencyBadge(CURRENT_AGENCY_FOR_CARD || 'DOT')}</div>
       </div>
-      ${o.positionNow ? '<a href="' + oppMailto(o) + '" style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic</a>' : ''}
+      ${o.positionNow ? '<a href="' + oppMailto(o) + '" style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic for this opportunity</a>' : ''}
     </div>
     ${labelBadge(o.label, o.previouslyFeatured)} ${clearBadge}
     <div class="opty-fields">
@@ -1241,6 +1241,7 @@ function showView(id, agencyCode) {
     if (id === 'priority')  buildPriorityTable(priorityFilter);
     if (id === 'timeline')  buildTimeline(timelineFilter);
     if (id === 'recompete') buildRecompete(recompeteFilter);
+    if (id === 'sam')       renderSamNotices();
   }
 }
 
@@ -1463,7 +1464,7 @@ function buildTimeline(filter) {
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
         ${agencyBadge(ag)}
         ${labelBadge(o.label, o.previouslyFeatured)}
-        ${o.positionNow ? '<a href="' + oppMailto(o) + '" style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic</a>' : ''}
+        ${o.positionNow ? '<a href="' + oppMailto(o) + '" style="display:inline-flex;align-items:center;gap:4px;background:#3fb950;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;text-decoration:none;white-space:nowrap;"><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.8);animation:pulse 1.8s infinite;display:inline-block;"></span>Request Diagnostic for this opportunity</a>' : ''}
       </div>
     </div>`;
   }).join('');
@@ -1680,6 +1681,7 @@ function initDashboard() {
   if (asOf) asOf.textContent = 'As of ' + DATA_AS_OF;
   buildAgencyTabs();
   buildOverview();
+  renderSamNotices();
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDashboard);
