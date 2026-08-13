@@ -6,9 +6,14 @@ name: Refresh SAM.gov feed
 
 on:
   schedule:
-    # 11:10 UTC daily = ~06:10 US Central. Runs before the outbound email window
-    # so the dashboard is already current when prospects click through.
-    - cron: "10 11 * * *"
+    # 00:15 UTC daily — deliberately just after the SAM.gov quota resets at
+    # midnight UTC. Personal API keys are capped near 10 requests/day and the
+    # quota is metered per key, so if the outbound email agent shares this key,
+    # whichever system runs first claims the budget. Running here means the
+    # dashboard refreshes before the agent starts its day.
+    # 00:15 UTC = 7:15pm US Central the previous evening, so the dashboard is
+    # already current by the time the morning outbound window opens.
+    - cron: "15 0 * * *"
   workflow_dispatch:        # lets you trigger a manual refresh from the Actions tab
 
 permissions:
