@@ -811,6 +811,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.89"/></svg>
         Recompete Watch
       </button>
+      <button class="nav-item" onclick="showView('sam')" id="nav-sam"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> SAM.gov</button>
     </div>
 
     <div class="nav-section">
@@ -911,6 +912,23 @@
         <div class="filter-bar" id="recompete-filter-bar">
           <span class="filter-label">Agency:</span>
           <button class="filter-chip active" onclick="filterRecompete('ALL',this)">All</button>
+        </div>
+        <div class="view" id="view-sam">
+          <div style="padding:16px 0 8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+              <div>
+                <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov Live Notices</h2>
+                <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Sources Sought · Presolicitation · Special Notice — sorted by closing date soonest first.</p>
+              </div>
+              <div style="font-size:11px;color:var(--color-text-muted);text-align:right;line-height:1.6;">
+                Last pulled: August 13, 2026 &nbsp;|&nbsp; Scope: NAICS 541xxx / 541330<br>
+                <span style="color:#e67e22;font-weight:700;">■</span> Sources Sought &nbsp;
+                <span style="color:#8e44ad;font-weight:700;">■</span> Presolicitation &nbsp;
+                <span style="color:#2980b9;font-weight:700;">■</span> Special Notice
+              </div>
+            </div>
+            <div id="sam-notices-list"></div>
+          </div>
         </div>
         <div class="card" style="margin-bottom:16px;padding:16px 20px;">
           <div style="display:flex;gap:14px;align-items:flex-start;">
@@ -1031,6 +1049,45 @@ const AGENCY_DATA = {
   "DOE": [],
   "DHS": [],
 };
+
+  const SAM_NOTICES = [
+    {solNum:"FA440726QSK05",title:"Joint Range Extension (JRE) system for Scott AFB, IL",agency:"FA4407  375 CONS LGC",dept:"DEPT OF DEFENSE",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-17",daysUntilClose:4,samLink:"https://sam.gov/opp/ea4a42039ff84cec89ef3a42cdb8a259/view",active:true},
+    {solNum:"",title:"A&E Repair Parking Apron Slab PDPG26-0115",agency:"DEPT OF THE AIR FORCE",dept:"DEPT OF DEFENSE",naics:"541330",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-08-17",daysUntilClose:4,samLink:"https://sam.gov/opp/961e8bdaff0640c69ba4c0e35ca0cbcc/view",active:true},
+    {solNum:"JTF-Sentinel-0001",title:"Sentinel Program Infrastructure Partnering Program",agency:"W071 ENDIST SEATTLE",dept:"DEPT OF DEFENSE",naics:"541611",type:"Sources Sought",postedDate:"2026-08-05",closeDate:"2026-08-18",daysUntilClose:5,samLink:"https://sam.gov/opp/f5c3351f96c64dba99b345f19bd4f3a2/view",active:true},
+    {solNum:"36C25526Q0580",title:"Vocera Smartbadges & accessories",agency:"255-NETWORK CONTRACT OFFICE 15 (36C255)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541519",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-08-19",daysUntilClose:6,samLink:"https://sam.gov/opp/144f6b5fd23e42d790c5182daf978966/view",active:true},
+    {solNum:"1240LT26Q0159",title:"R4 AE Bridge Load Rating",agency:"USDA-FS, CSA INTERMOUNTAIN 8",dept:"AGRICULTURE, DEPARTMENT OF",naics:"541330",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-08-19",daysUntilClose:6,samLink:"https://sam.gov/opp/a38ef67caa8a4869bbd0dee9a5911fd5/view",active:true},
+    {solNum:"SSN26-7571-CDC96901",title:"KNOWLEDGE MANAGEMENT TECHNICAL SUPPORT SERVICES (KMTSS)",agency:"OMAS STRATEGIC BUYING CENTER - INFORMATION TECHNOLOGY",dept:"HEALTH AND HUMAN SERVICES, DEPARTMENT OF",naics:"541512",type:"Sources Sought",postedDate:"2026-08-11",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/a90772453af941aabffd51b3cee8d114/view",active:true},
+    {solNum:"36C260-27-AP-0398",title:"Quality Assurance Inspection Software for EMS",agency:"260-NETWORK CONTRACT OFFICE 20 (36C260)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-20",daysUntilClose:7,samLink:"https://sam.gov/opp/4d7f04f62622483a89a4fab3fdc554ac/view",active:true},
+    {solNum:"HT941026N0099",title:"Notice of Intent to Sole Source - Plexus Location Asset Tracking System Installation and Maintenance Services",agency:"DEFENSE HEALTH AGENCY HCD WEST",dept:"DEPT OF DEFENSE",naics:"541512",type:"Special Notice",postedDate:"2026-08-11",closeDate:"2026-08-21",daysUntilClose:8,samLink:"https://sam.gov/opp/8400d75a4c804a26a27c4b6a0bbf9c5b/view",active:true},
+    {solNum:"D-26-L9-0037",title:"Notice of Intent",agency:"DRUG ENFORCEMENT ADMINISTRATION",dept:"JUSTICE, DEPARTMENT OF",naics:"541519",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-08-21",daysUntilClose:8,samLink:"https://sam.gov/opp/cae4886842a74917bb51107cdfb8781d/view",active:true},
+    {solNum:"36C25226Q0636",title:"R499--On-site Survey Readiness Services (Mock Physical Environment  / Life Safety Survey)",agency:"252-NETWORK CONTRACT OFFICE 12 (36C252)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541611",type:"Presolicitation",postedDate:"2026-08-11",closeDate:"2026-08-25",daysUntilClose:12,samLink:"https://sam.gov/opp/e854f985306d4bc39336edb274accf0c/view",active:true},
+    {solNum:"N00421-27-RFPREQ-A0X0000-0005",title:"Sources Sought for AIRWorks Lead Systems Integrator (LSI) Follow-On",agency:"NAVAL AIR WARFARE CENTER AIR DIV",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-25",daysUntilClose:12,samLink:"https://sam.gov/opp/3e06697a91514438b32db245d4378d5b/view",active:true},
+    {solNum:"M6785426I5422",title:"Electronic Limited Technical Inspection (LTI) and System Integration Solution",agency:"COMMANDER",dept:"DEPT OF DEFENSE",naics:"541512",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/88a9452ef9a041839867ba601ea94f82/view",active:true},
+    {solNum:"M9549426R0019",title:"Notice of Intent to Sole Source - Insider Threat Monitoring Tool",agency:"COMMANDING OFFICER",dept:"DEPT OF DEFENSE",naics:"541512",type:"Presolicitation",postedDate:"2026-08-11",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/99a23ebb700244c5bf3bf9f3909f2193/view",active:true},
+    {solNum:"FA481926Q0090",title:"JRE Helpdesk Support",agency:"FA4819  325 CONS PKP",dept:"DEPT OF DEFENSE",naics:"541512",type:"Presolicitation",postedDate:"2026-08-11",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/18599a7d8e9b4028954eac0c149e4e47/view",active:true},
+    {solNum:"PR0820260016185691",title:"WHA/EPSC OAS/SAS Support Services",agency:"ACQUISITIONS - AQM MOMENTUM",dept:"STATE, DEPARTMENT OF",naics:"541611",type:"Special Notice",postedDate:"2026-08-10",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/49a6f9f2a8a442f0876dbf3c8e731bac/view",active:true},
+    {solNum:"763ESS_SDPFY27",title:"AMC Special Departure Procedures",agency:"FA4452  763 ESS",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-26",daysUntilClose:13,samLink:"https://sam.gov/opp/0a83f0186e0f40d189bc1aa504307a87/view",active:true},
+    {solNum:"70Z03826IB0000012",title:"Joint Interoperability Test Command (JITC) Interoperability and Conformance Certification for the Link 16 Small Tactical",agency:"AVIATION LOGISTICS CENTER (ALC)(00038)",dept:"HOMELAND SECURITY, DEPARTMENT OF",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/fb0b787c384245df8552a2a923d38355/view",active:true},
+    {solNum:"LTAMDS_ESM_CY26-28",title:"LTAMDS Engineering Services CY26-CY28",agency:"DLA LAND AT ABERDEEN",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/faf7b52422644e65859a0359fec41d3e/view",active:true},
+    {solNum:"N0042126R1023",title:"NAWCAD WOLF Identification Systems Technical Management Support Services DRAFT RFO",agency:"NAVAL AIR WARFARE CENTER AIR DIV",dept:"DEPT OF DEFENSE",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-08-27",daysUntilClose:14,samLink:"https://sam.gov/opp/9d16c01d64f644d9bc1e7dc89662d57a/view",active:true},
+    {solNum:"36C24726R0129",title:"679-23-100 | Campus and Site Electrical Upgrades | CPS",agency:"247-NETWORK CONTRACT OFFICE 7 (36C247)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-08-28",daysUntilClose:15,samLink:"https://sam.gov/opp/856aaf4934d54707a6f0414467919d8e/view",active:true},
+    {solNum:"47QFRA26K0008",title:"CISA Strategic Cyber Tools Buying",agency:"GSA FAS AAS REGION 8",dept:"GENERAL SERVICES ADMINISTRATION",naics:"541519",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-01",daysUntilClose:19,samLink:"https://sam.gov/opp/a12bcbd9bfbc4e3ea64a0f8db379df70/view",active:true},
+    {solNum:"36C26126R0065_1",title:"C1DA--A/E Services Renovate Outpatient Clinics to PACT  Project Number: 662-25-105",agency:"261-NETWORK CONTRACT OFFICE 21 (36C261)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-07",daysUntilClose:25,samLink:"https://sam.gov/opp/8e89f673239f4880946a52b3f8eff0ea/view",active:true},
+    {solNum:"N0018926RW023",title:"R425 - OPTEVFOR/VX-1 Technical and Analytical Support Services",agency:"NAVSUP FLT LOG CTR NORFOLK",dept:"DEPT OF DEFENSE",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-10",daysUntilClose:28,samLink:"https://sam.gov/opp/c66d6fc47b0f430a8bf0b9fa4c0bb113/view",active:true},
+    {solNum:"36C10D26Q0186",title:"R499--RFI School Enrollment Reporting",agency:"VETERANS BENEFITS ADMIN (36C10D)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541512",type:"Sources Sought",postedDate:"2026-08-11",closeDate:"2026-09-11",daysUntilClose:29,samLink:"https://sam.gov/opp/35ad4744267a4802b6cce692883a7064/view",active:true},
+    {solNum:"RFI-MD9-2026-01",title:"REQUEST FOR INFORMATION (RFI)/ SOURCES SOUGHT Space Force Mission Delta 9 (MD9) \u2013 SL-5 EC2-S Ground System Sustainment",agency:"FA2518 USSF SPOC/SAIO",dept:"DEPT OF DEFENSE",naics:"541330",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-11",daysUntilClose:29,samLink:"https://sam.gov/opp/2d858b98ed9942e89b04a98338a7b8e7/view",active:true},
+    {solNum:"PANHES26P0000030863",title:"Exception to Fair Opportunity- Army Energy and Water Reporting System (AEWRS) Reports, Analysis, Operation, and System A",agency:"W2V6 USA ENG SPT CTR HUNTSVIL",dept:"DEPT OF DEFENSE",naics:"541512",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-09-13",daysUntilClose:31,samLink:"https://sam.gov/opp/f339c95ee6ca4ea6bb777e22202af5c4/view",active:true},
+    {solNum:"DRAFTH9224126RE007",title:"DRAFT RFP: Support Services for Special Operations Aviation - Specialized Technical Services",agency:"AMSAM-SPK",dept:"DEPT OF DEFENSE",naics:"541330",type:"Special Notice",postedDate:"2026-08-12",closeDate:"2026-09-14",daysUntilClose:32,samLink:"https://sam.gov/opp/c50b096b93b64d30b066cbc97fd60413/view",active:true},
+    {solNum:"REL2027-2031",title:"Regional Educational Laboratory Program: 2027 \u2013 2031 Cycle",agency:"INSTITUTE OF EDUCATION SCIENCES",dept:"EDUCATION, DEPARTMENT OF",naics:"541611",type:"Presolicitation",postedDate:"2026-08-10",closeDate:"2026-09-15",daysUntilClose:33,samLink:"https://sam.gov/opp/ba2f9d73180441b991688237f85c52f2/view",active:true},
+    {solNum:"19AQMM26R0250",title:"CODIS Phase III (Specialized Forensics IT Equipment)",agency:"ACQUISITIONS - AQM MOMENTUM",dept:"STATE, DEPARTMENT OF",naics:"541519",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-17",daysUntilClose:35,samLink:"https://sam.gov/opp/76dd9e9f39c34e02a0777a9113702afc/view",active:true},
+    {solNum:"FEMA-RFI(PA-TAC-VI)",title:"Request for Information - FEMA Public-Assistance Technical Assistance (PA-TAC) VI Contract",agency:"COMMUNITY SURVIVOR  ASSISTANCE SEC",dept:"HOMELAND SECURITY, DEPARTMENT OF",naics:"541611",type:"Sources Sought",postedDate:"2026-08-12",closeDate:"2026-09-30",daysUntilClose:48,samLink:"https://sam.gov/opp/2395b2cfa9a4455dbc722b1b7c336458/view",active:true},
+    {solNum:"DRAFT_RFP_N0017826R3107_HPM_SUPPORT_SERVICES",title:"Draft RFP_N0017826R3107_HPM Support Services",agency:"NSWC DAHLGREN",dept:"DEPT OF DEFENSE",naics:"541330",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-09-30",daysUntilClose:48,samLink:"https://sam.gov/opp/22ec99eba9e8482fb9c1d88f2a832129/view",active:true},
+    {solNum:"H9821026RE009",title:"DSPO Connect Program for Suicide Prevention",agency:"DEFENSE HUMAN RESOURCES ACTIVITY",dept:"DEPT OF DEFENSE",naics:"541611",type:"Presolicitation",postedDate:"2026-08-06",closeDate:"2026-10-01",daysUntilClose:49,samLink:"https://sam.gov/opp/aa782de0ebb840489236a672b871678e/view",active:true},
+    {solNum:"36C10B26Q0625",title:"DA01--VA-26-00071371 Memorials Integration Services and Innovation",agency:"TECHNOLOGY ACQUISITION CENTER NJ (36C10B)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541512",type:"Sources Sought",postedDate:"2026-08-07",closeDate:"2026-10-06",daysUntilClose:54,samLink:"https://sam.gov/opp/5632a898d02a4efe85655ad58562295c/view",active:true},
+    {solNum:"36C10B26Q0474",title:"7J20--Zero Trust Encryption (VA-26-00027030)",agency:"TECHNOLOGY ACQUISITION CENTER NJ (36C10B)",dept:"VETERANS AFFAIRS, DEPARTMENT OF",naics:"541519",type:"Presolicitation",postedDate:"2026-08-12",closeDate:"2026-10-11",daysUntilClose:59,samLink:"https://sam.gov/opp/3bdffc8a66bb4610bb039aa86e795b03/view",active:true},
+    {solNum:"GASNTi2b2_IND_DAY_INT_NOTICE_541512",title:"Global Aircrew Strategic Network Terminal Increment 2, Block 2 (GASNTi2b2) Industry Day - Initial Notice",agency:"FA8735 NUCLEAR NTW DIV AFNWC PZHN",dept:"DEPT OF DEFENSE",naics:"541512",type:"Special Notice",postedDate:"2026-08-11",closeDate:"2026-10-21",daysUntilClose:69,samLink:"https://sam.gov/opp/74b66e84dd7645c2bf3de452b1ab5236/view",active:true}
+  ];
+
 
 /* ─────────────────────────────────────────────────────────────────
    CONFIG
@@ -1153,7 +1210,7 @@ const PAGE_TITLES = {
   timeline:  'Solicitation Timeline',
   recompete: 'Recompete Watch',
   agency:    '',
-};
+, sam: 'SAM.gov Live Notices'};
 
 function showView(id, agencyCode) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1175,6 +1232,7 @@ function showView(id, agencyCode) {
     if (id === 'priority')  buildPriorityTable(priorityFilter);
     if (id === 'timeline')  buildTimeline(timelineFilter);
     if (id === 'recompete') buildRecompete(recompeteFilter);
+    if (id === 'sam') renderSamNotices();
   }
 }
 
@@ -1302,6 +1360,52 @@ function oppMailto(o){
     var body=encodeURIComponent('Hi Phil,\n\nI found this opportunity on the LAIG Federal Pipeline Dashboard and want to know if there is still time to position.\n\nOpportunity: '+title+'\n'+(org?'Organization: '+org+'\n':'')+'Solicitation Date: '+sol+'\nNAICS: '+naics+'\nValue: '+value+'\nType: '+type+'\nSet-Aside: '+sa+'\nIncumbent: '+inc+'\nDays Out: '+days+'\n'+(lbl?'Status: '+lbl+'\n':'')+'\nPlease let me know your availability. I understand sessions are held via Google Meet.\n\nThank you');
     return 'mailto:phil@limitlessaigrowth.com?subject='+subj+'&body='+body;
   }
+  
+  function renderSamNotices() {
+    var container = document.getElementById('sam-notices-list');
+    if (!container) return;
+    var today = new Date(); today.setHours(0,0,0,0);
+    var typeColors = {
+      'Sources Sought': '#e67e22',
+      'Presolicitation': '#8e44ad',
+      'Special Notice': '#2980b9'
+    };
+    var html = SAM_NOTICES.map(function(n) {
+      // Recalculate days until close live
+      var closeD = n.closeDate ? new Date(n.closeDate + 'T00:00:00') : null;
+      var daysLeft = closeD ? Math.round((closeD - today) / 86400000) : 999;
+      var isClosed = daysLeft < 0;
+      var isUrgent = daysLeft >= 0 && daysLeft <= 7;
+      var typeColor = typeColors[n.type] || '#555';
+      var urgentBadge = isUrgent && !isClosed ?
+        '<span style="display:inline-block;background:#c0392b;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSING SOON</span>' : '';
+      var closedBadge = isClosed ?
+        '<span style="display:inline-block;background:#888;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;">CLOSED</span>' : '';
+      var daysText = isClosed ? 'Closed' : (daysLeft === 0 ? 'Closes today' : daysLeft + 'd left');
+      var daysColor = isClosed ? '#888' : (isUrgent ? '#c0392b' : 'var(--color-text-muted)');
+      var rowOpacity = isClosed ? '0.5' : '1';
+
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;margin-bottom:6px;background:var(--color-surface);border-radius:6px;border-left:3px solid '+typeColor+';opacity:'+rowOpacity+';">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:3px;">' +
+            '<span style="font-size:10px;font-weight:700;color:'+typeColor+';white-space:nowrap;">'+n.type+'</span>' +
+            urgentBadge + closedBadge +
+            '<span style="font-size:10px;color:var(--color-text-muted);">NAICS '+n.naics+'</span>' +
+          '</div>' +
+          '<div style="font-size:13px;font-weight:600;color:var(--color-text);margin-bottom:2px;line-height:1.3;">'+n.title+'</div>' +
+          '<div style="font-size:11px;color:var(--color-text-muted);">'+n.agency+'</div>' +
+          (n.solNum ? '<div style="font-size:10px;color:var(--color-text-muted);margin-top:2px;">Notice: '+n.solNum+'</div>' : '') +
+        '</div>' +
+        '<div style="flex-shrink:0;text-align:right;min-width:80px;">' +
+          '<div style="font-size:13px;font-weight:700;color:'+daysColor+';">'+daysText+'</div>' +
+          '<div style="font-size:10px;color:var(--color-text-muted);">'+(n.closeDate ? 'Closes '+fmtDate(n.closeDate) : '')+'</div>' +
+          (n.samLink ? '<a href="'+n.samLink+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:4px;font-size:10px;font-weight:600;color:#4d9cf8;text-decoration:none;white-space:nowrap;">View on SAM.gov ↗</a>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+    container.innerHTML = html || '<p style="color:var(--color-text-muted);font-size:13px;padding:20px;">No active notices at this time. Check back after the next dashboard update.</p>';
+  }
+  
   function buildPriorityTable(filter) {
   priorityFilter = filter;
   const opps = filter === 'ALL' ? ALL_ACTIVE : (AGENCY_DATA[filter] || []);
@@ -1531,6 +1635,24 @@ function buildAgencyTabs() {
       <div class="agency-tab-left">
         <div class="agency-dot" style="background:${meta.color}"></div>
         <span>${ag}</span>
+      </div>
+
+      <div id="tab-sam" class="tab-panel" style="display:none;">
+        <div style="padding:16px 0 8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <div>
+              <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">SAM.gov Live Notices</h2>
+              <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">Sources Sought · Presolicitation · Special Notice — sorted by closing date. Last pulled: August 13, 2026.</p>
+            </div>
+            <div style="font-size:11px;color:var(--color-text-muted);text-align:right;">
+              35 active notices · NAICS 541xxx · 541330 · 541715<br>
+              <span style="color:#e67e22;">■</span> Sources Sought &nbsp;
+              <span style="color:#8e44ad;">■</span> Presolicitation &nbsp;
+              <span style="color:#2980b9;">■</span> Special Notice
+            </div>
+          </div>
+          <div id="sam-notices-list"></div>
+        </div>
       </div>
       ${posBadge}
     </button>`;
