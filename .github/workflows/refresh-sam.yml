@@ -40,6 +40,9 @@ jobs:
           SAM_API_KEY: ${{ secrets.SAM_API_KEY }}
         run: python scripts/refresh_sam.py
 
+      - name: Scrub check — no internal references, no excluded agencies
+        run: python scripts/scrub_check.py index.html
+
       - name: Verify index.html still parses
         run: |
           python - <<'PY'
