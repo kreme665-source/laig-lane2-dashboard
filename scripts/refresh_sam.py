@@ -115,10 +115,10 @@ EXCLUDED_AGENCY_KEYWORDS = [
 EXCLUDED_SOLNUM_PREFIXES = ("70",)
 
 PTYPES = "r,s"        # r = Sources Sought, s = Special Notice (where most RFIs live)
-LOOKBACK_DAYS = 7     # only newly posted notices; retention preserves the rest
+LOOKBACK_DAYS = 30     # only newly posted notices; retention preserves the rest
 RETENTION_DAYS = 45   # keep closed notices this long so old email links resolve
 PAGE_LIMIT = 1000     # max records per call
-MAX_API_CALLS = 3     # hard ceiling — must stay well under the daily key quota
+MAX_API_CALLS = 5     # hard ceiling — must stay well under the daily key quota
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 INDEX = os.path.normpath(os.path.join(HERE, "..", "index.html"))
