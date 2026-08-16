@@ -334,6 +334,24 @@ def classify(rec):
     return t or "Sources Sought"
 
 
+# SAM.gov's API returns uiLink pointing at the signed-in WORKSPACE path:
+#     https://sam.gov/workspace/contract/opp/<32-hex-id>/view
+# A prospect arriving from an outbound email is not signed in, so that path
+# risks dropping them on a login screen instead of the notice — which defeats
+# the entire reason the email cites a notice number. The public permalink
+#     https://sam.gov/opp/<32-hex-id>/view
+# carries the same opportunity id and needs no account. Rewrite on ingest.
+WORKSPACE_LINK_RE = re.compile(
+    r"^https://sam\.gov/workspace/contract/opp/([0-9a-f]{32})/view/?$", re.I)
+
+
+def public_sam_link(url):
+    """Normalise a SAM.gov opportunity URL to its public permalink form."""
+    u = (url or "").strip()
+    m = WORKSPACE_LINK_RE.match(u)
+    return f"https://sam.gov/opp/{m.group(1).lower()}/view" if m else u
+
+
 def to_notice(rec):
     sol = (rec.get("solicitationNumber") or rec.get("noticeId") or "").strip()
     if not sol:
@@ -347,7 +365,7 @@ def to_notice(rec):
         "type": classify(rec),
         "postedDate": norm_date(rec.get("postedDate")),
         "closeDate": norm_date(rec.get("responseDeadLine")),
-        "samLink": (rec.get("uiLink") or "").strip(),
+        "samLink": public_sam_link(rec.get("uiLink")),
         "note": "",
     }
 
@@ -532,6 +550,18 @@ def main():
                 "ABORT: more than 20% of notices failed date validation. "
                 "That is a systemic problem, not a one-off bad record — "
                 "index.html left unchanged.")
+
+    # Normalise every published link, not just newly ingested ones — records
+    # carried over by retention may predate public_sam_link().
+    relinked = 0
+    for n in merged:
+        before = n.get("samLink") or ""
+        after = public_sam_link(before)
+        if after != before:
+            n["samLink"] = after
+            relinked += 1
+    if relinked:
+        print(f"normalised {relinked} workspace link(s) to public permalink")
 
     merged.sort(key=lambda n: (n.get("closeDate") or "9999-99-99",
                                n.get("title") or ""))
