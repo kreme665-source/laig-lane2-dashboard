@@ -21,22 +21,27 @@ WHAT THIS SCRIPT WILL NOT DO
     exceed. Any computed "likelihood" would be a guess wearing a data costume.
     So: observed dates only, clearly labelled as to which kind.
 
-TWO DATES PER RECORD
-    optionEnd    Period of Performance Current End Date.
-                 An option DECISION point. Government discretion. Weak signal.
-    competeEnd   Ordering-period / ultimate end (Last Date to Order for IDVs,
-                 End Date for contracts). A MANDATORY competition point.
-    Positioning is anchored on competeEnd where one exists, because that is the
-    date a competition must occur by. Both are written to the record so the
-    dashboard can show them separately.
+FIELD NAMES ARE PER AWARD TYPE — this is what broke run #7
+    "Period of Performance Current End Date" appears in the RESPONSE schema but
+    is NOT a requestable field, so sorting on it returns HTTP 400. The end date
+    is exposed under a different name for each award type:
 
-52.217-8 BRIDGE INFERENCE
-    FPDS does not report clause numbers, so a 217-8 "Option to Extend Services"
-    cannot be read directly. It can be *inferred*: when performance is running
-    PAST the award's planned end by a period within the clause's six-month cap,
-    that is the shape of a bridge extension — and a bridge usually means the
-    follow-on solicitation is late and imminent. Flagged as inferred, never as
-    fact. Set INFER_BRIDGES = False to disable.
+        Contracts (A,B,C,D) -> "End Date"
+        IDVs                -> "Last Date to Order"   (no "End Date" at all)
+
+ENRICHMENT — why only one date per record today
+    The search endpoint exposes ONE end date per award type. It does not return
+    the potential/ultimate end alongside the current end, so for a contract the
+    option decision point and the true competition point cannot be separated
+    from search results alone. Both live on
+        /api/v2/awards/<generated_internal_id>/   -> period_of_performance
+    generated_internal_id is requested here so an enrichment pass can be added
+    without changing the query. Until that exists:
+      - IDV records carry a genuine competition point (ordering period end)
+      - Contract records carry a period end that MAY be an option decision
+      - bridge inference cannot fire for contracts (it needs both dates)
+    Status labels state which kind of date each record actually holds rather
+    than implying a distinction the data does not support.
 
 API SHAPE — read before changing the query
     period_of_performance_current_end_date is NOT a valid `date_type`. The award
@@ -131,7 +136,7 @@ def post(body):
         with urllib.request.urlopen(req, timeout=90) as r:
             return json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
-        detail = e.read().decode("utf-8", "replace")[:500]
+        detail = e.read().decode("utf-8", "replace")[:800]
         raise SystemExit(f"USASpending HTTP {e.code}: {detail}")
     except Exception as e:
         raise SystemExit(f"USASpending request failed: {e}")
@@ -141,8 +146,8 @@ def fetch_window(today, award_types, fields, sort_field, label):
     """Page sorted by end date descending, collecting the positioning window.
 
     Sorted descending means we walk from the furthest-future end dates down.
-    Once we drop below the window we can stop — everything after is nearer-term
-    and already outside scope.
+    Once a whole page sits below the window we can stop — everything after is
+    nearer-term and already outside scope.
     """
     lo = today + timedelta(days=WINDOW_MIN_DAYS)
     hi = today + timedelta(days=WINDOW_MAX_DAYS)
@@ -188,7 +193,6 @@ def fetch_window(today, award_types, fields, sort_field, label):
         print(f"  {label} page {page}: {len(results)} scanned, "
               f"{len(kept)} in window so far")
 
-        # Sorted descending: once a whole page sits below the window, stop.
         if below == len(results):
             break
         if not (payload.get("page_metadata") or {}).get("hasNext"):
@@ -260,17 +264,25 @@ def to_record(rec, today, is_idv, i):
     if not code:
         return None, "agency not on dashboard"
 
-    option_end = parse_date(rec.get("Period of Performance Current End Date"))
-    compete_end = parse_date(rec.get("Last Date to Order") if is_idv
-                             else rec.get("End Date"))
+    # IDV  -> "Last Date to Order" is the ordering-period end: a MANDATORY
+    #         competition point once it passes.
+    # Contract -> "End Date" is the current period-of-performance end. From the
+    #         search endpoint alone this cannot be distinguished from an option
+    #         decision point; the potential end lives on the award detail
+    #         endpoint. See ENRICHMENT in the module docstring.
+    if is_idv:
+        option_end = None
+        compete_end = parse_date(rec.get("Last Date to Order"))
+    else:
+        option_end = parse_date(rec.get("End Date"))
+        compete_end = None
 
-    # Anchor on the mandatory competition point where one exists.
     anchor = compete_end or option_end
     if not anchor:
         return None, "no usable end date"
 
-    # Bridge inference: performance running past the planned end, within the
-    # six-month cap 52.217-8 imposes. Inferred from dates only, never asserted.
+    # Bridge inference needs BOTH dates, so with search-only data it cannot fire
+    # for contracts. Retained for the enrichment pass.
     bridge = False
     if (INFER_BRIDGES and option_end and compete_end
             and option_end > compete_end
@@ -281,9 +293,9 @@ def to_record(rec, today, is_idv, i):
     if bridge:
         status = "Recompete — possible bridge extension"
     elif compete_end:
-        status = "Recompete — competition point"
+        status = "Recompete — ordering period end (competition point)"
     else:
-        status = "Recompete — option decision point"
+        status = "Recompete — period end (option decision possible)"
 
     return {
         "id": slug(code, title, i),
@@ -306,9 +318,9 @@ def to_record(rec, today, is_idv, i):
         "location": "",
         "pocName": "",
         "pocEmail": "",
-        # Extra fields — inert until the renderer uses them. Two dates, kept
-        # separate on purpose so the dashboard never conflates a discretionary
-        # option decision with a mandatory competition.
+        # Extra fields — inert until the renderer uses them. Kept separate on
+        # purpose so the dashboard never conflates a discretionary option
+        # decision with a mandatory competition.
         "optionEnd": option_end.isoformat() if option_end else "",
         "competeEnd": compete_end.isoformat() if compete_end else "",
         "bridgeInferred": bridge,
@@ -411,19 +423,21 @@ def main():
           f"({WINDOW_MIN_DAYS}-{WINDOW_MAX_DAYS} days out)")
     print(f"NAICS prefixes    : {', '.join(NAICS_PREFIXES)}")
 
+    # Requestable fields differ by award type. "Period of Performance Current
+    # End Date" is response-only and cannot be sorted on — that returns 400.
     base_fields = ["Award ID", "Recipient Name", "Awarding Agency",
                    "Awarding Sub Agency", "Description", "NAICS",
-                   "Award Amount", "Period of Performance Current End Date"]
+                   "Award Amount", "generated_internal_id"]
 
     print("\nquerying contracts (A,B,C,D)...")
     contracts, c_scanned, c_pages = fetch_window(
-        today, CONTRACT_TYPES, base_fields + ["End Date", "Start Date"],
-        "Period of Performance Current End Date", "contracts")
+        today, CONTRACT_TYPES, base_fields + ["Start Date", "End Date"],
+        "End Date", "contracts")
 
     print("\nquerying IDVs...")
     idvs, i_scanned, i_pages = fetch_window(
-        today, IDV_TYPES, base_fields + ["Last Date to Order"],
-        "Period of Performance Current End Date", "IDVs")
+        today, IDV_TYPES, base_fields + ["Start Date", "Last Date to Order"],
+        "Last Date to Order", "IDVs")
 
     print(f"\nscanned {c_scanned} contracts over {c_pages} page(s), "
           f"{i_scanned} IDVs over {i_pages} page(s)")
@@ -449,9 +463,9 @@ def main():
 
     bridges = sum(1 for r in records if r["bridgeInferred"])
     with_inc = sum(1 for r in records if r["incumbent"])
-    both = sum(1 for r in records if r["optionEnd"] and r["competeEnd"])
+    idv_n = sum(1 for r in records if r["vehicle"] == "IDV")
     print(f"   with named incumbent      : {with_inc}")
-    print(f"   with both dates present   : {both}")
+    print(f"   IDV / Contract            : {idv_n} / {len(records)-idv_n}")
     print(f"   possible 52.217-8 bridges : {bridges} (inferred, not asserted)")
 
     # ---- splice into AGENCY_DATA, replacing existing Recompete Watch ----
