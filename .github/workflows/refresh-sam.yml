@@ -11,8 +11,7 @@ on:
     # quota is metered per key, so if the outbound email agent shares this key,
     # whichever system runs first claims the budget. Running here means the
     # dashboard refreshes before the agent starts its day.
-    # 00:15 UTC = 7:15pm US Central the previous evening, so the dashboard is
-    # already current by the time the morning outbound window opens.
+    # 00:15 UTC = 4:15pm Alaska / 7:15pm US Central the previous evening.
     - cron: "15 0 * * *"
   workflow_dispatch:        # lets you trigger a manual refresh from the Actions tab
 
@@ -41,11 +40,18 @@ jobs:
         run: python scripts/refresh_sam.py
 
       # Rebuilds Recompete Watch from FPDS period-of-performance end dates.
-      # No API key, no quota. continue-on-error so a USASpending outage cannot
-      # block the SAM.gov refresh from committing — the two feeds are
-      # independent and the script refuses to empty the section on failure.
+      # No API key, no quota.
+      #
+      # Deliberately NOT continue-on-error. A broken feed must show red. The
+      # cost is that a USASpending failure aborts the run before the commit
+      # step, discarding that cycle's SAM.gov refresh too — acceptable, because
+      # refresh_sam.py looks back 30 days and retention preserves existing
+      # notices, so the next successful run catches up with nothing lost.
+      #
+      # The script already refuses to write an empty Recompete Watch: if the
+      # API returns no usable records it aborts rather than emptying the
+      # section, so a red run never means a blanked dashboard.
       - name: Refresh Recompete Watch from USASpending
-        continue-on-error: true
         run: python scripts/refresh_usaspending.py
 
       - name: Scrub check — no internal references, no excluded agencies
