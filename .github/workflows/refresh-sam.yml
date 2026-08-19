@@ -39,20 +39,34 @@ jobs:
           SAM_API_KEY: ${{ secrets.SAM_API_KEY }}
         run: python scripts/refresh_sam.py
 
-      # Rebuilds Recompete Watch from FPDS period-of-performance end dates.
-      # No API key, no quota.
+      # ─────────────────────────────────────────────────────────────────────
+      # USASpending Recompete Watch feed — PARKED, deliberately not running.
       #
-      # Deliberately NOT continue-on-error. A broken feed must show red. The
-      # cost is that a USASpending failure aborts the run before the commit
-      # step, discarding that cycle's SAM.gov refresh too — acceptable, because
-      # refresh_sam.py looks back 30 days and retention preserves existing
-      # notices, so the next successful run catches up with nothing lost.
+      # scripts/refresh_usaspending.py remains in the repo and is believed
+      # correct, but it has never executed successfully: runs #7 and #8 both
+      # died on an HTTP 400 while the corrected file sat on main. The cause is
+      # unresolved (see INVESTIGATION_stale_runner.md — leading theory is a
+      # commit/dispatch race pinning the run to a pre-fix SHA).
       #
-      # The script already refuses to write an empty Recompete Watch: if the
-      # API returns no usable records it aborts rather than emptying the
-      # section, so a red run never means a blanked dashboard.
-      - name: Refresh Recompete Watch from USASpending
-        run: python scripts/refresh_usaspending.py
+      # It is removed rather than left failing because continue-on-error was
+      # deliberately dropped, so a failing step aborts the job BEFORE the commit
+      # and discards the SAM.gov refresh that succeeded in the same run. A
+      # parked feed must not block a working one.
+      #
+      # TO UNPARK: restore the step below, and FIRST capture the commit SHA
+      # shown in the run header to confirm the runner is executing current code.
+      #
+      #   - name: Refresh Recompete Watch from USASpending
+      #     run: python scripts/refresh_usaspending.py
+      #
+      # Recommended diagnostic to add alongside it on the first attempt:
+      #
+      #   - name: Show checked-out revision and sort keys
+      #     run: |
+      #       echo "SHA: $GITHUB_SHA"
+      #       git log -1 --oneline
+      #       grep -n 'fetch_window(' scripts/refresh_usaspending.py || true
+      # ─────────────────────────────────────────────────────────────────────
 
       - name: Scrub check — no internal references, no excluded agencies
         run: python scripts/scrub_check.py index.html
@@ -112,5 +126,5 @@ jobs:
           git add index.html
           # Match the dashboard's own stamp, which resolves in US Central.
           # Using UTC here made commits read one day ahead of the file contents.
-          git commit -m "Feed refresh — $(TZ=America/Chicago date +'%B %d, %Y')"
+          git commit -m "SAM.gov feed refresh — $(TZ=America/Chicago date +'%B %d, %Y')"
           git push
