@@ -10,45 +10,51 @@ WHY CONTRACT END DATES, NOT FORECAST DATES
     Acquisition Gateway export, 1,400 of 1,504 rows were already past their own
     published solicitation date. A period-of-performance end date is different
     in kind — it is a term the Government already committed to and reported to
-    FPDS. It does not slip. Anchoring the recompete pipeline on observed end
-    dates is therefore more reliable than anchoring it on forecasts.
+    FPDS. It does not slip.
 
 WHAT THIS SCRIPT WILL NOT DO
     It does not predict whether an option will be exercised. The Government may
     exercise or decline at its discretion, the RFO text at 17.204-1 relaxed the
     prior "most advantageous method" test, and the 5-year services ceiling is a
     default that agency supplements and approved acquisition strategies can
-    exceed. Any computed "likelihood" would be a guess wearing a data costume.
-    So: observed dates only, clearly labelled as to which kind.
+    exceed. Observed dates only, labelled as to which kind.
+
+CURATION — display is capped, data is not
+    The first successful run returned 4,336 in-window records, which is genuine
+    volume: the federal services recompete market in 5413/5415/5416 across
+    eleven departments really is that large. Rendering all of it produced a
+    2.8 MB index.html — a database, not the "decision filter" the page claims
+    to be, and 13x the weight the page was deliberately trimmed to.
+
+    So: the top DISPLAY_CAP records by value then urgency are written into
+    AGENCY_DATA and render on the page. EVERY record — curated and not — is
+    written to forecast-index.json, which the search box lazy-loads on the
+    first keystroke.
+
+    This trims DISPLAY ONLY. Nothing is discarded. A record an outbound email
+    cites remains findable by search whether or not it made the cut, and
+    search results mark which are on the dashboard and which are archive.
 
 FIELD NAMES ARE PER AWARD TYPE — this is what broke run #7
     "Period of Performance Current End Date" appears in the RESPONSE schema but
-    is NOT a requestable field, so sorting on it returns HTTP 400. The end date
-    is exposed under a different name for each award type:
+    is NOT a requestable field, so sorting on it returns HTTP 400:
 
         Contracts (A,B,C,D) -> "End Date"
         IDVs                -> "Last Date to Order"   (no "End Date" at all)
 
 ENRICHMENT — why only one date per record today
-    The search endpoint exposes ONE end date per award type. It does not return
-    the potential/ultimate end alongside the current end, so for a contract the
-    option decision point and the true competition point cannot be separated
-    from search results alone. Both live on
-        /api/v2/awards/<generated_internal_id>/   -> period_of_performance
+    The search endpoint exposes ONE end date per award type. The potential end
+    lives on /api/v2/awards/<generated_internal_id>/ under period_of_performance.
     generated_internal_id is requested here so an enrichment pass can be added
-    without changing the query. Until that exists:
-      - IDV records carry a genuine competition point (ordering period end)
-      - Contract records carry a period end that MAY be an option decision
-      - bridge inference cannot fire for contracts (it needs both dates)
-    Status labels state which kind of date each record actually holds rather
-    than implying a distinction the data does not support.
+    without changing the query. Until then bridge inference cannot fire for
+    contracts, and status labels say which kind of date each record carries.
 
 API SHAPE — read before changing the query
     period_of_performance_current_end_date is NOT a valid `date_type`. The award
     search time_period filter accepts only action_date, date_signed,
-    last_modified_date and new_awards_only. The end-date window is therefore
-    applied CLIENT-SIDE, after sorting the result set by end date descending.
-    Do not "optimise" this into a server-side date filter; it does not exist.
+    last_modified_date and new_awards_only. The end-date window is applied
+    CLIENT-SIDE after sorting by end date descending. Do not "optimise" this
+    into a server-side date filter; it does not exist.
 """
 
 import json
@@ -63,8 +69,6 @@ from zoneinfo import ZoneInfo
 
 API_URL = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
 
-# Dates resolve in the audience's timezone, not the UTC runner's. Same reason
-# as refresh_sam.py: a 00:15 UTC job would otherwise stamp tomorrow's date.
 LOCAL_TZ = ZoneInfo("America/Chicago")
 
 
@@ -73,24 +77,28 @@ def local_today():
 
 
 # ── Positioning window ───────────────────────────────────────────────────────
-# A services recompete solicitation typically drops 6-18 months before the
-# incumbent's contract ends. Outside that window a record is not actionable.
 WINDOW_MIN_DAYS = 180
 WINDOW_MAX_DAYS = 545
 
-NAICS_PREFIXES = ["5413", "5415", "5416"]   # engineering, IT, professional svcs
-MIN_AWARD_AMOUNT = 250_000                  # skip micro-purchases
-ACTION_LOOKBACK_DAYS = 730                  # only awards with recent activity
+# ── Display curation ─────────────────────────────────────────────────────────
+# How many records render on the page. The rest stay searchable. 220 matches
+# the cap the previous Recompete Watch carried and keeps index.html in the
+# ~250 KB class rather than the megabytes.
+DISPLAY_CAP = 220
+
+NAICS_PREFIXES = ["5413", "5415", "5416"]
+MIN_AWARD_AMOUNT = 250_000
+ACTION_LOOKBACK_DAYS = 730
 
 CONTRACT_TYPES = ["A", "B", "C", "D"]
 IDV_TYPES = ["IDV_A", "IDV_B", "IDV_B_A", "IDV_B_B", "IDV_B_C",
              "IDV_C", "IDV_D", "IDV_E"]
 
 PAGE_LIMIT = 100
-MAX_PAGES = 100          # 10,000 records — the documented practical ceiling
+MAX_PAGES = 100
 REQUEST_PAUSE = 0.25
 INFER_BRIDGES = True
-BRIDGE_MAX_DAYS = 183    # 52.217-8 caps the extension at six months
+BRIDGE_MAX_DAYS = 183
 
 # ── Conflict screen — keep in sync with refresh_sam.py ───────────────────────
 EXCLUDED_AGENCY_KEYWORDS = [
@@ -105,8 +113,6 @@ EXCLUDED_AGENCY_KEYWORDS = [
     "FEDERAL LAW ENFORCEMENT TRAINING", "FLETC",
 ]
 
-# Awarding agency name -> dashboard agency code. Anything unmapped is skipped:
-# adding an agency to the dashboard requires Phil's explicit approval per SOP.
 AGENCY_MAP = {
     "Department of Veterans Affairs": "VA",
     "Department of Energy": "DOE",
@@ -123,6 +129,11 @@ AGENCY_MAP = {
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 INDEX = os.path.normpath(os.path.join(HERE, "..", "index.html"))
+INDEX_JSON = os.path.normpath(os.path.join(HERE, "..", "forecast-index.json"))
+
+# Records this feed writes carry "_USAS_" in their id. Used to replace only
+# this feed's rows in the search index while preserving forecast rows.
+FEED_MARKER = "_USAS_"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -143,12 +154,6 @@ def post(body):
 
 
 def fetch_window(today, award_types, fields, sort_field, label):
-    """Page sorted by end date descending, collecting the positioning window.
-
-    Sorted descending means we walk from the furthest-future end dates down.
-    Once a whole page sits below the window we can stop — everything after is
-    nearer-term and already outside scope.
-    """
     lo = today + timedelta(days=WINDOW_MIN_DAYS)
     hi = today + timedelta(days=WINDOW_MAX_DAYS)
     kept, page, scanned = [], 1, 0
@@ -184,10 +189,10 @@ def fetch_window(today, award_types, fields, sort_field, label):
             if not end:
                 continue
             if end > hi:
-                continue                    # still above the window
+                continue
             if end < lo:
                 below += 1
-                continue                    # past it
+                continue
             kept.append(rec)
 
         print(f"  {label} page {page}: {len(results)} scanned, "
@@ -243,19 +248,17 @@ def value_rank(v):
 
 def slug(agency, title, i):
     s = re.sub(r"[^A-Za-z0-9]+", "_", (title or "")[:26]).strip("_")
-    return f"{agency}_USAS_{s}_{i}"
+    return f"{agency}{FEED_MARKER}{s}_{i}"
 
 
 def to_record(rec, today, is_idv, i):
-    """Map an FPDS award onto the dashboard's record schema."""
     agency_name = (rec.get("Awarding Agency") or "").strip()
     sub_agency = (rec.get("Awarding Sub Agency") or "").strip()
     title = (rec.get("Description") or "").strip() or (rec.get("Award ID") or "").strip()
     incumbent = (rec.get("Recipient Name") or "").strip()
 
-    # Conflict screen runs FIRST, before the agency map. A DHS component bought
-    # through a mapped agency (Coast Guard work on a GSA vehicle) would
-    # otherwise slip through as an ordinary GSA record.
+    # Conflict screen runs FIRST, before the agency map, so DHS work bought
+    # through a mapped agency cannot slip through as an ordinary record.
     kw = excluded(agency_name, sub_agency, title, incumbent)
     if kw:
         return None, f"excluded agency keyword '{kw}'"
@@ -264,12 +267,6 @@ def to_record(rec, today, is_idv, i):
     if not code:
         return None, "agency not on dashboard"
 
-    # IDV  -> "Last Date to Order" is the ordering-period end: a MANDATORY
-    #         competition point once it passes.
-    # Contract -> "End Date" is the current period-of-performance end. From the
-    #         search endpoint alone this cannot be distinguished from an option
-    #         decision point; the potential end lives on the award detail
-    #         endpoint. See ENRICHMENT in the module docstring.
     if is_idv:
         option_end = None
         compete_end = parse_date(rec.get("Last Date to Order"))
@@ -281,8 +278,6 @@ def to_record(rec, today, is_idv, i):
     if not anchor:
         return None, "no usable end date"
 
-    # Bridge inference needs BOTH dates, so with search-only data it cannot fire
-    # for contracts. Retained for the enrichment pass.
     bridge = False
     if (INFER_BRIDGES and option_end and compete_end
             and option_end > compete_end
@@ -318,9 +313,6 @@ def to_record(rec, today, is_idv, i):
         "location": "",
         "pocName": "",
         "pocEmail": "",
-        # Extra fields — inert until the renderer uses them. Kept separate on
-        # purpose so the dashboard never conflates a discretionary option
-        # decision with a mandatory competition.
         "optionEnd": option_end.isoformat() if option_end else "",
         "competeEnd": compete_end.isoformat() if compete_end else "",
         "bridgeInferred": bridge,
@@ -334,11 +326,8 @@ def to_record(rec, today, is_idv, i):
 # index.html read / write
 # ─────────────────────────────────────────────────────────────────────────────
 def quote_js_keys(js):
-    """JS object-literal -> strict JSON, string-aware.
-
-    A regex like ([{,]\\s*)(\\w+)\\s*: corrupts any value containing
-    ", word:" — which real contract descriptions do contain. Character walk.
-    """
+    """JS object-literal -> strict JSON, string-aware. A regex would corrupt
+    any value containing ", word:" — real contract descriptions do."""
     out, i, n = [], 0, len(js)
     in_str, quote = False, ""
     while i < n:
@@ -409,6 +398,40 @@ def render_agency_data(data):
     return "\n".join(lines)
 
 
+def write_search_index(records, curated_ids):
+    """Write EVERY record to forecast-index.json.
+
+    Entry shape must match what the search box in index.html expects:
+        [id, agency, date, naics, value, title, incumbent, onDashboardFlag]
+
+    Rows from this feed are replaced wholesale; rows from any other source
+    (the Acquisition Gateway forecast archive) are preserved untouched.
+    """
+    try:
+        with open(INDEX_JSON, encoding="utf-8") as f:
+            existing = json.load(f)
+    except (OSError, ValueError):
+        existing = []
+
+    preserved = [e for e in existing
+                 if not (e and FEED_MARKER in str(e[0]))]
+
+    rows = [[r["id"],
+             r["id"].split("_")[0],
+             r.get("competeEnd") or r.get("optionEnd") or r.get("solDate") or "",
+             r.get("naics") or "",
+             (r.get("value") or "")[:26],
+             (r.get("title") or "")[:96],
+             (r.get("incumbent") or "")[:40],
+             1 if r["id"] in curated_ids else 0]
+            for r in records]
+
+    with open(INDEX_JSON, "w", encoding="utf-8") as f:
+        json.dump(preserved + rows, f, separators=(",", ":"))
+
+    return len(preserved), len(rows)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
     today = local_today()
@@ -422,9 +445,8 @@ def main():
     print(f"positioning window: {lo} .. {hi} "
           f"({WINDOW_MIN_DAYS}-{WINDOW_MAX_DAYS} days out)")
     print(f"NAICS prefixes    : {', '.join(NAICS_PREFIXES)}")
+    print(f"display cap       : {DISPLAY_CAP} (remainder stays searchable)")
 
-    # Requestable fields differ by award type. "Period of Performance Current
-    # End Date" is response-only and cannot be sorted on — that returns 400.
     base_fields = ["Award ID", "Recipient Name", "Awarding Agency",
                    "Awarding Sub Agency", "Description", "NAICS",
                    "Award Amount", "generated_internal_id"]
@@ -468,7 +490,22 @@ def main():
     print(f"   IDV / Contract            : {idv_n} / {len(records)-idv_n}")
     print(f"   possible 52.217-8 bridges : {bridges} (inferred, not asserted)")
 
-    # ---- splice into AGENCY_DATA, replacing existing Recompete Watch ----
+    # ---- curate: highest value first, then soonest expiry ----
+    records.sort(key=lambda r: (-(r.get("valueRank") or 0),
+                                r.get("daysOut") or 9999))
+    curated = records[:DISPLAY_CAP]
+    archived = records[DISPLAY_CAP:]
+    curated_ids = {r["id"] for r in curated}
+    print(f"\ncuration: {len(curated)} rendered on the page, "
+          f"{len(archived)} archived to search "
+          f"(display trimmed, nothing discarded)")
+
+    # ---- search index: every record, curated flag set ----
+    preserved, written = write_search_index(records, curated_ids)
+    print(f"forecast-index.json: {preserved} non-feed row(s) preserved, "
+          f"{written} written, {preserved + written} total searchable")
+
+    # ---- splice curated set into AGENCY_DATA ----
     html = open(INDEX, encoding="utf-8").read()
     head, start, end = locate_agency_data(html)
     existing = json.loads(quote_js_keys(html[start:end]))
@@ -480,23 +517,27 @@ def main():
         removed += len(recs) - len(keep)
         merged[agency] = keep
 
-    added = 0
-    for r in records:
-        agency = r["id"].split("_")[0]
-        merged.setdefault(agency, []).append(r)
-        added += 1
+    for r in curated:
+        merged.setdefault(r["id"].split("_")[0], []).append(r)
 
     for agency in merged:
         merged[agency].sort(key=lambda r: (-(r.get("valueRank") or 0),
                                            r.get("daysOut") or 9999))
 
-    print(f"\nRecompete Watch: removed {removed} previous record(s) "
-          f"(DOE snapshot), added {added} from USASpending")
+    print(f"\nRecompete Watch: removed {removed} previous record(s), "
+          f"added {len(curated)} from USASpending")
 
     html = html[:head] + render_agency_data(merged) + html[end:]
     open(INDEX, "w", encoding="utf-8").write(html)
+
+    size_kb = os.path.getsize(INDEX) / 1024
+    json_kb = os.path.getsize(INDEX_JSON) / 1024
     print(f"index.html updated — {sum(len(v) for v in merged.values())} "
-          f"total records across {len(merged)} agencies")
+          f"records across {len(merged)} agencies")
+    print(f"   index.html          : {size_kb:,.0f} KB")
+    print(f"   forecast-index.json : {json_kb:,.0f} KB (lazy-loaded)")
+    if size_kb > 400:
+        print(f"   WARNING: index.html above 400 KB — lower DISPLAY_CAP.")
 
 
 if __name__ == "__main__":
