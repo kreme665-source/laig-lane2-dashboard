@@ -1,0 +1,116 @@
+name: Refresh Recompete Watch (USASpending)
+
+# Deliberately SEPARATE from refresh-sam.yml.
+#
+# The USASpending feed has never executed successfully. Runs #7 and #8 failed
+# on HTTP 400 while the corrected script sat on main; run #9 proved the runner
+# executes current code when the dispatch is not issued immediately after the
+# commit, which points at a commit/dispatch race rather than a code defect.
+#
+# Keeping it in its own workflow means a failure here can never abort the
+# SAM.gov refresh mid-job and discard a successful pull — which is what
+# happened when both lived in one workflow without continue-on-error.
+#
+# NO SCHEDULE until this has run green at least twice. Manual dispatch only.
+# Once proven, either add a cron here or fold the step back into refresh-sam.yml.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Same concurrency group as refresh-sam.yml on purpose: both workflows commit
+# index.html, so they must serialise rather than race each other's push.
+concurrency:
+  group: refresh-sam
+  cancel-in-progress: false
+
+jobs:
+  recompete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Answers "is the runner executing current code?" inside the run itself,
+      # so it never again depends on fetching the file from a CDN that lags.
+      # Compare the SHA below against the latest commit on main before reading
+      # any other output.
+      - name: Show checked-out revision and the sort keys being sent
+        run: |
+          echo "SHA:  $GITHUB_SHA"
+          echo "Ref:  $GITHUB_REF"
+          git log -1 --oneline
+          echo "--- fetch_window call sites (these carry the sort key) ---"
+          grep -n 'fetch_window(' scripts/refresh_usaspending.py || true
+          echo "--- must NOT appear outside a comment ---"
+          grep -n 'Period of Performance Current End Date' scripts/refresh_usaspending.py || true
+
+      - name: Refresh Recompete Watch from USASpending
+        run: python scripts/refresh_usaspending.py
+
+      - name: Scrub check — no internal references, no excluded agencies
+        run: python scripts/scrub_check.py index.html
+
+      - name: Verify index.html still parses
+        run: |
+          python - <<'PY'
+          import re, subprocess, tempfile, sys
+          html = open('index.html', encoding='utf-8').read()
+          blocks = re.findall(r'<script[^>]*>(.*?)</script>', html, re.S)
+          bad = False
+          for i, js in enumerate(blocks):
+              if not js.strip():
+                  continue
+              with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False,
+                                               encoding='utf-8') as f:
+                  f.write(js); path = f.name
+              r = subprocess.run(['node', '--check', path],
+                                 capture_output=True, text=True)
+              if r.returncode:
+                  print(f"SYNTAX ERROR in script block {i}:\n{r.stderr}")
+                  bad = True
+          from html.parser import HTMLParser
+          class P(HTMLParser):
+              def __init__(s):
+                  super().__init__(); s.stack=[]; s.res={}
+              def handle_starttag(s, t, a):
+                  d = dict(a)
+                  if t == 'div':
+                      s.stack.append(d.get('id') or '')
+                      if d.get('id','').startswith('view-'):
+                          s.res[d['id']] = list(s.stack[:-1])
+              def handle_endtag(s, t):
+                  if t == 'div' and s.stack:
+                      s.stack.pop()
+          p = P(); p.feed(html)
+          for vid, anc in p.res.items():
+              nested = [a for a in anc if a.startswith('view-')]
+              if nested:
+                  print(f"STRUCTURE ERROR: {vid} is nested inside {nested[0]}")
+                  bad = True
+          if bad:
+              sys.exit(1)
+          print("index.html: JS parses, view structure flat. OK")
+          PY
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change to index.html — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Recompete Watch refresh — $(TZ=America/Chicago date +'%B %d, %Y')"
+          # Rebase before pushing: refresh-sam.yml commits the same file, and a
+          # nightly run may have landed since this job checked out.
+          git pull --rebase origin main
+          git push
