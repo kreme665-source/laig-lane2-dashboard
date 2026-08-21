@@ -8,9 +8,8 @@ No API key, no quota — USASpending is a fully open endpoint.
 WHY CONTRACT END DATES, NOT FORECAST DATES
     Agency forecast dates are projections and they slip: in the Aug 2026
     Acquisition Gateway export, 1,400 of 1,504 rows were already past their own
-    published solicitation date. A period-of-performance end date is different
-    in kind — it is a term the Government already committed to and reported to
-    FPDS. It does not slip.
+    published solicitation date. A period-of-performance end date is a term the
+    Government already committed to and reported to FPDS. It does not slip.
 
 WHAT THIS SCRIPT WILL NOT DO
     It does not predict whether an option will be exercised. The Government may
@@ -19,35 +18,32 @@ WHAT THIS SCRIPT WILL NOT DO
     default that agency supplements and approved acquisition strategies can
     exceed. Observed dates only, labelled as to which kind.
 
+WHY ENRICHMENT EXISTS — the 99.7% problem
+    The search endpoint returns exactly ONE end date per award. A status derived
+    from a single date cannot separate "the option year ends here" from "the
+    contract ends here", so it collapses into a restatement of award type:
+    every contract got one label, every IDV the other, and the bridge branch was
+    unreachable because no record ever held both dates.
+
+    The award detail endpoint returns them together:
+        period_of_performance.end_date           current period end
+        period_of_performance.potential_end_date ultimate end (nullable)
+
+    So the curated set is enriched after selection. 220 calls at ~0.25s is about
+    a minute against an endpoint with no quota. Enriching all 4,336 would cost
+    twenty minutes for records that never render.
+
 CURATION — display is capped, data is not
-    The first successful run returned 4,336 in-window records, which is genuine
-    volume: the federal services recompete market in 5413/5415/5416 across
-    eleven departments really is that large. Rendering all of it produced a
-    2.8 MB index.html — a database, not the "decision filter" the page claims
-    to be, and 13x the weight the page was deliberately trimmed to.
-
-    So: the top DISPLAY_CAP records by value then urgency are written into
-    AGENCY_DATA and render on the page. EVERY record — curated and not — is
-    written to forecast-index.json, which the search box lazy-loads on the
-    first keystroke.
-
-    This trims DISPLAY ONLY. Nothing is discarded. A record an outbound email
-    cites remains findable by search whether or not it made the cut, and
-    search results mark which are on the dashboard and which are archive.
+    The top DISPLAY_CAP records by value then urgency render on the page. EVERY
+    record is written to forecast-index.json, which the search box lazy-loads.
+    This trims DISPLAY ONLY — a record cited in an outbound email stays findable
+    whether or not it made the cut, marked archive rather than live.
 
 FIELD NAMES ARE PER AWARD TYPE — this is what broke run #7
-    "Period of Performance Current End Date" appears in the RESPONSE schema but
-    is NOT a requestable field, so sorting on it returns HTTP 400:
-
+    "Period of Performance Current End Date" is in the RESPONSE schema but is
+    NOT requestable, so sorting on it returns HTTP 400:
         Contracts (A,B,C,D) -> "End Date"
         IDVs                -> "Last Date to Order"   (no "End Date" at all)
-
-ENRICHMENT — why only one date per record today
-    The search endpoint exposes ONE end date per award type. The potential end
-    lives on /api/v2/awards/<generated_internal_id>/ under period_of_performance.
-    generated_internal_id is requested here so an enrichment pass can be added
-    without changing the query. Until then bridge inference cannot fire for
-    contracts, and status labels say which kind of date each record carries.
 
 API SHAPE — read before changing the query
     period_of_performance_current_end_date is NOT a valid `date_type`. The award
@@ -63,11 +59,13 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 API_URL = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+AWARD_DETAIL_URL = "https://api.usaspending.gov/api/v2/awards/{}/"
 
 LOCAL_TZ = ZoneInfo("America/Chicago")
 
@@ -81,10 +79,11 @@ WINDOW_MIN_DAYS = 180
 WINDOW_MAX_DAYS = 545
 
 # ── Display curation ─────────────────────────────────────────────────────────
-# How many records render on the page. The rest stay searchable. 220 matches
-# the cap the previous Recompete Watch carried and keeps index.html in the
-# ~250 KB class rather than the megabytes.
 DISPLAY_CAP = 220
+
+# ── Enrichment ───────────────────────────────────────────────────────────────
+ENRICH_CURATED = True
+ENRICH_PAUSE = 0.25
 
 NAICS_PREFIXES = ["5413", "5415", "5416"]
 MIN_AWARD_AMOUNT = 250_000
@@ -97,8 +96,7 @@ IDV_TYPES = ["IDV_A", "IDV_B", "IDV_B_A", "IDV_B_B", "IDV_B_C",
 PAGE_LIMIT = 100
 MAX_PAGES = 100
 REQUEST_PAUSE = 0.25
-INFER_BRIDGES = True
-BRIDGE_MAX_DAYS = 183
+BRIDGE_MAX_DAYS = 183    # 52.217-8 caps the extension at six months
 
 # ── Conflict screen — keep in sync with refresh_sam.py ───────────────────────
 EXCLUDED_AGENCY_KEYWORDS = [
@@ -131,8 +129,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 INDEX = os.path.normpath(os.path.join(HERE, "..", "index.html"))
 INDEX_JSON = os.path.normpath(os.path.join(HERE, "..", "forecast-index.json"))
 
-# Records this feed writes carry "_USAS_" in their id. Used to replace only
-# this feed's rows in the search index while preserving forecast rows.
 FEED_MARKER = "_USAS_"
 
 
@@ -153,10 +149,24 @@ def post(body):
         raise SystemExit(f"USASpending request failed: {e}")
 
 
+def get_award_detail(award_key):
+    """Fetch one award. Returns {} on any failure — enrichment is best-effort
+    and must never abort the run over a single bad id."""
+    if not award_key:
+        return {}
+    url = AWARD_DETAIL_URL.format(urllib.parse.quote(str(award_key), safe=""))
+    req = urllib.request.Request(url, headers={"Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=45) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except Exception:
+        return {}
+
+
 def fetch_window(today, award_types, fields, sort_field, label):
     lo = today + timedelta(days=WINDOW_MIN_DAYS)
     hi = today + timedelta(days=WINDOW_MAX_DAYS)
-    kept, page, scanned = [], 1, 0
+    kept, page, scanned, undated = [], 1, 0, 0
 
     while page <= MAX_PAGES:
         body = {
@@ -187,6 +197,7 @@ def fetch_window(today, award_types, fields, sort_field, label):
         for rec in results:
             end = parse_date(rec.get(sort_field))
             if not end:
+                undated += 1          # counted, not silently swallowed
                 continue
             if end > hi:
                 continue
@@ -205,6 +216,8 @@ def fetch_window(today, award_types, fields, sort_field, label):
         page += 1
         time.sleep(REQUEST_PAUSE)
 
+    if undated:
+        print(f"  {label}: {undated} record(s) had no '{sort_field}' and were skipped")
     return kept, scanned, page
 
 
@@ -267,38 +280,22 @@ def to_record(rec, today, is_idv, i):
     if not code:
         return None, "agency not on dashboard"
 
+    # Pre-enrichment: only one date is available per award type. Status is
+    # provisional and says so; enrich_curated() replaces it with a real one.
     if is_idv:
-        option_end = None
-        compete_end = parse_date(rec.get("Last Date to Order"))
+        first_end = parse_date(rec.get("Last Date to Order"))
     else:
-        option_end = parse_date(rec.get("End Date"))
-        compete_end = None
-
-    anchor = compete_end or option_end
-    if not anchor:
+        first_end = parse_date(rec.get("End Date"))
+    if not first_end:
         return None, "no usable end date"
-
-    bridge = False
-    if (INFER_BRIDGES and option_end and compete_end
-            and option_end > compete_end
-            and (option_end - compete_end).days <= BRIDGE_MAX_DAYS):
-        bridge = True
-        anchor = option_end
-
-    if bridge:
-        status = "Recompete — possible bridge extension"
-    elif compete_end:
-        status = "Recompete — ordering period end (competition point)"
-    else:
-        status = "Recompete — period end (option decision possible)"
 
     return {
         "id": slug(code, title, i),
         "title": title[:140],
         "org": sub_agency or agency_name,
-        "status": status,
-        "solDate": anchor.isoformat(),
-        "daysOut": (anchor - today).days,
+        "status": "Recompete — pending date resolution",
+        "solDate": first_end.isoformat(),
+        "daysOut": (first_end - today).days,
         "awardQtr": "",
         "value": money(rec.get("Award Amount")),
         "valueRank": value_rank(rec.get("Award Amount")),
@@ -313,13 +310,78 @@ def to_record(rec, today, is_idv, i):
         "location": "",
         "pocName": "",
         "pocEmail": "",
-        "optionEnd": option_end.isoformat() if option_end else "",
-        "competeEnd": compete_end.isoformat() if compete_end else "",
-        "bridgeInferred": bridge,
+        "optionEnd": "",
+        "competeEnd": "",
+        "bridgeInferred": False,
         "awardId": (rec.get("Award ID") or "").strip(),
+        "awardKey": (rec.get("generated_internal_id") or "").strip(),
         "vehicle": "IDV" if is_idv else "Contract",
         "source": "USASpending",
     }, None
+
+
+def enrich_curated(records, today):
+    """Resolve BOTH dates, then derive a status that actually means something.
+
+        end_date           -> current period end    (option DECISION point)
+        potential_end_date -> ultimate end          (MANDATORY competition point)
+
+    Only with both in hand can the label distinguish the two. Records the API
+    cannot resolve keep their provisional status and say so plainly.
+    """
+    stats = {"enriched": 0, "no_detail": 0, "no_potential": 0, "rewindowed": 0,
+             "options_remain": 0, "final_period": 0, "bridge": 0, "unreported": 0}
+    for r in records:
+        detail = get_award_detail(r.get("awardKey") or r.get("awardId"))
+        time.sleep(ENRICH_PAUSE)
+        if not detail:
+            stats["no_detail"] += 1
+            r["status"] = "Recompete — period end (detail unavailable)"
+            continue
+        stats["enriched"] += 1
+
+        pop = detail.get("period_of_performance") or {}
+        cur = parse_date(pop.get("end_date"))
+        pot = parse_date(pop.get("potential_end_date"))
+        if not pot:
+            stats["no_potential"] += 1
+
+        if pot and cur and pot > cur:
+            r["optionEnd"], r["competeEnd"] = cur.isoformat(), pot.isoformat()
+            r["status"] = "Recompete — option decision first, competition by ultimate end"
+            stats["options_remain"] += 1
+            anchor = pot
+        elif pot and cur and cur > pot and (cur - pot).days <= BRIDGE_MAX_DAYS:
+            r["optionEnd"], r["competeEnd"] = cur.isoformat(), pot.isoformat()
+            r["bridgeInferred"] = True
+            r["status"] = "Recompete — possible bridge extension (follow-on likely imminent)"
+            stats["bridge"] += 1
+            anchor = cur
+        elif pot and cur:
+            # potential == current: no options remain, this really is the end.
+            r["optionEnd"], r["competeEnd"] = "", cur.isoformat()
+            r["status"] = "Recompete — final period end (competition point)"
+            stats["final_period"] += 1
+            anchor = cur
+        elif cur:
+            # potential_end_date is NULL. That means "not reported", not
+            # "no options exist" — so do NOT assert a competition point.
+            # Claiming finality on absent data is the same failure as a baked
+            # date: confident-sounding, unsupported. Label the uncertainty.
+            r["optionEnd"], r["competeEnd"] = "", ""
+            r["status"] = "Recompete — period end (options not reported)"
+            stats["unreported"] += 1
+            anchor = cur
+        else:
+            r["status"] = "Recompete — period end (no dates returned)"
+            continue
+
+        new_days = (anchor - today).days
+        if not (WINDOW_MIN_DAYS <= new_days <= WINDOW_MAX_DAYS):
+            stats["rewindowed"] += 1
+        r["solDate"] = anchor.isoformat()
+        r["daysOut"] = new_days
+    return stats
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -356,10 +418,10 @@ def locate_agency_data(html):
     """Find the AGENCY_DATA block, skipping braces inside string literals.
 
     Naive brace counting breaks once record values contain '{' or '}' inside
-    a quoted string (the USASpending feed's titles/descriptions do). Track
-    quote state so only structural braces are counted. (Fixed 2026-08-20 —
-    run 32430425274 failed with "AGENCY_DATA braces unbalanced" on the
-    4,336-record build.)
+    a quoted string (USASpending titles/descriptions do — verified 2026-08-20
+    on the 220-record build: 8,698 '{' vs 4,362 '}' in the 4,336 build, and
+    the naive counter fails on the curated 288 KB build too). Track quote
+    state so only structural braces are counted.
     """
     m = re.search(r"const AGENCY_DATA\s*=\s*\{", html)
     if not m:
@@ -422,8 +484,11 @@ def render_agency_data(data):
 def write_search_index(records, curated_ids):
     """Write EVERY record to forecast-index.json.
 
-    Entry shape must match what the search box in index.html expects:
-        [id, agency, date, naics, value, title, incumbent, onDashboardFlag]
+        [id, agency, date, naics, value, title, incumbent, onDashboardFlag,
+         status]
+
+    Older rows written before the status field exist with 8 elements; the
+    renderer treats a missing r[8] as "no status" rather than breaking.
 
     Rows from this feed are replaced wholesale; rows from any other source
     (the Acquisition Gateway forecast archive) are preserved untouched.
@@ -434,8 +499,16 @@ def write_search_index(records, curated_ids):
     except (OSError, ValueError):
         existing = []
 
-    preserved = [e for e in existing
-                 if not (e and FEED_MARKER in str(e[0]))]
+    preserved = [e for e in existing if not (e and FEED_MARKER in str(e[0]))]
+
+    # Ninth field is the STATUS, so a lookup on a call reads out the same
+    # qualification the dashboard shows. Archived records were never enriched,
+    # so they say so explicitly rather than presenting a bare date that could
+    # be mistaken for a competition point.
+    def status_for(r):
+        if r["id"] in curated_ids:
+            return r.get("status") or ""
+        return "Archive — current period end, options not verified"
 
     rows = [[r["id"],
              r["id"].split("_")[0],
@@ -444,7 +517,8 @@ def write_search_index(records, curated_ids):
              (r.get("value") or "")[:26],
              (r.get("title") or "")[:96],
              (r.get("incumbent") or "")[:40],
-             1 if r["id"] in curated_ids else 0]
+             1 if r["id"] in curated_ids else 0,
+             status_for(r)]
             for r in records]
 
     with open(INDEX_JSON, "w", encoding="utf-8") as f:
@@ -504,12 +578,10 @@ def main():
             "ABORT: USASpending returned no usable records. Leaving "
             "index.html unchanged rather than emptying Recompete Watch.")
 
-    bridges = sum(1 for r in records if r["bridgeInferred"])
     with_inc = sum(1 for r in records if r["incumbent"])
     idv_n = sum(1 for r in records if r["vehicle"] == "IDV")
     print(f"   with named incumbent      : {with_inc}")
     print(f"   IDV / Contract            : {idv_n} / {len(records)-idv_n}")
-    print(f"   possible 52.217-8 bridges : {bridges} (inferred, not asserted)")
 
     # ---- curate: highest value first, then soonest expiry ----
     records.sort(key=lambda r: (-(r.get("valueRank") or 0),
@@ -521,9 +593,37 @@ def main():
           f"{len(archived)} archived to search "
           f"(display trimmed, nothing discarded)")
 
+    # ---- enrich the curated set so status is real, not a proxy for type ----
+    if ENRICH_CURATED and curated:
+        print(f"\nenriching {len(curated)} curated records with potential_end_date "
+              f"(~{len(curated)*ENRICH_PAUSE:.0f}s)...")
+        est = enrich_curated(curated, today)
+        print(f"   detail fetched            : {est['enriched']}")
+        print(f"   detail unavailable        : {est['no_detail']}")
+        print(f"   no potential_end_date     : {est['no_potential']}")
+        print(f"   anchor moved out of window: {est['rewindowed']}")
+        have = est['options_remain'] + est['final_period'] + est['bridge']
+        print(f"\n   WITH potential_end_date   : {have}")
+        print(f"      options remain         : {est['options_remain']}")
+        print(f"      final period           : {est['final_period']}")
+        print(f"      bridge extension       : {est['bridge']}")
+        print(f"   WITHOUT potential_end_date: {est['unreported'] + est['no_detail']}")
+        print(f"      options not reported   : {est['unreported']}")
+        print(f"      detail unavailable     : {est['no_detail']}")
+        dist = {}
+        for r in curated:
+            dist[r["status"]] = dist.get(r["status"], 0) + 1
+        print("   status distribution after enrichment:")
+        for k, v in sorted(dist.items(), key=lambda kv: -kv[1]):
+            print(f"      {v:>4}  {k}")
+        bridges = sum(1 for r in curated if r["bridgeInferred"])
+        print(f"   possible 52.217-8 bridges : {bridges} (inferred, not asserted)")
+        curated.sort(key=lambda r: (-(r.get("valueRank") or 0),
+                                    r.get("daysOut") or 9999))
+
     # ---- search index: every record, curated flag set ----
     preserved, written = write_search_index(records, curated_ids)
-    print(f"forecast-index.json: {preserved} non-feed row(s) preserved, "
+    print(f"\nforecast-index.json: {preserved} non-feed row(s) preserved, "
           f"{written} written, {preserved + written} total searchable")
 
     # ---- splice curated set into AGENCY_DATA ----
@@ -558,7 +658,7 @@ def main():
     print(f"   index.html          : {size_kb:,.0f} KB")
     print(f"   forecast-index.json : {json_kb:,.0f} KB (lazy-loaded)")
     if size_kb > 400:
-        print(f"   WARNING: index.html above 400 KB — lower DISPLAY_CAP.")
+        print("   WARNING: index.html above 400 KB — lower DISPLAY_CAP.")
 
 
 if __name__ == "__main__":
