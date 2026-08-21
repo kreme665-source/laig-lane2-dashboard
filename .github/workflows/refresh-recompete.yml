@@ -102,13 +102,13 @@ jobs:
 
       - name: Commit if changed
         run: |
-          if git diff --quiet -- index.html; then
-            echo "No change to index.html — nothing to commit."
+          if git diff --quiet -- index.html && git diff --quiet -- forecast-index.json; then
+            echo "No change to index.html / forecast-index.json — nothing to commit."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add index.html forecast-index.json
           git commit -m "Recompete Watch refresh — $(TZ=America/Chicago date +'%B %d, %Y')"
           # Rebase before pushing: refresh-sam.yml commits the same file, and a
           # nightly run may have landed since this job checked out.
