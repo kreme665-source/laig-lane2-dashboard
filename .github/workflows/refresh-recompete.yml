@@ -11,11 +11,15 @@ name: Refresh Recompete Watch (USASpending)
 # SAM.gov refresh mid-job and discard a successful pull — which is what
 # happened when both lived in one workflow without continue-on-error.
 #
-# NO SCHEDULE until this has run green at least twice. Manual dispatch only.
-# Once proven, either add a cron here or fold the step back into refresh-sam.yml.
+# Nightly schedule added 2026-08-20: the Recompete Watch is now a research
+# asset (4,336-record USASpending pool, curated 220 on the page) — the feed
+# refreshes nightly at 00:45 UTC so the asset stays current for inbound
+# recompete questions. Manual dispatch still available.
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "45 0 * * *"
 
 permissions:
   contents: write
