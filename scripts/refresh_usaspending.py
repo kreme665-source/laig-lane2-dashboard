@@ -649,6 +649,11 @@ def main():
           f"added {len(curated)} from USASpending")
 
     html = html[:head] + render_agency_data(merged) + html[end:]
+    # DATA_AS_OF tracks the content just written: every run stamps the label
+    # with the run's date so the "As of" label can never lag the data.
+    html = re.sub(r"DATA_AS_OF_ISO\s*=\s*'[^']*'",
+                  f"DATA_AS_OF_ISO = '{today.isoformat()}'",
+                  html, count=1)
     open(INDEX, "w", encoding="utf-8").write(html)
 
     size_kb = os.path.getsize(INDEX) / 1024
