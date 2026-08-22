@@ -127,4 +127,8 @@ jobs:
           # Match the dashboard's own stamp, which resolves in US Central.
           # Using UTC here made commits read one day ahead of the file contents.
           git commit -m "SAM.gov feed refresh — $(TZ=America/Chicago date +'%B %d, %Y')"
+          # Rebase before pushing: the recompete workflow commits the same
+          # file, and a concurrent/manual dispatch may have landed since this
+          # job checked out (rejected-push incident 2026-08-22).
+          git pull --rebase origin main
           git push
