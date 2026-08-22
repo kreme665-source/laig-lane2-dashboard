@@ -584,6 +584,11 @@ def main():
     html = PULLED_RE.sub(
         lambda m: m.group(1) + f"  const SAM_LAST_PULLED = '{stamp}';" + m.group(2),
         html, count=1)
+    # DATA_AS_OF tracks the content just written: every run stamps the label
+    # with the run's date so the "As of" label can never lag the data.
+    html = re.sub(r"DATA_AS_OF_ISO\s*=\s*'[^']*'",
+                  f"DATA_AS_OF_ISO = '{today.isoformat()}'",
+                  html, count=1)
 
     open(INDEX, "w", encoding="utf-8").write(html)
     print(f"index.html updated. Last pulled: {stamp}")
