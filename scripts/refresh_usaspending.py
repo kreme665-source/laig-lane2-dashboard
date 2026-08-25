@@ -131,6 +131,26 @@ INDEX_JSON = os.path.normpath(os.path.join(HERE, "..", "forecast-index.json"))
 
 FEED_MARKER = "_USAS_"
 
+# ── Search-index layers ──────────────────────────────────────────────────────
+# Every index row carries an explicit source tag in field 10. Layers are
+# identified POSITIVELY, never by exclusion.
+#
+# Why this matters: the retired label must never mask a stale LIVE feed.
+# Inferring "anything that isn't mine is retired" would do exactly that — a SAM
+# row or a market-view row carries no "_USAS_" marker, so a blanket stamp would
+# brand a live feed retired and hide its staleness.
+#
+# Rule: a row is stamped retired ONLY if its tag is AG or absent (legacy
+# Acquisition Gateway rows written before tagging existed). A row tagged with
+# anything in LIVE_SOURCES can never be stamped, whatever its id looks like.
+#
+# ANY NEW WRITER MUST SET ITS OWN TAG AND ADD IT TO LIVE_SOURCES.
+SOURCE_USASPENDING = "USASPENDING"
+SOURCE_AG_RETIRED = "AG"
+LIVE_SOURCES = {SOURCE_USASPENDING, "SAM", "MARKET"}
+RETIRED_LABEL = ("Retired source — Acquisition Gateway export, Aug 13 2026, "
+                 "no longer refreshed")
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # API
@@ -485,7 +505,7 @@ def write_search_index(records, curated_ids):
     """Write EVERY record to forecast-index.json.
 
         [id, agency, date, naics, value, title, incumbent, onDashboardFlag,
-         status]
+         status, source]
 
     Older rows written before the status field exist with 8 elements; the
     renderer treats a missing r[8] as "no status" rather than breaking.
@@ -499,7 +519,24 @@ def write_search_index(records, curated_ids):
     except (OSError, ValueError):
         existing = []
 
-    preserved = [e for e in existing if not (e and FEED_MARKER in str(e[0]))]
+    def source_of(row):
+        return row[9] if len(row) > 9 and row[9] else ""
+
+    # Rows from this feed are replaced wholesale. Everything else is preserved,
+    # and stamped retired ONLY when it is genuinely legacy Acquisition Gateway.
+    preserved, stamped, left_alone = [], 0, 0
+    for row in existing:
+        if source_of(row) == SOURCE_USASPENDING or (
+                not source_of(row) and FEED_MARKER in str(row[0])):
+            continue                          # ours — about to be rewritten
+        row = list(row) + [""] * (10 - len(row))
+        if source_of(row) in LIVE_SOURCES:
+            left_alone += 1                   # a live feed: NEVER stamp retired
+        else:
+            row[8] = RETIRED_LABEL
+            row[9] = SOURCE_AG_RETIRED
+            stamped += 1
+        preserved.append(row)
 
     # Ninth field is the STATUS, so a lookup on a call reads out the same
     # qualification the dashboard shows. Archived records were never enriched,
@@ -518,12 +555,16 @@ def write_search_index(records, curated_ids):
              (r.get("title") or "")[:96],
              (r.get("incumbent") or "")[:40],
              1 if r["id"] in curated_ids else 0,
-             status_for(r)]
+             status_for(r),
+             SOURCE_USASPENDING]
             for r in records]
 
     with open(INDEX_JSON, "w", encoding="utf-8") as f:
         json.dump(preserved + rows, f, separators=(",", ":"))
 
+    print(f"   layers: {len(rows)} USASPENDING (live), "
+          f"{stamped} AG (retired, stamped), "
+          f"{left_alone} other live row(s) left untouched")
     return len(preserved), len(rows)
 
 
