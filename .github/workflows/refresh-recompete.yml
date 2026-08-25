@@ -59,6 +59,12 @@ jobs:
       - name: Refresh Recompete Watch from USASpending
         run: python scripts/refresh_usaspending.py
 
+      # Market context: obligations already awarded in-lane, top agencies.
+      # Three calls, no key, no quota. Runs after the recompete feed because
+      # both write index.html and must not interleave.
+      - name: Refresh market view (Where the Money Flows)
+        run: python scripts/refresh_market.py
+
       - name: Scrub check — no internal references, no excluded agencies
         run: python scripts/scrub_check.py index.html
 
