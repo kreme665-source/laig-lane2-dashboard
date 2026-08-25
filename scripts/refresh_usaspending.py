@@ -74,12 +74,40 @@ def local_today():
     return datetime.now(LOCAL_TZ).date()
 
 
-# ── Positioning window ───────────────────────────────────────────────────────
+# ── Positioning windows ──────────────────────────────────────────────────────
+# Two bands, two questions, one nightly pull.
+#
+#   Position Now      60-179 days   this contract's CURRENT PERIOD ends soon
+#   Recompete Watch  180-545 days   this contract's COMPETITION POINT falls here
+#
+# The Recompete window is UNCHANGED and its records are untouched by the
+# Position Now work.
+#
+# Why the near band had to be added rather than derived: before this change
+# WINDOW_MIN_DAYS = 180 was the floor of the ENTIRE feed. Nothing ending sooner
+# than 180 days was ever fetched, so no such record existed anywhere - not in
+# the curated set, not in the 4,260-row USASPENDING archive (measured earliest
+# end date: 187 days out). Position Now could not be rebuilt from stored data;
+# the floor itself was the blocker.
 WINDOW_MIN_DAYS = 180
 WINDOW_MAX_DAYS = 545
 
+# Half-open against the Recompete floor so a record can never land in both
+# bands and be rendered twice.
+POSITION_MIN_DAYS = 60
+POSITION_MAX_DAYS = WINDOW_MIN_DAYS - 1        # 179
+
+# POSITION_MIN_DAYS mirrors INELIGIBLE_DAYS = 60 in index.html. index.html
+# recomputes daysOut from the visitor's clock and drops anything under 60, so a
+# Position Now row ages out on its own between runs. Keep these two in sync: a
+# lower floor here would write rows the page discards on arrival.
+
 # ── Display curation ─────────────────────────────────────────────────────────
-DISPLAY_CAP = 220
+# Separate allocations, deliberately. The Recompete sort is value-descending,
+# so a single shared cap would let long-dated high-value awards crowd out every
+# near-term row - which is precisely the set Position Now exists to surface.
+DISPLAY_CAP = 220              # Recompete Watch - unchanged
+POSITION_CAP = 60              # Position Now - reserved, cannot be crowded out
 
 # ── Enrichment ───────────────────────────────────────────────────────────────
 ENRICH_CURATED = True
@@ -183,9 +211,9 @@ def get_award_detail(award_key):
         return {}
 
 
-def fetch_window(today, award_types, fields, sort_field, label):
-    lo = today + timedelta(days=WINDOW_MIN_DAYS)
-    hi = today + timedelta(days=WINDOW_MAX_DAYS)
+def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label):
+    lo = today + timedelta(days=lo_days)
+    hi = today + timedelta(days=hi_days)
     kept, page, scanned, undated = [], 1, 0, 0
 
     while page <= MAX_PAGES:
@@ -238,6 +266,13 @@ def fetch_window(today, award_types, fields, sort_field, label):
 
     if undated:
         print(f"  {label}: {undated} record(s) had no '{sort_field}' and were skipped")
+    if page > MAX_PAGES:
+        # The walk is end-date DESCENDING, so the pages nearest the floor are
+        # the last ones read. Exhausting MAX_PAGES truncates the SOONEST-ending
+        # records - the ones that matter most. Say so; never fail silently.
+        print(f"  {label}: WARNING - hit MAX_PAGES={MAX_PAGES} before reaching "
+              f"the {lo_days}-day floor. The near end of this band is "
+              f"TRUNCATED. Raise MAX_PAGES or narrow the band.")
     return kept, scanned, page
 
 
@@ -284,7 +319,7 @@ def slug(agency, title, i):
     return f"{agency}{FEED_MARKER}{s}_{i}"
 
 
-def to_record(rec, today, is_idv, i):
+def to_record(rec, today, is_idv, i, band="recompete"):
     agency_name = (rec.get("Awarding Agency") or "").strip()
     sub_agency = (rec.get("Awarding Sub Agency") or "").strip()
     title = (rec.get("Description") or "").strip() or (rec.get("Award ID") or "").strip()
@@ -309,11 +344,30 @@ def to_record(rec, today, is_idv, i):
     if not first_end:
         return None, "no usable end date"
 
+    # ── Band assignment ──────────────────────────────────────────────────
+    # Position Now carries ONE claim: the observed end of the current period of
+    # performance, exactly as reported by the award record. No clause logic, no
+    # 52.217-8/9 reading, no option-exercise judgment - the Government may
+    # exercise or decline at its discretion and this feed asserts nothing about
+    # that. optionEnd and competeEnd stay empty because we have not resolved
+    # them and will not imply that we have.
+    #
+    # The wording matters: "current period of performance ends" is an observed
+    # fact. "Recompetes on" would be a prediction, and a period end is not a
+    # competition point.
+    if band == "position":
+        status = (f"Current period of performance ends "
+                  f"{first_end.isoformat()} — as reported")
+        label, position_now = "Position Now", True
+    else:
+        status = "Recompete — pending date resolution"
+        label, position_now = "Recompete Watch", False
+
     return {
         "id": slug(code, title, i),
         "title": title[:140],
         "org": sub_agency or agency_name,
-        "status": "Recompete — pending date resolution",
+        "status": status,
         "solDate": first_end.isoformat(),
         "daysOut": (first_end - today).days,
         "awardQtr": "",
@@ -323,8 +377,8 @@ def to_record(rec, today, is_idv, i):
         "naicsDesc": "",
         "setAside": "",
         "incumbent": incumbent,
-        "label": "Recompete Watch",
-        "positionNow": False,
+        "label": label,
+        "positionNow": position_now,
         "previouslyFeatured": False,
         "clearance": "",
         "location": "",
@@ -545,6 +599,13 @@ def write_search_index(records, curated_ids):
     def status_for(r):
         if r["id"] in curated_ids:
             return r.get("status") or ""
+        # An over-cap Position Now row is trimmed from the DISPLAY, never
+        # discarded: it stays searchable so a cited notice remains findable.
+        # It gets its own caveat rather than the recompete one, which would
+        # describe a qualification this row never went through.
+        if r.get("label") == "Position Now":
+            return ("Archive — current period of performance end, "
+                    "not rendered on the page")
         return "Archive — current period end, options not verified"
 
     rows = [[r["id"],
@@ -576,30 +637,54 @@ def main():
         print(f"note: runner is {runner_today} (UTC), audience date {today} "
               f"(US Central). Using the audience date.")
 
-    lo = today + timedelta(days=WINDOW_MIN_DAYS)
-    hi = today + timedelta(days=WINDOW_MAX_DAYS)
-    print(f"positioning window: {lo} .. {hi} "
+    rc_lo = today + timedelta(days=WINDOW_MIN_DAYS)
+    rc_hi = today + timedelta(days=WINDOW_MAX_DAYS)
+    pn_lo = today + timedelta(days=POSITION_MIN_DAYS)
+    pn_hi = today + timedelta(days=POSITION_MAX_DAYS)
+    print(f"Recompete Watch window : {rc_lo} .. {rc_hi} "
           f"({WINDOW_MIN_DAYS}-{WINDOW_MAX_DAYS} days out)")
-    print(f"NAICS prefixes    : {', '.join(NAICS_PREFIXES)}")
-    print(f"display cap       : {DISPLAY_CAP} (remainder stays searchable)")
+    print(f"Position Now window    : {pn_lo} .. {pn_hi} "
+          f"({POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} days out)  [NEW]")
+    print(f"NAICS prefixes         : {', '.join(NAICS_PREFIXES)}")
+    print(f"display caps           : recompete {DISPLAY_CAP} "
+          f"(remainder stays searchable) / position {POSITION_CAP}")
 
     base_fields = ["Award ID", "Recipient Name", "Awarding Agency",
                    "Awarding Sub Agency", "Description", "NAICS",
                    "Award Amount", "generated_internal_id"]
+    c_fields = base_fields + ["Start Date", "End Date"]
+    i_fields = base_fields + ["Start Date", "Last Date to Order"]
 
-    print("\nquerying contracts (A,B,C,D)...")
+    # Each band gets its own bounded walk. A single 60-545 fetch would page
+    # from 545 down to 60, so the near band would sit at the very end of the
+    # walk and be the first thing lost to MAX_PAGES.
+    print("\n── Recompete Watch band ──")
+    print("querying contracts (A,B,C,D)...")
     contracts, c_scanned, c_pages = fetch_window(
-        today, CONTRACT_TYPES, base_fields + ["Start Date", "End Date"],
-        "End Date", "contracts")
-
-    print("\nquerying IDVs...")
+        today, WINDOW_MIN_DAYS, WINDOW_MAX_DAYS,
+        CONTRACT_TYPES, c_fields, "End Date", "contracts")
+    print("querying IDVs...")
     idvs, i_scanned, i_pages = fetch_window(
-        today, IDV_TYPES, base_fields + ["Start Date", "Last Date to Order"],
-        "Last Date to Order", "IDVs")
-
-    print(f"\nscanned {c_scanned} contracts over {c_pages} page(s), "
+        today, WINDOW_MIN_DAYS, WINDOW_MAX_DAYS,
+        IDV_TYPES, i_fields, "Last Date to Order", "IDVs")
+    print(f"scanned {c_scanned} contracts over {c_pages} page(s), "
           f"{i_scanned} IDVs over {i_pages} page(s)")
-    print(f"in positioning window: {len(contracts)} contracts, {len(idvs)} IDVs")
+    print(f"in recompete window: {len(contracts)} contracts, {len(idvs)} IDVs")
+
+    print("\n── Position Now band (never previously fetched) ──")
+    print("querying contracts (A,B,C,D)...")
+    pn_contracts, pc_scanned, pc_pages = fetch_window(
+        today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
+        CONTRACT_TYPES, c_fields, "End Date", "position/contracts")
+    print("querying IDVs...")
+    pn_idvs, pi_scanned, pi_pages = fetch_window(
+        today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
+        IDV_TYPES, i_fields, "Last Date to Order", "position/IDVs")
+    print(f"scanned {pc_scanned} contracts over {pc_pages} page(s), "
+          f"{pi_scanned} IDVs over {pi_pages} page(s)")
+    print(f"BAND MEASUREMENT — raw in {POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} "
+          f"day band: {len(pn_contracts)} contracts, {len(pn_idvs)} IDVs, "
+          f"{len(pn_contracts) + len(pn_idvs)} total (pre-screen)")
 
     records, skipped = [], {}
     for i, rec in enumerate(contracts):
@@ -611,9 +696,23 @@ def main():
         (records.append(r) if r else skipped.__setitem__(
             why, skipped.get(why, 0) + 1))
 
-    print(f"\nmapped to dashboard records: {len(records)}")
+    # Index offsets keep slug() ids distinct across bands.
+    position, pn_skipped = [], {}
+    for i, rec in enumerate(pn_contracts):
+        r, why = to_record(rec, today, False, 20000 + i, band="position")
+        (position.append(r) if r else pn_skipped.__setitem__(
+            why, pn_skipped.get(why, 0) + 1))
+    for i, rec in enumerate(pn_idvs):
+        r, why = to_record(rec, today, True, 30000 + i, band="position")
+        (position.append(r) if r else pn_skipped.__setitem__(
+            why, pn_skipped.get(why, 0) + 1))
+
+    print(f"\nmapped to dashboard records: {len(records)} recompete, "
+          f"{len(position)} position")
     for why, n in sorted(skipped.items(), key=lambda kv: -kv[1]):
-        print(f"   skipped {n}: {why}")
+        print(f"   recompete skipped {n}: {why}")
+    for why, n in sorted(pn_skipped.items(), key=lambda kv: -kv[1]):
+        print(f"   position  skipped {n}: {why}")
     if not records:
         raise SystemExit(
             "ABORT: USASpending returned no usable records. Leaving "
@@ -633,6 +732,35 @@ def main():
     print(f"\ncuration: {len(curated)} rendered on the page, "
           f"{len(archived)} archived to search "
           f"(display trimmed, nothing discarded)")
+
+    # ---- curate Position Now: SOONEST first, then value ----
+    # Deliberately the inverse of the recompete sort. The question this band
+    # answers is "what closes first", not "what is biggest".
+    position.sort(key=lambda r: (r.get("daysOut") or 9999,
+                                 -(r.get("valueRank") or 0)))
+    position_shown = position[:POSITION_CAP]
+    position_over = position[POSITION_CAP:]
+    curated_ids |= {r["id"] for r in position_shown}
+    print(f"Position Now: {len(position_shown)} rendered "
+          f"(cap {POSITION_CAP})")
+    if position_over:
+        # No silent caps. Name what was trimmed and what it cost.
+        last = position_shown[-1]["daysOut"] if position_shown else "-"
+        print(f"   NOTE: {len(position_over)} record(s) over the cap are "
+              f"archived to search, not rendered. Rendered rows end within "
+              f"{last} days; the rest end later, up to "
+              f"{position_over[-1]['daysOut']} days. Raise POSITION_CAP to "
+              f"widen the rendered set.")
+    if position_shown:
+        span = (position_shown[0]["daysOut"], position_shown[-1]["daysOut"])
+        print(f"   days-out span rendered   : {span[0]} .. {span[1]}")
+        by_agency = {}
+        for r in position_shown:
+            by_agency[r["id"].split("_")[0]] = \
+                by_agency.get(r["id"].split("_")[0], 0) + 1
+        print("   by agency                : " + ", ".join(
+            f"{k} {v}" for k, v in sorted(by_agency.items(),
+                                          key=lambda kv: -kv[1])))
 
     # ---- enrich the curated set so status is real, not a proxy for type ----
     if ENRICH_CURATED and curated:
@@ -663,7 +791,8 @@ def main():
                                     r.get("daysOut") or 9999))
 
     # ---- search index: every record, curated flag set ----
-    preserved, written = write_search_index(records, curated_ids)
+    # Every position record goes to the index, not just the rendered ones.
+    preserved, written = write_search_index(records + position, curated_ids)
     print(f"\nforecast-index.json: {preserved} non-feed row(s) preserved, "
           f"{written} written, {preserved + written} total searchable")
 
@@ -672,22 +801,46 @@ def main():
     head, start, end = locate_agency_data(html)
     existing = json.loads(quote_js_keys(html[start:end]))
 
+    # Labels this feed OWNS and therefore clears before re-adding. Without
+    # "Position Now" here the new rows would accumulate on every nightly run.
+    #
+    # "Monitor" and "Too Early" are included because they are retired rungs.
+    # They existed only to bucket Acquisition Gateway's multi-year forecast
+    # dates; on an observed period-end axis they would sit directly on top of
+    # the Recompete window - the same records under a second name. The only
+    # rows still carrying them are the frozen, untagged AG leftovers, which
+    # this clears out.
+    replaced_labels = {"Recompete Watch", "Position Now", "Monitor", "Too Early"}
+
+    # Fail-safe: an empty near band must not silently blank the section. Leave
+    # the existing Position Now rows in place, shout, and let the recompete
+    # half of the run proceed.
+    if not position_shown:
+        replaced_labels -= {"Position Now", "Monitor", "Too Early"}
+        print("\n   WARNING: the Position Now band returned NO records. "
+              "Existing Position Now rows left untouched rather than writing "
+              "an empty section. Investigate before trusting the page.")
+
     removed = 0
     merged = {}
     for agency, recs in existing.items():
-        keep = [r for r in recs if r.get("label") != "Recompete Watch"]
+        keep = [r for r in recs if r.get("label") not in replaced_labels]
         removed += len(recs) - len(keep)
         merged[agency] = keep
 
     for r in curated:
+        merged.setdefault(r["id"].split("_")[0], []).append(r)
+    for r in position_shown:
         merged.setdefault(r["id"].split("_")[0], []).append(r)
 
     for agency in merged:
         merged[agency].sort(key=lambda r: (-(r.get("valueRank") or 0),
                                            r.get("daysOut") or 9999))
 
-    print(f"\nRecompete Watch: removed {removed} previous record(s), "
-          f"added {len(curated)} from USASpending")
+    print(f"\nsplice: removed {removed} previous record(s) carrying "
+          f"{sorted(replaced_labels)}")
+    print(f"   Recompete Watch added    : {len(curated)}")
+    print(f"   Position Now added       : {len(position_shown)}")
 
     html = html[:head] + render_agency_data(merged) + html[end:]
     # DATA_AS_OF tracks the content just written: every run stamps the label
