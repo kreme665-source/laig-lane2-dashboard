@@ -812,6 +812,7 @@
         Recompete Watch
       </button>
       <button class="nav-item" onclick="showView('sam')" id="nav-sam"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> SAM.gov</button>
+      <button class="nav-item" onclick="showView('market')" id="nav-market"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Money Flows</button>
     </div>
 
     <div class="nav-section">
@@ -947,6 +948,41 @@
             </div>
           </div>
           <div id="sam-notices-list"></div>
+        </div>
+      </div>
+
+      <!-- ══ WHERE THE MONEY FLOWS ══ -->
+      <div class="view" id="view-market">
+        <div style="padding:16px 0 8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <div>
+              <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--color-text);">Where the Money Flows</h2>
+              <p style="margin:4px 0 0;font-size:12px;color:var(--color-text-muted);">
+                Obligations already awarded in NAICS 5413 / 5415 / 5416 — engineering, IT and professional services.
+                Market context, not pipeline: this is spend that has happened, not opportunity.</p>
+            </div>
+            <div style="font-size:11px;color:var(--color-text-muted);text-align:right;line-height:1.8;">
+              <span id="market-window">—</span><br><span id="market-updated">—</span>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-header"><span class="card-title">In-lane obligations by agency</span></div>
+            <div class="card-body"><div class="chart-wrap"><canvas id="chartMarket"></canvas></div></div>
+          </div>
+          <div class="card" id="market-table-wrap">
+            <div class="table-wrap">
+              <table class="priority-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th><th>Agency</th><th>In-Lane Obligations</th>
+                    <th>Set-Aside %</th><th>FY-over-FY</th>
+                  </tr>
+                </thead>
+                <tbody id="market-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <p id="market-footnote" style="margin:10px 2px 0;font-size:11px;color:var(--color-text-muted);"></p>
         </div>
       </div>
 
@@ -1650,7 +1686,8 @@ const PAGE_TITLES = {
   timeline:  'Solicitation Timeline',
   recompete: 'Recompete Watch',
   agency:    '',
-  sam: 'SAM.gov — Sources Sought & RFI'
+  sam: 'SAM.gov — Sources Sought & RFI',
+  market: 'Where the Money Flows — In-Lane Obligations'
 };
 
 function showView(id, agencyCode) {
@@ -1673,6 +1710,7 @@ function showView(id, agencyCode) {
     if (id === 'priority')  buildPriorityTable(priorityFilter);
     if (id === 'timeline')  buildTimeline(timelineFilter);
     if (id === 'recompete') buildRecompete(recompeteFilter);
+    if (id === 'market')    buildMarket();
     if (id === 'sam')       renderSamNotices();
   }
 }
@@ -1946,6 +1984,108 @@ function oppMailto(o){
       }
       clearTimeout(t);
       t = setTimeout(function(){ runSearch(v); }, 160);
+    });
+  }
+
+
+  /* ─────────────────────────────────────────────────────────────────
+     WHERE THE MONEY FLOWS
+     Obligations already awarded in-lane. Market context, not pipeline.
+     MARKET_DATA is rewritten nightly by scripts/refresh_market.py.
+  ───────────────────────────────────────────────────────────────── */
+  /* MARKET_DATA_START */
+  const MARKET_DATA = {"window":"—","priorWindow":"","updated":"","excludedCount":0,"rows":[]};
+  /* MARKET_DATA_END */
+
+  let marketChart = null;
+
+  function buildMarket() {
+    var win = document.getElementById('market-window');
+    var upd = document.getElementById('market-updated');
+    var tb  = document.getElementById('market-tbody');
+    var foot= document.getElementById('market-footnote');
+    if (!tb) return;
+
+    var rows = (MARKET_DATA && MARKET_DATA.rows) || [];
+    if (win) win.textContent = MARKET_DATA.window || '—';
+    if (upd) upd.textContent = MARKET_DATA.updated
+      ? 'Updated ' + fmtDate(MARKET_DATA.updated) : 'Not yet pulled';
+
+    if (!rows.length) {
+      tb.innerHTML = '<tr><td colspan="5" style="padding:18px;color:var(--color-text-muted);">'
+        + 'No data yet — runs nightly at 00:45 UTC.</td></tr>';
+      if (foot) foot.textContent = '';
+      return;
+    }
+
+    tb.innerHTML = rows.map(function(r){
+      var sa  = (r.setAsidePct === null || r.setAsidePct === undefined)
+                ? '—' : r.setAsidePct.toFixed(0) + '%';
+      var yoy = (r.yoyPct === null || r.yoyPct === undefined)
+                ? '—' : (r.yoyPct > 0 ? '+' : '') + r.yoyPct.toFixed(0) + '%';
+      var yoyCol = (r.yoyPct === null || r.yoyPct === undefined) ? 'var(--color-text-muted)'
+                 : (r.yoyPct >= 0 ? 'var(--color-success)' : 'var(--color-warning)');
+      return '<tr>'
+        + '<td style="font-weight:700;color:var(--color-text-muted);">' + r.rank + '</td>'
+        + '<td style="font-weight:600;">' + r.agency + '</td>'
+        + '<td style="font-weight:700;">' + r.amountLabel + '</td>'
+        + '<td>' + sa + '</td>'
+        + '<td style="font-weight:700;color:' + yoyCol + ';">' + yoy
+        + '<span style="font-weight:400;color:var(--color-text-muted);font-size:10px;"> vs '
+        + r.priorLabel + '</span></td>'
+        + '</tr>';
+    }).join('');
+
+    if (foot) {
+      foot.textContent = 'Obligations already awarded — spend that has happened, not opportunity. '
+        + 'Prior-year comparison uses the same calendar span one year earlier ('
+        + (MARKET_DATA.priorWindow || '') + ').'
+        + (MARKET_DATA.excludedCount
+            ? '  ' + MARKET_DATA.excludedCount + ' agency/agencies withheld — active engagement.'
+            : '');
+    }
+
+    var cv = document.getElementById('chartMarket');
+    if (!cv || typeof Chart === 'undefined') return;
+    if (marketChart) { marketChart.destroy(); marketChart = null; }
+    marketChart = new Chart(cv, {
+      type: 'bar',
+      data: {
+        labels: rows.map(function(r){ return r.agency.length > 34
+                  ? r.agency.slice(0,32) + '…' : r.agency; }),
+        datasets: [{
+          data: rows.map(function(r){ return r.amount; }),
+          backgroundColor: '#4d9cf8',
+          borderRadius: 3,
+          barThickness: 16
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(c){
+            var r = rows[c.dataIndex];
+            return r.amountLabel + '  ·  set-aside '
+              + (r.setAsidePct === null ? '—' : r.setAsidePct.toFixed(0) + '%');
+          }}}
+        },
+        scales: {
+          x: {
+            ticks: {
+              callback: function(v){
+                return v >= 1e9 ? '$' + (v/1e9).toFixed(1) + 'B'
+                     : v >= 1e6 ? '$' + (v/1e6).toFixed(0) + 'M'
+                     : '$' + v;
+              }
+            },
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          y: { grid: { display: false } }
+        }
+      }
     });
   }
 
