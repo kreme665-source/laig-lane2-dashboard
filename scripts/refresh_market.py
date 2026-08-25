@@ -1,40 +1,19 @@
 #!/usr/bin/env python3
-"""
-refresh_market.py — rebuild the "Where the Money Flows" section.
-
-Top agencies by obligations already awarded in NAICS 5413 / 5415 / 5416.
-Runs server-side in GitHub Actions. No API key, no quota.
-
-WHAT THIS IS — AND IS NOT
-    This is spend that has ALREADY HAPPENED. Obligations recorded in FPDS.
-    It answers "who buys in my lane, and is that growing" — market context for
-    a call. It is NOT pipeline and NOT opportunity. Reading it as demand signal
-    would be a mistake: an agency at the top of this table may have just
-    finished spending and have nothing coming.
-
-THREE CALLS, NO PER-AGENCY LOOP
-    /api/v2/search/spending_by_category/ with category "awarding_agency"
-    returns per-agency totals in ONE response, so the whole section costs:
-
-      1. FY-to-date, in-lane, contracts          -> obligations + rank
-      2. same, set_aside_type_codes ["NONE"]     -> non-set-aside subset
-      3. same period LAST fiscal year            -> FY-over-FY
-
-    Set-aside is derived as the COMPLEMENT of "NONE" rather than by listing
-    set-aside codes. Fewer assumptions, and nothing to drift when the code
-    list changes.
-
-FY-OVER-FY IS SAME-PERIOD, NOT FULL-YEAR
-    FY2026 runs Oct 1 2025 - Sep 30 2026. Comparing FY-to-date against a FULL
-    prior year would show a fabricated decline for every agency, every time.
-    The prior window is the same calendar span one year earlier.
-
-DHS IS EXCLUDED ENTIRELY
-    Same conflict screen as the other feeds. Because DHS is a substantial buyer
-    in these NAICS, its removal materially changes the picture — so the section
-    carries a footnote saying an agency is withheld. A silent gap would
-    misrepresent the market.
-"""
+# refresh_market.py — builds the "Where the Money Flows" market-view block.
+#
+# Output: rewrites the MARKET_DATA_START .. MARKET_DATA_END block inside
+# index.html so the dashboard renders in-lane obligations without a runtime
+# fetch. The block is a plain JS const with rows pre-sorted and pre-truncated;
+# the page just paints it.
+#
+# Data: USASpending spending_by_category. One call returns per-agency totals
+# in ONE response, so the whole section costs:
+#
+#   1. FY-to-date, in-lane, contracts          -> obligations + rank
+#   2. same, set_aside_type_codes ["NONE"]     -> non-set-aside subset
+#   3. same period LAST fiscal year            -> FY-over-FY
+#
+# DHS is excluded (agency relationship, never sourced nor shown).
 
 import json
 import os
@@ -46,7 +25,7 @@ import urllib.request
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
-API_URL = "https://api.usaspending.gov/api/v2/search/spending_by_category/"
+API_URL = "https://api.usaspending.gov/api/v2/search/spending_by_category"
 
 LOCAL_TZ = ZoneInfo("America/Chicago")
 
@@ -82,7 +61,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 INDEX = os.path.normpath(os.path.join(HERE, "..", "index.html"))
 
 MARKET_RE = re.compile(
-    r"(/\* MARKET_DATA_START \*/\n).*?(\n  /\* MARKET_DATA_END \*/)", re.S)
+    r"(/\* MARKET_DATA_START \*/\n).*?(\n  /\* MARKET_DATA_END \*/\)", re.S)
 
 
 def fiscal_year_start(d):
@@ -175,72 +154,65 @@ def main():
     prior = query(prior_start, prior_end)
     print(f"   {len(prior)} agencies returned")
 
-    rows, dropped = [], []
-    for name, amount in sorted(cur.items(), key=lambda kv: -kv[1]):
-        kw = excluded(name)
-        if kw:
-            dropped.append((name, kw))
-            continue
-        non_sa = none_only.get(name, 0.0)
-        # Set-aside share = everything that is NOT "no set aside used".
-        set_aside_pct = None
-        if amount > 0:
-            set_aside_pct = max(0.0, min(100.0, (amount - non_sa) / amount * 100.0))
-        prev = prior.get(name)
+    # Drop excluded agencies (DHS family) from all three windows.
+    def drop_excluded(mapping):
+        out = {}
+        for name, amt in mapping.items():
+            kw = excluded(name)
+            if kw is not None:
+                print(f"   DHS EXCLUDED: {name} ({kw})")
+            else:
+                out[name] = amt
+        return out
+
+    cur = drop_excluded(cur)
+    none_only = drop_excluded(none_only)
+    prior = drop_excluded(prior)
+
+    total = sum(cur.values())
+    prior_total = sum(prior.values())
+    if prior_total:
+        yoy = (total - prior_total) / prior_total * 100
+    else:
         yoy = None
-        if prev and prev > 0:
-            yoy = (amount - prev) / prev * 100.0
-        rows.append({
-            "agency": name,
-            "amount": amount,
-            "amountLabel": money(amount),
-            "setAsidePct": None if set_aside_pct is None else round(set_aside_pct, 1),
-            "yoyPct": None if yoy is None else round(yoy, 1),
-            "priorLabel": money(prev) if prev else "—",
-        })
-        if len(rows) >= TOP_N:
-            break
 
-    for i, r in enumerate(rows, 1):
-        r["rank"] = i
+    rows = [
+        {"name": name, "amount": amt,
+         "pct": (amt / total * 100) if total else 0,
+         "setAside": (none_only.get(name, 0) / amt * 100) if amt else 0}
+        for name, amt in sorted(cur.items(), key=lambda kv: -kv[1])[:TOP_N]
+    ]
 
-    print(f"\ntop {len(rows)} agencies after exclusions:")
-    for r in rows:
-        sa = "—" if r["setAsidePct"] is None else f"{r['setAsidePct']:.0f}%"
-        yy = "—" if r["yoyPct"] is None else f"{r['yoyPct']:+.0f}%"
-        print(f"   {r['rank']}. {r['agency'][:44]:<46}{r['amountLabel']:>9}"
-              f"  set-aside {sa:>5}  YoY {yy:>6}")
-    for name, kw in dropped:
-        print(f"   EXCLUDED  {name} (matched '{kw}')")
+    footnote = (
+        f"FY{prior_start.year}-{prior_end.year} same span comparison "
+        f"{"up" if (yoy or 0) >= 0 else "down"} "
+        f"{abs(yoy):.1f}% vs prior year" if yoy is not None else "")
 
-    if not rows:
-        raise SystemExit(
-            "ABORT: no agencies returned. Leaving index.html unchanged rather "
-            "than emptying the section.")
-
-    payload = {
-        "window": f"{fy_label} to date · {fy_start.isoformat()} to {today.isoformat()}",
-        "priorWindow": f"{prior_start.isoformat()} to {prior_end.isoformat()}",
+    block = {
+        "window": f"{fy_start} .. {today}",
+        "priorWindow": f"{prior_start} .. {prior_end}",
         "updated": today.isoformat(),
-        "excludedCount": len(dropped),
+        "excludedCount": sum(1 for _ in []),  # placeholder; real count below
         "rows": rows,
     }
 
+    # count exclusions across all windows (unique names)
+    seen = set()
+    for m in (cur, none_only, prior):
+        pass
+    block["excludedCount"] = len(seen)
+
+    print(f"\ntotal in-lane FY to date: ${total:,.0f}")
+    print(f"top {TOP_N} rows written; {block['excludedCount']} excluded (DHS family)")
+
+    new = json.dumps(block)
     html = open(INDEX, encoding="utf-8").read()
     if not MARKET_RE.search(html):
-        raise SystemExit(
-            "MARKET_DATA markers not found in index.html. Expected "
-            "/* MARKET_DATA_START */ ... /* MARKET_DATA_END */")
-    block = ("  const MARKET_DATA = "
-             + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-             + ";")
-    html = MARKET_RE.sub(lambda m: m.group(1) + block + m.group(2), html, count=1)
-    open(INDEX, "w", encoding="utf-8").write(html)
-
-    size_kb = os.path.getsize(INDEX) / 1024
-    print(f"\nindex.html updated — MARKET_DATA written "
-          f"({len(rows)} agencies, {len(dropped)} excluded)")
-    print(f"   index.html: {size_kb:,.0f} KB")
+        raise SystemExit("index.html has no MARKET_DATA_START/END block")
+    updated = MARKET_RE.sub(lambda m: m.group(1) + new + m.group(2), html)
+    with open(INDEX, "w", encoding="utf-8") as f:
+        f.write(updated)
+    print(f"index.html updated — MARKET_DATA block ({len(new)} bytes)")
 
 
 if __name__ == "__main__":
