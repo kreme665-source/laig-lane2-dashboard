@@ -117,12 +117,20 @@ NAICS_PREFIXES = ["5413", "5415", "5416"]
 MIN_AWARD_AMOUNT = 250_000
 ACTION_LOOKBACK_DAYS = 730
 
+# The near band needs a longer memory than the recompete band. A contract
+# ending in 90 days with no transaction in two years is not a stale record -
+# it is the single most valuable Position Now case: a final period running out
+# with no option left to exercise. A 730-day action_date lookback is most
+# likely to drop exactly those. Widened for the near band only; the recompete
+# band keeps 730 and its records are unchanged.
+POSITION_ACTION_LOOKBACK_DAYS = 1825      # 5 years
+
 CONTRACT_TYPES = ["A", "B", "C", "D"]
 IDV_TYPES = ["IDV_A", "IDV_B", "IDV_B_A", "IDV_B_B", "IDV_B_C",
              "IDV_C", "IDV_D", "IDV_E"]
 
 PAGE_LIMIT = 100
-MAX_PAGES = 100
+MAX_PAGES = 250          # raised from 100: see the walk-direction note below
 REQUEST_PAUSE = 0.25
 BRIDGE_MAX_DAYS = 183    # 52.217-8 caps the extension at six months
 
@@ -211,9 +219,28 @@ def get_award_detail(award_key):
         return {}
 
 
-def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label):
+def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label,
+                 order="desc", lookback_days=None):
+    """Page a sorted result set and keep the slice inside [lo, hi].
+
+    WALK DIRECTION IS NOT COSMETIC. The API has no server-side end-date filter
+    (period_of_performance_current_end_date is not a valid date_type), so the
+    window is applied client-side and every record outside it still costs a
+    page.
+
+    Descending from the far end works for the recompete band, whose ceiling is
+    near the top of the sort. It fails for the near band: reaching 179 days
+    means first paging through EVERY record beyond it - the whole 180-545 set
+    (~4,470) plus the multi-year tail (~5,600) - about 10,000 records, which is
+    exactly the old 100-page ceiling. The walk expired at the band's doorstep
+    and only a handful of rows survived.
+
+    So the near band walks ASCENDING instead, entering the window from below
+    and stopping the moment a full page clears the top of it.
+    """
     lo = today + timedelta(days=lo_days)
     hi = today + timedelta(days=hi_days)
+    lookback = ACTION_LOOKBACK_DAYS if lookback_days is None else lookback_days
     kept, page, scanned, undated = [], 1, 0, 0
 
     while page <= MAX_PAGES:
@@ -222,13 +249,13 @@ def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label
             "limit": PAGE_LIMIT,
             "page": page,
             "sort": sort_field,
-            "order": "desc",
+            "order": order,
             "filters": {
                 "award_type_codes": award_types,
                 "naics_codes": {"require": NAICS_PREFIXES},
                 "award_amounts": [{"lower_bound": MIN_AWARD_AMOUNT}],
                 "time_period": [{
-                    "start_date": (today - timedelta(days=ACTION_LOOKBACK_DAYS)).isoformat(),
+                    "start_date": (today - timedelta(days=lookback)).isoformat(),
                     "end_date": (today + timedelta(days=1)).isoformat(),
                     "date_type": "action_date",
                 }],
@@ -241,23 +268,29 @@ def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label
         if not results:
             break
 
-        below = 0
+        # Records past the FAR edge of the direction of travel. Descending, that
+        # is below lo; ascending, above hi. A full page of them means the walk
+        # has left the window behind and can stop.
+        beyond = 0
         for rec in results:
             end = parse_date(rec.get(sort_field))
             if not end:
                 undated += 1          # counted, not silently swallowed
                 continue
             if end > hi:
+                if order == "asc":
+                    beyond += 1
                 continue
             if end < lo:
-                below += 1
+                if order == "desc":
+                    beyond += 1
                 continue
             kept.append(rec)
 
         print(f"  {label} page {page}: {len(results)} scanned, "
               f"{len(kept)} in window so far")
 
-        if below == len(results):
+        if beyond == len(results):
             break
         if not (payload.get("page_metadata") or {}).get("hasNext"):
             break
@@ -267,12 +300,10 @@ def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label
     if undated:
         print(f"  {label}: {undated} record(s) had no '{sort_field}' and were skipped")
     if page > MAX_PAGES:
-        # The walk is end-date DESCENDING, so the pages nearest the floor are
-        # the last ones read. Exhausting MAX_PAGES truncates the SOONEST-ending
-        # records - the ones that matter most. Say so; never fail silently.
-        print(f"  {label}: WARNING - hit MAX_PAGES={MAX_PAGES} before reaching "
-              f"the {lo_days}-day floor. The near end of this band is "
-              f"TRUNCATED. Raise MAX_PAGES or narrow the band.")
+        edge = f"{lo_days}-day floor" if order == "desc" else f"{hi_days}-day ceiling"
+        print(f"  {label}: WARNING - hit MAX_PAGES={MAX_PAGES} walking {order} "
+              f"before clearing the {edge}. THIS BAND IS TRUNCATED and its "
+              f"count is a floor, not a measurement. Raise MAX_PAGES.")
     return kept, scanned, page
 
 
@@ -671,20 +702,40 @@ def main():
           f"{i_scanned} IDVs over {i_pages} page(s)")
     print(f"in recompete window: {len(contracts)} contracts, {len(idvs)} IDVs")
 
-    print("\n── Position Now band (never previously fetched) ──")
+    print("\n── Position Now band (ascending walk, 5-year action lookback) ──")
+    print(f"   walk: ASC from the near edge · action lookback "
+          f"{POSITION_ACTION_LOOKBACK_DAYS}d (recompete band uses "
+          f"{ACTION_LOOKBACK_DAYS}d, unchanged)")
     print("querying contracts (A,B,C,D)...")
     pn_contracts, pc_scanned, pc_pages = fetch_window(
         today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
-        CONTRACT_TYPES, c_fields, "End Date", "position/contracts")
+        CONTRACT_TYPES, c_fields, "End Date", "position/contracts",
+        order="asc", lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
     print("querying IDVs...")
     pn_idvs, pi_scanned, pi_pages = fetch_window(
         today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
-        IDV_TYPES, i_fields, "Last Date to Order", "position/IDVs")
+        IDV_TYPES, i_fields, "Last Date to Order", "position/IDVs",
+        order="asc", lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
     print(f"scanned {pc_scanned} contracts over {pc_pages} page(s), "
           f"{pi_scanned} IDVs over {pi_pages} page(s)")
     print(f"BAND MEASUREMENT — raw in {POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} "
           f"day band: {len(pn_contracts)} contracts, {len(pn_idvs)} IDVs, "
           f"{len(pn_contracts) + len(pn_idvs)} total (pre-screen)")
+    # Continuity check. The two bands are one population at two calendar
+    # positions: a contract 8 months out becomes a contract 4 months out. A
+    # cliff between them is a query artefact, not a thin market. Flag it here
+    # rather than letting an empty-looking section pass as a finding.
+    rc_raw, pn_raw = len(contracts) + len(idvs), len(pn_contracts) + len(pn_idvs)
+    rc_rate = rc_raw / (WINDOW_MAX_DAYS - WINDOW_MIN_DAYS)
+    pn_rate = pn_raw / (POSITION_MAX_DAYS - POSITION_MIN_DAYS)
+    print(f"   density: recompete {rc_rate:.1f}/day · position {pn_rate:.1f}/day")
+    if rc_rate and pn_rate < rc_rate * 0.25:
+        print(f"   WARNING - the near band is running at "
+              f"{pn_rate / rc_rate:.0%} of the recompete band's density. "
+              f"These are the same population at different calendar "
+              f"positions; a gap this size points at the query, not the "
+              f"market. Check the MAX_PAGES warning above and the action "
+              f"lookback before accepting this count.")
 
     records, skipped = [], {}
     for i, rec in enumerate(contracts):
