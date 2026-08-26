@@ -109,6 +109,17 @@ POSITION_MAX_DAYS = WINDOW_MIN_DAYS - 1        # 179
 DISPLAY_CAP = 220              # Recompete Watch - unchanged
 POSITION_CAP = 60              # Position Now - reserved, cannot be crowded out
 
+# Position Now renders a 120-day band through a 60-row window. Taking simply
+# the 60 soonest turned out to cover about two days of it - a section labelled
+# 60-179 days showing 60-61. The label would be doing work the data does not
+# support, which is the same failure as a baked date.
+#
+# So the cap is spread across the band in equal time strata, highest value
+# first inside each, with unused slots from thin strata handed to full ones.
+# Every rendered row is still an observed period end; only WHICH rows are shown
+# changes. Set to 1 for the old soonest-first behaviour.
+POSITION_STRATA = 4
+
 # ── Enrichment ───────────────────────────────────────────────────────────────
 ENRICH_CURATED = True
 ENRICH_PAUSE = 0.25
@@ -130,7 +141,29 @@ IDV_TYPES = ["IDV_A", "IDV_B", "IDV_B_A", "IDV_B_B", "IDV_B_C",
              "IDV_C", "IDV_D", "IDV_E"]
 
 PAGE_LIMIT = 100
-MAX_PAGES = 250          # raised from 100: see the walk-direction note below
+MAX_PAGES = 250
+
+# THE binding constraint, and it is not ours. spending_by_award stops paging at
+# 10,000 records: hasNext goes false at page 100 whatever MAX_PAGES says. The
+# window is applied client-side (period_of_performance_current_end_date is not
+# a valid date_type), so every out-of-window record still spends part of that
+# 10,000.
+#
+# Measured on the unpartitioned query: walking end-date DESCENDING, the 10,000
+# records span from the far-future tail down to roughly 180 days out - landing
+# almost exactly on the recompete floor. Walking ASCENDING, they span 2001 to
+# about 2019. The 60-179 day band falls in the gap between those two reachable
+# windows, which is why neither direction could see it and why raising
+# MAX_PAGES changed nothing.
+#
+# The fix is not a bigger walk, it is a smaller universe: partition the query
+# so each slice fits inside 10,000, then walk each slice descending.
+API_RECORD_CAP = 10_000
+
+# Sub-partition tiers for any single agency that still exceeds the cap (DoD is
+# the likely one). Applied only where needed, never pre-emptively.
+AMOUNT_TIERS = [(250_000, 1_000_000), (1_000_000, 10_000_000),
+                (10_000_000, 100_000_000), (100_000_000, None)]
 REQUEST_PAUSE = 0.25
 BRIDGE_MAX_DAYS = 183    # 52.217-8 caps the extension at six months
 
@@ -220,28 +253,52 @@ def get_award_detail(award_key):
 
 
 def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label,
-                 order="desc", lookback_days=None):
-    """Page a sorted result set and keep the slice inside [lo, hi].
+                 lookback_days=None, agency=None, amount_tier=None, quiet=False):
+    """Page one slice descending by end date, keeping the part inside [lo, hi].
 
-    WALK DIRECTION IS NOT COSMETIC. The API has no server-side end-date filter
-    (period_of_performance_current_end_date is not a valid date_type), so the
-    window is applied client-side and every record outside it still costs a
-    page.
+    ALWAYS DESCENDING. Ascending was tried and is wrong: it enters at the
+    oldest end dates, so the 10,000-record budget is spent on contracts that
+    ended years ago and the walk never reaches the present.
 
-    Descending from the far end works for the recompete band, whose ceiling is
-    near the top of the sort. It fails for the near band: reaching 179 days
-    means first paging through EVERY record beyond it - the whole 180-545 set
-    (~4,470) plus the multi-year tail (~5,600) - about 10,000 records, which is
-    exactly the old 100-page ceiling. The walk expired at the band's doorstep
-    and only a handful of rows survived.
+    Descending is correct once the slice is small enough to fit the cap. It
+    enters from the far future, crosses the window, and stops on the first full
+    page below the floor - so the ancient tail costs nothing.
 
-    So the near band walks ASCENDING instead, entering the window from below
-    and stopping the moment a full page clears the top of it.
+    Returns (kept, scanned, pages, reached_floor). reached_floor is the honest
+    signal: False means the walk stopped for a reason other than clearing the
+    window, so the result is a floor, not a measurement.
     """
     lo = today + timedelta(days=lo_days)
     hi = today + timedelta(days=hi_days)
     lookback = ACTION_LOOKBACK_DAYS if lookback_days is None else lookback_days
     kept, page, scanned, undated = [], 1, 0, 0
+    reached_floor = False
+
+    if amount_tier:
+        low, high = amount_tier
+        amounts = [{"lower_bound": max(low, MIN_AWARD_AMOUNT)}]
+        if high is not None:
+            amounts[0]["upper_bound"] = high
+    else:
+        amounts = [{"lower_bound": MIN_AWARD_AMOUNT}]
+
+    filters = {
+        "award_type_codes": award_types,
+        "naics_codes": {"require": NAICS_PREFIXES},
+        "award_amounts": amounts,
+        "time_period": [{
+            "start_date": (today - timedelta(days=lookback)).isoformat(),
+            "end_date": (today + timedelta(days=1)).isoformat(),
+            "date_type": "action_date",
+        }],
+    }
+    # Server-side agency filter. This is the whole point of v4: the previous
+    # versions sent no agency filter at all, pulled every federal agency, and
+    # then discarded everything outside AGENCY_MAP in to_record(). The 10,000
+    # budget was being spent largely on agencies the dashboard never renders.
+    if agency:
+        filters["agencies"] = [{"type": "awarding", "tier": "toptier",
+                                "name": agency}]
 
     while page <= MAX_PAGES:
         body = {
@@ -249,17 +306,8 @@ def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label
             "limit": PAGE_LIMIT,
             "page": page,
             "sort": sort_field,
-            "order": order,
-            "filters": {
-                "award_type_codes": award_types,
-                "naics_codes": {"require": NAICS_PREFIXES},
-                "award_amounts": [{"lower_bound": MIN_AWARD_AMOUNT}],
-                "time_period": [{
-                    "start_date": (today - timedelta(days=lookback)).isoformat(),
-                    "end_date": (today + timedelta(days=1)).isoformat(),
-                    "date_type": "action_date",
-                }],
-            },
+            "order": "desc",
+            "filters": filters,
             "fields": fields,
         }
         payload = post(body)
@@ -271,40 +319,155 @@ def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label
         # Records past the FAR edge of the direction of travel. Descending, that
         # is below lo; ascending, above hi. A full page of them means the walk
         # has left the window behind and can stop.
-        beyond = 0
+        below = 0
         for rec in results:
             end = parse_date(rec.get(sort_field))
             if not end:
                 undated += 1          # counted, not silently swallowed
                 continue
             if end > hi:
-                if order == "asc":
-                    beyond += 1
                 continue
             if end < lo:
-                if order == "desc":
-                    beyond += 1
+                below += 1
                 continue
             kept.append(rec)
 
-        print(f"  {label} page {page}: {len(results)} scanned, "
-              f"{len(kept)} in window so far")
+        if not quiet:
+            print(f"  {label} page {page}: {len(results)} scanned, "
+                  f"{len(kept)} in window so far")
 
-        if beyond == len(results):
+        if below == len(results):
+            reached_floor = True      # walked clear of the window: trustworthy
             break
         if not (payload.get("page_metadata") or {}).get("hasNext"):
+            # hasNext false means one of two very different things, and
+            # conflating them cries wolf on every small slice: either the slice
+            # was genuinely exhausted (we saw everything, nothing was hidden),
+            # or we ran into the API's 10,000-record ceiling mid-walk. Only the
+            # second is a truncation. Distinguish by how much was scanned.
+            reached_floor = scanned < API_RECORD_CAP - PAGE_LIMIT
             break
         page += 1
         time.sleep(REQUEST_PAUSE)
 
-    if undated:
+    if undated and not quiet:
         print(f"  {label}: {undated} record(s) had no '{sort_field}' and were skipped")
-    if page > MAX_PAGES:
-        edge = f"{lo_days}-day floor" if order == "desc" else f"{hi_days}-day ceiling"
-        print(f"  {label}: WARNING - hit MAX_PAGES={MAX_PAGES} walking {order} "
-              f"before clearing the {edge}. THIS BAND IS TRUNCATED and its "
-              f"count is a floor, not a measurement. Raise MAX_PAGES.")
-    return kept, scanned, page
+    return kept, scanned, page, reached_floor
+
+
+def stratified_pick(records, cap, lo_days, hi_days, strata):
+    """Spread `cap` rendered slots across the band instead of front-loading.
+
+    Returns (shown, rest). Slots are divided evenly across `strata` equal time
+    buckets; a bucket that cannot fill its share releases the remainder to the
+    others, so a thin band still renders everything it has. Ordering inside a
+    bucket is soonest-first, which is how the sorted input already arrives.
+    """
+    if strata <= 1 or len(records) <= cap:
+        return records[:cap], records[cap:]
+
+    width = (hi_days - lo_days) / strata
+    buckets = [[] for _ in range(strata)]
+    for r in records:
+        d = r.get("daysOut") or lo_days
+        i = min(int((d - lo_days) / width), strata - 1)
+        buckets[max(i, 0)].append(r)
+
+    share, shown = cap // strata, []
+    # Two passes: everyone takes their share, then the leftover from thin
+    # buckets is offered back round-robin so the cap is never under-spent.
+    taken = [b[:share] for b in buckets]
+    for t in taken:
+        shown += t
+    leftover = cap - len(shown)
+    if leftover:
+        pool = [b[len(t):] for b, t in zip(buckets, taken)]
+        i = 0
+        while leftover and any(pool):
+            if pool[i % strata]:
+                shown.append(pool[i % strata].pop(0))
+                leftover -= 1
+            i += 1
+            if i > strata * cap:
+                break
+    shown.sort(key=lambda r: (r.get("daysOut") or 9999,
+                              -(r.get("valueRank") or 0)))
+    ids = {id(r) for r in shown}
+    return shown, [r for r in records if id(r) not in ids]
+
+
+def fetch_partitioned(today, lo_days, hi_days, award_types, fields, sort_field,
+                      label, lookback_days=None):
+    """One bounded descending walk per agency in AGENCY_MAP.
+
+    Each agency gets its own 10,000-record budget instead of sharing one across
+    the whole federal government. Any agency that still hits the cap is split
+    again by award-amount tier - applied only where measured, never
+    pre-emptively.
+
+    Prints a per-agency count table. Those counts have never been observed;
+    this run is the measurement.
+    """
+    kept, rows = [], []
+    for agency, code in AGENCY_MAP.items():
+        recs, scanned, pages, floor = fetch_window(
+            today, lo_days, hi_days, award_types, fields, sort_field,
+            f"{label}/{code}", lookback_days=lookback_days, agency=agency,
+            quiet=True)
+
+        # Zero scanned means the agency name did not match, not that the agency
+        # bought nothing. AGENCY_MAP keys are toptier names harvested from this
+        # same API's responses, so a miss is a real defect worth shouting about.
+        if scanned == 0:
+            print(f"  {code:<6} 0 scanned — NAME MISMATCH? "
+                  f"'{agency}' returned nothing at all. The agency filter is "
+                  f"not matching; this agency is invisible to the feed.")
+            rows.append((code, 0, 0, 0, False, "name-mismatch"))
+            continue
+
+        note = ""
+        if not floor:
+            # The walk stopped without clearing the window: either our page
+            # ceiling or the API's record cap. Split by amount and retry.
+            note = "capped -> split"
+            print(f"  {code:<6} hit the cap at {scanned:,} scanned — "
+                  f"sub-partitioning by award amount")
+            recs, scanned, pages, floor = [], 0, 0, True
+            for low, high in AMOUNT_TIERS:
+                t_recs, t_scan, t_pages, t_floor = fetch_window(
+                    today, lo_days, hi_days, award_types, fields, sort_field,
+                    f"{label}/{code}", lookback_days=lookback_days,
+                    agency=agency, amount_tier=(low, high), quiet=True)
+                tier = f"${low/1e6:g}M+" if high is None else \
+                       f"${low/1e6:g}-{high/1e6:g}M"
+                print(f"     {tier:<12} {t_scan:>6,} scanned  "
+                      f"{len(t_recs):>5,} in window"
+                      f"{'  STILL CAPPED' if not t_floor else ''}")
+                recs += t_recs
+                scanned += t_scan
+                pages += t_pages
+                floor = floor and t_floor
+                time.sleep(REQUEST_PAUSE)
+            note = "split ok" if floor else "STILL CAPPED after split"
+
+        rows.append((code, scanned, pages, len(recs), floor, note))
+        kept += recs
+        time.sleep(REQUEST_PAUSE)
+
+    print(f"\n  per-agency counts — {label}")
+    print(f"     {'agency':<8}{'scanned':>10}{'pages':>7}{'in window':>11}"
+          f"{'complete':>10}  note")
+    for code, scanned, pages, n, floor, note in rows:
+        print(f"     {code:<8}{scanned:>10,}{pages:>7}{n:>11,}"
+              f"{('yes' if floor else 'NO'):>10}  {note}")
+    total = sum(r[3] for r in rows)
+    bad = [r[0] for r in rows if not r[4]]
+    print(f"     {'TOTAL':<8}{sum(r[1] for r in rows):>10,}"
+          f"{sum(r[2] for r in rows):>7}{total:>11,}")
+    if bad:
+        print(f"     WARNING - incomplete after sub-partitioning: "
+              f"{', '.join(bad)}. Those counts are floors, not measurements.")
+    return kept, rows
 
 
 def parse_date(v):
@@ -689,35 +852,47 @@ def main():
     # Each band gets its own bounded walk. A single 60-545 fetch would page
     # from 545 down to 60, so the near band would sit at the very end of the
     # walk and be the first thing lost to MAX_PAGES.
+    print(f"\npartitioned by agency: {len(AGENCY_MAP)} agencies, one bounded "
+          f"descending walk each (API record cap {API_RECORD_CAP:,} per slice)")
+
     print("\n── Recompete Watch band ──")
     print("querying contracts (A,B,C,D)...")
-    contracts, c_scanned, c_pages = fetch_window(
+    contracts, rc_c_rows = fetch_partitioned(
         today, WINDOW_MIN_DAYS, WINDOW_MAX_DAYS,
-        CONTRACT_TYPES, c_fields, "End Date", "contracts")
-    print("querying IDVs...")
-    idvs, i_scanned, i_pages = fetch_window(
+        CONTRACT_TYPES, c_fields, "End Date", "recompete/contracts")
+    print("\nquerying IDVs...")
+    idvs, rc_i_rows = fetch_partitioned(
         today, WINDOW_MIN_DAYS, WINDOW_MAX_DAYS,
-        IDV_TYPES, i_fields, "Last Date to Order", "IDVs")
-    print(f"scanned {c_scanned} contracts over {c_pages} page(s), "
-          f"{i_scanned} IDVs over {i_pages} page(s)")
-    print(f"in recompete window: {len(contracts)} contracts, {len(idvs)} IDVs")
+        IDV_TYPES, i_fields, "Last Date to Order", "recompete/IDVs")
+    print(f"\nin recompete window: {len(contracts)} contracts, {len(idvs)} IDVs")
+    # Was the old unpartitioned 220 curated from a truncated scan? The tell is
+    # the near edge of the window. A complete descending walk reaches 180 days;
+    # a truncated one stops short and the earliest record sits well above it.
+    rc_all = [parse_date(r.get("End Date")) for r in contracts] + \
+             [parse_date(r.get("Last Date to Order")) for r in idvs]
+    rc_all = [d for d in rc_all if d]
+    if rc_all:
+        nearest = min((d - today).days for d in rc_all)
+        print(f"   nearest record in the recompete band: {nearest} days out "
+              f"(floor is {WINDOW_MIN_DAYS})")
+        if nearest > WINDOW_MIN_DAYS + 5:
+            print(f"   NOTE: still {nearest - WINDOW_MIN_DAYS} days short of "
+                  f"the floor — check the per-agency 'complete' column above.")
 
-    print("\n── Position Now band (ascending walk, 5-year action lookback) ──")
-    print(f"   walk: ASC from the near edge · action lookback "
-          f"{POSITION_ACTION_LOOKBACK_DAYS}d (recompete band uses "
-          f"{ACTION_LOOKBACK_DAYS}d, unchanged)")
+    print("\n── Position Now band ──")
+    print(f"   descending walk · action lookback "
+          f"{POSITION_ACTION_LOOKBACK_DAYS}d (recompete uses "
+          f"{ACTION_LOOKBACK_DAYS}d)")
     print("querying contracts (A,B,C,D)...")
-    pn_contracts, pc_scanned, pc_pages = fetch_window(
+    pn_contracts, pn_c_rows = fetch_partitioned(
         today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
         CONTRACT_TYPES, c_fields, "End Date", "position/contracts",
-        order="asc", lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
-    print("querying IDVs...")
-    pn_idvs, pi_scanned, pi_pages = fetch_window(
+        lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
+    print("\nquerying IDVs...")
+    pn_idvs, pn_i_rows = fetch_partitioned(
         today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
         IDV_TYPES, i_fields, "Last Date to Order", "position/IDVs",
-        order="asc", lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
-    print(f"scanned {pc_scanned} contracts over {pc_pages} page(s), "
-          f"{pi_scanned} IDVs over {pi_pages} page(s)")
+        lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
     print(f"BAND MEASUREMENT — raw in {POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} "
           f"day band: {len(pn_contracts)} contracts, {len(pn_idvs)} IDVs, "
           f"{len(pn_contracts) + len(pn_idvs)} total (pre-screen)")
@@ -725,6 +900,11 @@ def main():
     # positions: a contract 8 months out becomes a contract 4 months out. A
     # cliff between them is a query artefact, not a thin market. Flag it here
     # rather than letting an empty-looking section pass as a finding.
+    incomplete = [r[0] for r in rc_c_rows + rc_i_rows + pn_c_rows + pn_i_rows
+                  if not r[4]]
+    if incomplete:
+        print(f"   INCOMPLETE partitions this run: "
+              f"{', '.join(sorted(set(incomplete)))}")
     rc_raw, pn_raw = len(contracts) + len(idvs), len(pn_contracts) + len(pn_idvs)
     rc_rate = rc_raw / (WINDOW_MAX_DAYS - WINDOW_MIN_DAYS)
     pn_rate = pn_raw / (POSITION_MAX_DAYS - POSITION_MIN_DAYS)
@@ -789,8 +969,10 @@ def main():
     # answers is "what closes first", not "what is biggest".
     position.sort(key=lambda r: (r.get("daysOut") or 9999,
                                  -(r.get("valueRank") or 0)))
-    position_shown = position[:POSITION_CAP]
-    position_over = position[POSITION_CAP:]
+    position_shown, position_over = stratified_pick(position, POSITION_CAP,
+                                                    POSITION_MIN_DAYS,
+                                                    POSITION_MAX_DAYS,
+                                                    POSITION_STRATA)
     curated_ids |= {r["id"] for r in position_shown}
     print(f"Position Now: {len(position_shown)} rendered "
           f"(cap {POSITION_CAP})")
@@ -804,7 +986,13 @@ def main():
               f"widen the rendered set.")
     if position_shown:
         span = (position_shown[0]["daysOut"], position_shown[-1]["daysOut"])
-        print(f"   days-out span rendered   : {span[0]} .. {span[1]}")
+        print(f"   days-out span rendered   : {span[0]} .. {span[1]} "
+              f"(band is {POSITION_MIN_DAYS}-{POSITION_MAX_DAYS}, "
+              f"{POSITION_STRATA} strata)")
+        if span[1] - span[0] < (POSITION_MAX_DAYS - POSITION_MIN_DAYS) / 3:
+            print(f"   NOTE: rendered rows cover only {span[1]-span[0]} days of "
+                  f"a {POSITION_MAX_DAYS-POSITION_MIN_DAYS}-day band. The "
+                  f"section label is wider than what it shows.")
         by_agency = {}
         for r in position_shown:
             by_agency[r["id"].split("_")[0]] = \
