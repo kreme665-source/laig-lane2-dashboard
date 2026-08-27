@@ -237,6 +237,11 @@ FEED_MARKER = "_USAS_"
 # anything in LIVE_SOURCES can never be stamped, whatever its id looks like.
 #
 # ANY NEW WRITER MUST SET ITS OWN TAG AND ADD IT TO LIVE_SOURCES.
+# Agency names observed to return at least one record during this run. Shared
+# across legs so a leg with no records for an agency is not mistaken for a
+# filter that does not match.
+_RESOLVED_AGENCY_NAMES = set()
+
 SOURCE_USASPENDING = "USASPENDING"
 SOURCE_AG_RETIRED = "AG"
 LIVE_SOURCES = {SOURCE_USASPENDING, "SAM", "MARKET"}
@@ -433,20 +438,34 @@ def fetch_partitioned(today, lo_days, hi_days, award_types, fields, sort_field,
     """
     kept, rows = [], []
     for agency, code in AGENCY_MAP.items():
+        # Names proven to resolve earlier in this run. A zero-scan slice for one
+        # of them is DATA, not a broken filter.
+        resolved = _RESOLVED_AGENCY_NAMES
         recs, scanned, pages, floor = fetch_window(
             today, lo_days, hi_days, award_types, fields, sort_field,
             f"{label}/{code}", lookback_days=lookback_days, agency=agency,
             quiet=True)
 
-        # Zero scanned means the agency name did not match, not that the agency
-        # bought nothing. AGENCY_MAP keys are toptier names harvested from this
-        # same API's responses, so a miss is a real defect worth shouting about.
+        # A zero-scan slice has two very different causes and the old wording
+        # only admitted one of them. If this agency name has already returned
+        # records in ANY leg of this run, the filter demonstrably works and a
+        # zero here is the true state of the data - DoD, NSF and DOL genuinely
+        # hold no IDVs in NAICS 5413/5415/5416, confirmed by direct API probe.
+        # Calling that a name mismatch cries wolf on a clean zero, and a
+        # warning that fires on correct data stops being read.
         if scanned == 0:
-            print(f"  {code:<6} 0 scanned — NAME MISMATCH? "
-                  f"'{agency}' returned nothing at all. The agency filter is "
-                  f"not matching; this agency is invisible to the feed.")
-            rows.append((code, 0, 0, 0, False, "name-mismatch"))
+            if agency in resolved:
+                print(f"  {code:<6} 0 records in this band — name resolves "
+                      f"elsewhere in this run, so this is a true zero, "
+                      f"not a broken filter")
+                rows.append((code, 0, 0, 0, True, "none in band"))
+            else:
+                print(f"  {code:<6} 0 scanned, and '{agency}' has not resolved "
+                      f"in ANY leg of this run — probable toptier NAME "
+                      f"MISMATCH; this agency would be invisible to the feed.")
+                rows.append((code, 0, 0, 0, False, "name-mismatch?"))
             continue
+        resolved.add(agency)
 
         note = ""
         if not floor:
@@ -475,10 +494,14 @@ def fetch_partitioned(today, lo_days, hi_days, award_types, fields, sort_field,
                 print(f"     {name:<12} {t_scan:>6,} scanned  "
                       f"{len(t_recs):>5,} in window"
                       f"{'  STILL CAPPED' if not t_floor else ''}")
-                recs += t_recs
                 scanned += t_scan
                 pages += t_pages
-                if not t_floor:
+                if t_floor:
+                    recs += t_recs
+                else:
+                    # A capped slice returns a PARTIAL set. Keeping it and then
+                    # re-fetching the same slice split by amount would count its
+                    # records twice. Drop the partial; the split supersedes it.
                     still.append((types_arg, name))
                 time.sleep(REQUEST_PAUSE)
 
@@ -497,10 +520,32 @@ def fetch_partitioned(today, lo_days, hi_days, award_types, fields, sort_field,
                         scanned += t_scan
                         pages += t_pages
                         floor = floor and t_floor
+                        print(f"       {name} x "
+                              f"{'$%gM+' % (low/1e6) if high is None else '$%g-%gM' % (low/1e6, high/1e6)}"
+                              f"  {t_scan:>6,} scanned  {len(t_recs):>5,} in window"
+                              f"{'  STILL CAPPED' if not t_floor else ''}")
                         time.sleep(REQUEST_PAUSE)
-            else:
-                floor = not still
+            elif still:
+                # Amount was already the axis and some tier still capped: the
+                # partials were dropped, so say the count is short.
+                floor = False
             note = "split ok" if floor else "STILL CAPPED after split"
+
+            # Belt and braces. Slices are disjoint by construction, so a
+            # duplicate id means an assumption above is wrong; drop it rather
+            # than inflate the count, and say so.
+            seen, deduped = set(), []
+            for r in recs:
+                k = r.get("generated_internal_id") or r.get("Award ID")
+                if k and k in seen:
+                    continue
+                if k:
+                    seen.add(k)
+                deduped.append(r)
+            if len(deduped) != len(recs):
+                print(f"     NOTE: dropped {len(recs) - len(deduped)} duplicate "
+                      f"record(s) across slices")
+            recs = deduped
 
         rows.append((code, scanned, pages, len(recs), floor, note))
         kept += recs
