@@ -164,6 +164,29 @@ API_RECORD_CAP = 10_000
 # the likely one). Applied only where needed, never pre-emptively.
 AMOUNT_TIERS = [(250_000, 1_000_000), (1_000_000, 10_000_000),
                 (10_000_000, 100_000_000), (100_000_000, None)]
+
+# ── Band scoping ─────────────────────────────────────────────────────────────
+# Position Now is CONTRACTS ONLY. An IDV's "Last Date to Order" is the close of
+# an ordering window, not the end of a period of performance. Putting it under
+# a heading that reads "current period of performance ends" would state one
+# event and mean another, which is the same failure as asserting a competition
+# point from a period end.
+#
+# IDVs are not dropped, they are scoped: they stay in Recompete Watch, where an
+# ordering window closing IS the signal, and they are labelled as that.
+#
+# This also resolves a measured blind spot. Across v3 and both v4 runs the near
+# band returned 5-6 IDVs while the recompete band held a steady 12-15% IDV
+# share right down to its 180-day floor (203 IDVs in the 180-209 day bucket).
+# A continuous population does not stop dead at a boundary; that leg was never
+# reaching the band. Scoping removes the question rather than papering over it.
+POSITION_AWARD_TYPES = CONTRACT_TYPES
+
+# Sub-partition dimension by leg. Award-type code is the right axis for IDVs:
+# eight codes, each a genuinely different population, versus amount which does
+# not separate them. Amount stays the axis for contracts.
+SUBPARTITION_BY_TYPE = "type"
+SUBPARTITION_BY_AMOUNT = "amount"
 REQUEST_PAUSE = 0.25
 BRIDGE_MAX_DAYS = 183    # 52.217-8 caps the extension at six months
 
@@ -397,7 +420,7 @@ def stratified_pick(records, cap, lo_days, hi_days, strata):
 
 
 def fetch_partitioned(today, lo_days, hi_days, award_types, fields, sort_field,
-                      label, lookback_days=None):
+                      label, lookback_days=None, subpartition="amount"):
     """One bounded descending walk per agency in AGENCY_MAP.
 
     Each agency gets its own 10,000-record budget instead of sharing one across
@@ -428,26 +451,55 @@ def fetch_partitioned(today, lo_days, hi_days, award_types, fields, sort_field,
         note = ""
         if not floor:
             # The walk stopped without clearing the window: either our page
-            # ceiling or the API's record cap. Split by amount and retry.
-            note = "capped -> split"
+            # ceiling or the API's record cap. Escalate on the axis that
+            # actually separates this leg's population.
+            axis = "award type code" if subpartition == "type" else "award amount"
             print(f"  {code:<6} hit the cap at {scanned:,} scanned — "
-                  f"sub-partitioning by award amount")
+                  f"sub-partitioning by {axis}")
+            slices = ([([t], t) for t in award_types] if subpartition == "type"
+                      else [(award_types, (lo, hi)) for lo, hi in AMOUNT_TIERS])
             recs, scanned, pages, floor = [], 0, 0, True
-            for low, high in AMOUNT_TIERS:
+            still = []
+            for types_arg, key in slices:
+                tier_arg = None if subpartition == "type" else key
                 t_recs, t_scan, t_pages, t_floor = fetch_window(
-                    today, lo_days, hi_days, award_types, fields, sort_field,
+                    today, lo_days, hi_days, types_arg, fields, sort_field,
                     f"{label}/{code}", lookback_days=lookback_days,
-                    agency=agency, amount_tier=(low, high), quiet=True)
-                tier = f"${low/1e6:g}M+" if high is None else \
-                       f"${low/1e6:g}-{high/1e6:g}M"
-                print(f"     {tier:<12} {t_scan:>6,} scanned  "
+                    agency=agency, amount_tier=tier_arg, quiet=True)
+                if subpartition == "type":
+                    name = key
+                else:
+                    low, high = key
+                    name = (f"${low/1e6:g}M+" if high is None
+                            else f"${low/1e6:g}-{high/1e6:g}M")
+                print(f"     {name:<12} {t_scan:>6,} scanned  "
                       f"{len(t_recs):>5,} in window"
                       f"{'  STILL CAPPED' if not t_floor else ''}")
                 recs += t_recs
                 scanned += t_scan
                 pages += t_pages
-                floor = floor and t_floor
+                if not t_floor:
+                    still.append((types_arg, name))
                 time.sleep(REQUEST_PAUSE)
+
+            # Second escalation: a single award type that still caps gets the
+            # amount axis on top of it. Only ever reached where measured.
+            if still and subpartition == "type":
+                print(f"     escalating {len(still)} capped type(s) by amount")
+                for types_arg, name in still:
+                    for low, high in AMOUNT_TIERS:
+                        t_recs, t_scan, t_pages, t_floor = fetch_window(
+                            today, lo_days, hi_days, types_arg, fields,
+                            sort_field, f"{label}/{code}",
+                            lookback_days=lookback_days, agency=agency,
+                            amount_tier=(low, high), quiet=True)
+                        recs += t_recs
+                        scanned += t_scan
+                        pages += t_pages
+                        floor = floor and t_floor
+                        time.sleep(REQUEST_PAUSE)
+            else:
+                floor = not still
             note = "split ok" if floor else "STILL CAPPED after split"
 
         rows.append((code, scanned, pages, len(recs), floor, note))
@@ -550,9 +602,13 @@ def to_record(rec, today, is_idv, i, band="recompete"):
     # fact. "Recompetes on" would be a prediction, and a period end is not a
     # competition point.
     if band == "position":
+        # Contracts only in this band, so the wording is safe to be specific.
         status = (f"Current period of performance ends "
                   f"{first_end.isoformat()} — as reported")
         label, position_now = "Position Now", True
+    elif is_idv:
+        status = "Ordering window — pending date resolution"
+        label, position_now = "Recompete Watch", False
     else:
         status = "Recompete — pending date resolution"
         label, position_now = "Recompete Watch", False
@@ -586,6 +642,19 @@ def to_record(rec, today, is_idv, i, band="recompete"):
         "vehicle": "IDV" if is_idv else "Contract",
         "source": "USASpending",
     }, None
+
+
+def idv_status(status):
+    """An IDV's date is the close of an ordering window, not the end of a
+    period of performance. Same observed date, different event.
+
+    The enrichment statuses draw an option-decision / final-period distinction
+    that is a period-of-performance concept and does not map onto an ordering
+    window at all. Flattening IDVs to one plain statement says less and asserts
+    nothing untrue, which is the right trade.
+    """
+    return ("Ordering window closes — last date to order, as reported"
+            if status.startswith(("Recompete", "Ordering")) else status)
 
 
 def enrich_curated(records, today):
@@ -649,6 +718,8 @@ def enrich_curated(records, today):
             stats["rewindowed"] += 1
         r["solDate"] = anchor.isoformat()
         r["daysOut"] = new_days
+        if r.get("vehicle") == "IDV":
+            r["status"] = idv_status(r["status"])
     return stats
 
 
@@ -800,6 +871,13 @@ def write_search_index(records, curated_ids):
         if r.get("label") == "Position Now":
             return ("Archive — current period of performance end, "
                     "not rendered on the page")
+        # The archived caveat has to respect the same distinction the rendered
+        # rows now do. Roughly 1,400 archived IDVs would otherwise carry
+        # "current period end" wording, which is the exact conflation the
+        # relabel exists to remove - moved out of sight into the search index
+        # rather than fixed.
+        if r.get("vehicle") == "IDV":
+            return "Archive — last date to order, not verified"
         return "Archive — current period end, options not verified"
 
     rows = [[r["id"],
@@ -863,7 +941,8 @@ def main():
     print("\nquerying IDVs...")
     idvs, rc_i_rows = fetch_partitioned(
         today, WINDOW_MIN_DAYS, WINDOW_MAX_DAYS,
-        IDV_TYPES, i_fields, "Last Date to Order", "recompete/IDVs")
+        IDV_TYPES, i_fields, "Last Date to Order", "recompete/IDVs",
+        subpartition=SUBPARTITION_BY_TYPE)
     print(f"\nin recompete window: {len(contracts)} contracts, {len(idvs)} IDVs")
     # Was the old unpartitioned 220 curated from a truncated scan? The tell is
     # the near edge of the window. A complete descending walk reaches 180 days;
@@ -879,23 +958,21 @@ def main():
             print(f"   NOTE: still {nearest - WINDOW_MIN_DAYS} days short of "
                   f"the floor — check the per-agency 'complete' column above.")
 
-    print("\n── Position Now band ──")
+    print("\n── Position Now band — CONTRACTS ONLY ──")
     print(f"   descending walk · action lookback "
           f"{POSITION_ACTION_LOOKBACK_DAYS}d (recompete uses "
           f"{ACTION_LOOKBACK_DAYS}d)")
+    print("   IDVs are deliberately OUT of this band: a Last Date to Order is")
+    print("   an ordering window closing, not a period of performance ending.")
+    print("   They stay in Recompete Watch and are labelled as what they are.")
     print("querying contracts (A,B,C,D)...")
     pn_contracts, pn_c_rows = fetch_partitioned(
         today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
-        CONTRACT_TYPES, c_fields, "End Date", "position/contracts",
+        POSITION_AWARD_TYPES, c_fields, "End Date", "position/contracts",
         lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
-    print("\nquerying IDVs...")
-    pn_idvs, pn_i_rows = fetch_partitioned(
-        today, POSITION_MIN_DAYS, POSITION_MAX_DAYS,
-        IDV_TYPES, i_fields, "Last Date to Order", "position/IDVs",
-        lookback_days=POSITION_ACTION_LOOKBACK_DAYS)
-    print(f"BAND MEASUREMENT — raw in {POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} "
-          f"day band: {len(pn_contracts)} contracts, {len(pn_idvs)} IDVs, "
-          f"{len(pn_contracts) + len(pn_idvs)} total (pre-screen)")
+    pn_idvs, pn_i_rows = [], []
+    print(f"\nBAND MEASUREMENT — raw in {POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} "
+          f"day band: {len(pn_contracts)} contracts (IDVs out of scope by design)")
     # Continuity check. The two bands are one population at two calendar
     # positions: a contract 8 months out becomes a contract 4 months out. A
     # cliff between them is a query artefact, not a thin market. Flag it here
@@ -905,10 +982,15 @@ def main():
     if incomplete:
         print(f"   INCOMPLETE partitions this run: "
               f"{', '.join(sorted(set(incomplete)))}")
-    rc_raw, pn_raw = len(contracts) + len(idvs), len(pn_contracts) + len(pn_idvs)
+    # Contracts against contracts. Comparing a contracts-only band to a mixed
+    # one would build the scoping decision into the health check and hide a
+    # real regression behind it.
+    rc_raw, pn_raw = len(contracts), len(pn_contracts)
     rc_rate = rc_raw / (WINDOW_MAX_DAYS - WINDOW_MIN_DAYS)
     pn_rate = pn_raw / (POSITION_MAX_DAYS - POSITION_MIN_DAYS)
-    print(f"   density: recompete {rc_rate:.1f}/day · position {pn_rate:.1f}/day")
+    print(f"   density (contracts only): recompete {rc_rate:.1f}/day · "
+          f"position {pn_rate:.1f}/day")
+    print(f"   recompete IDVs: {len(idvs)} (own leg, scoped to this band)")
     if rc_rate and pn_rate < rc_rate * 0.25:
         print(f"   WARNING - the near band is running at "
               f"{pn_rate / rc_rate:.0%} of the recompete band's density. "
@@ -938,8 +1020,17 @@ def main():
         (position.append(r) if r else pn_skipped.__setitem__(
             why, pn_skipped.get(why, 0) + 1))
 
+    # Scope assertion. Cheap, and it fails loudly rather than letting an IDV
+    # appear under period-of-performance wording months from now.
+    strays = [r for r in position if r.get("vehicle") != "Contract"]
+    if strays:
+        raise SystemExit(
+            f"ABORT: {len(strays)} non-contract record(s) reached the Position "
+            f"Now band. That band is contracts-only by design. Leaving "
+            f"index.html unchanged.")
+
     print(f"\nmapped to dashboard records: {len(records)} recompete, "
-          f"{len(position)} position")
+          f"{len(position)} position (contracts only)")
     for why, n in sorted(skipped.items(), key=lambda kv: -kv[1]):
         print(f"   recompete skipped {n}: {why}")
     for why, n in sorted(pn_skipped.items(), key=lambda kv: -kv[1]):
