@@ -2053,7 +2053,19 @@ function oppMailto(o){
     var cEl = document.getElementById('sam-count');
     if (cEl) cEl.textContent = openCount + ' active notice' + (openCount===1?'':'s') +
       (SAM_NOTICES.length>openCount ? ' · '+(SAM_NOTICES.length-openCount)+' closed' : '');
-    el.innerHTML = SAM_NOTICES.map(function(n) {
+    // Display sort (Phil 2026-09-08): live/active notices FIRST, closed at the
+    // BOTTOM (kept, not removed — a closed Sources Sought can precede the
+    // pre-solicitation/solicitation that follows it). Stable within each group:
+    // existing feed order preserved, no re-ranking.
+    var sorted = SAM_NOTICES.slice().sort(function(a, b) {
+      var cdA = a.closeDate ? new Date(a.closeDate + 'T00:00:00') : null;
+      var cdB = b.closeDate ? new Date(b.closeDate + 'T00:00:00') : null;
+      var closedA = cdA ? Math.round((cdA - t) / 86400000) < 0 : false;
+      var closedB = cdB ? Math.round((cdB - t) / 86400000) < 0 : false;
+      if (closedA !== closedB) return closedA ? 1 : -1;
+      return 0;
+    });
+    el.innerHTML = sorted.map(function(n) {
       var cd = n.closeDate ? new Date(n.closeDate+'T00:00:00') : null;
       var dl = cd ? Math.round((cd-t)/86400000) : 999;
       var closed = dl < 0, urgent = !closed && dl <= 7;
