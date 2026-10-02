@@ -124,7 +124,7 @@ POSITION_STRATA = 4
 ENRICH_CURATED = True
 ENRICH_PAUSE = 0.25
 
-NAICS_PREFIXES = ["5413", "5415", "5416"]
+# NAICS prefix scope removed per Phil 09-21: dashboard tracks agencies, not NAICS families.
 MIN_AWARD_AMOUNT = 250_000
 ACTION_LOOKBACK_DAYS = 730
 
@@ -312,7 +312,6 @@ def fetch_window(today, lo_days, hi_days, award_types, fields, sort_field, label
 
     filters = {
         "award_type_codes": award_types,
-        "naics_codes": {"require": NAICS_PREFIXES},
         "award_amounts": amounts,
         "time_period": [{
             "start_date": (today - timedelta(days=lookback)).isoformat(),
@@ -962,7 +961,7 @@ def main():
           f"({WINDOW_MIN_DAYS}-{WINDOW_MAX_DAYS} days out)")
     print(f"Position Now window    : {pn_lo} .. {pn_hi} "
           f"({POSITION_MIN_DAYS}-{POSITION_MAX_DAYS} days out)  [NEW]")
-    print(f"NAICS prefixes         : {', '.join(NAICS_PREFIXES)}")
+    print(f"NAICS scope removed: dashboard now pulls all NAICS (agency+gate-5c ranking)")
     print(f"display caps           : recompete {DISPLAY_CAP} "
           f"(remainder stays searchable) / position {POSITION_CAP}")
 
