@@ -65,21 +65,8 @@ def local_today():
 
 API_BASE = "https://api.sam.gov/opportunities/v2/search"
 
-# Capture scope: IT services, professional services, engineering.
-# Applied LOCALLY after the pull — filtering server-side would cost one call each.
-NAICS_SCOPE = {
-    "541511",  # Custom Computer Programming Services
-    "541512",  # Computer Systems Design Services
-    "541513",  # Computer Facilities Management
-    "541519",  # Other Computer Related Services
-    "518210",  # Data Processing, Hosting
-    "541330",  # Engineering Services
-    "541611",  # Admin & General Management Consulting
-    "541612",  # HR Consulting
-    "541618",  # Other Management Consulting
-    "541690",  # Other Scientific & Technical Consulting
-    "541715",  # R&D in Physical, Engineering & Life Sciences
-}
+# Capture scope removed per Phil 09-21: dashboard tracks agencies, not NAICS families.
+# Pull all notices; ranking is by gate-5c (set-aside > teaming > unrestricted).
 
 # ─────────────────────────────────────────────────────────────────────────────
 # EXCLUDED AGENCIES — conflict-of-interest screen
@@ -500,17 +487,12 @@ def main():
               "Retention still protects existing notices.")
 
     fresh = {}
-    skipped_scope = 0
     for rec in records:
         n = to_notice(rec)
         if not n:
             continue
-        if n["naics"] not in NAICS_SCOPE:
-            skipped_scope += 1
-            continue
         fresh.setdefault(n["solNum"], n)
-    print(f"in-scope notices from API      : {len(fresh)} "
-          f"({skipped_scope} outside NAICS scope, discarded)")
+    print(f"notices from API              : {len(fresh)} (NAICS scope removed — all notices accepted)")
 
     # ---- merge: fresh wins, but keep hand-authored notes ----
     by_sol = {n.get("solNum", ""): dict(n) for n in existing}
